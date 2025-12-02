@@ -3,119 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Javoblarini Belgilash - Lokal Server Versiyasi</title>
+    <title>LegalMentor TEST | Rasmiy Versiya</title>
+    
     <style>
-        /* CSS uslublari */
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
-        h1 { color: #333; text-align: center; }
-        .question-container { margin-bottom: 25px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .question-text { font-weight: bold; margin-bottom: 10px; color: #333; }
-        .answer-text { color: #333; display: block; margin-bottom: 5px; white-space: pre-wrap; }
-        .answer-selection-group { margin-top: 15px; }
-        .answer-label { display: inline-block; margin-right: 15px; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; transition: background-color 0.2s, border-color 0.2s; }
-        input[type="radio"] { display: none; }
-        input[type="radio"]:checked + .answer-label { background-color: #4CAF50; color: white; border-color: #4CAF50; }
+        /* 7. Mobil Ekran uchun Asosiy Uslublar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; 
+            padding-top: 60px; /* Taymer uchun joy qoldirish */
+            background-color: #f0f2f5;
+            color: #333;
+            /* 5. Matn tanlashni o'chirish */
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         
-        /* Natija maydoni */
+        /* 9. Qattiq Taymer Konteyneri (Fixed Position) */
+        .timer-bar {
+            position: fixed; /* Joyidan siljimasligi uchun */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #0056b3;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            z-index: 1000; /* Boshqa elementlardan ustun turishi uchun */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .timer-warning {
+            background-color: #dc3545; /* Qizil rang 5 daqiqa qolganda */
+        }
+
+        /* 6. Logotip va Sarlavha Uslubi */
+        .header {
+            text-align: center;
+            padding: 15px 10px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 15px;
+        }
+        .header img {
+            max-width: 150px; /* Logotip razmeri */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #0056b3;
+        }
+
+        /* Savol Konteynerlari */
+        .question-container {
+            margin: 0 10px 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .answer-text {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        /* Tanlash Tugmalari (Mobil uchun moslashuvchan) */
+        .answer-selection-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+        .answer-label {
+            flex: 1; /* Teng kenglikda bo'lishi uchun */
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 5px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: bold;
+            min-width: 40px;
+        }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .answer-label {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        /* Natija Maydoni Uslubi */
+        .result-section {
+            margin: 20px 10px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
         #result-field {
             width: 100%;
             min-height: 50px;
             padding: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
             border: 2px dashed #007bff;
             border-radius: 5px;
             font-size: 1.1em;
             letter-spacing: 1px;
             box-sizing: border-box;
+            text-align: center;
+            /* Nusxalanadigan matnni tanlashga ruxsat berish */
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+        }
+        .copy-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            width: 100%; /* Mobil uchun to'liq kenglik */
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .copy-message {
+            color: #4CAF50; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            visibility: hidden;
         }
     </style>
 </head>
-<body> 
-    <h1>Test Savollari</h1>
+<body>
 
-    <p style="text-align: center; color: green; font-weight: bold;">✅ Lokal Serverda Avtomatik Hisoblash</p>
-    <hr>
-    
-    <div class="question-container">
-        <div class="question-text">1. Alohida mol-mulkka ega bo‘lgan...</div>
-        <div class="answer-selection-group">
-            <input type="radio" id="q1a" name="question1" value="a">
-            <label class="answer-label" for="q1a">A</label>
-            <input type="radio" id="q1b" name="question1" value="b">
-            <label class="answer-label" for="q1b">B</label>
-            <input type="radio" id="q1c" name="question1" value="c">
-            <label class="answer-label" for="q1c">C</label>
-            <input type="radio" id="q1d" name="question1" value="d">
-            <label class="answer-label" for="q1d">D</label>
-        </div>
+    <div id="timer-display" class="timer-bar">
+        Vaqt: 60:00
     </div>
 
-    <div class="question-container">
-        <div class="question-text">2. Quyosh tizimida joylashgan eng katta sayyorani aniqlang.</div>
-        <div class="answer-selection-group">
-            <input type="radio" id="q2a" name="question2" value="a">
-            <label class="answer-label" for="q2a">A</label>
-            <input type="radio" id="q2b" name="question2" value="b">
-            <label class="answer-label" for="q2b">B</label>
-            <input type="radio" id="q2c" name="question2" value="c">
-            <label class="answer-label" for="q2c">C</label>
-            <input type="radio" id="q2d" name="question2" value="d">
-            <label class="answer-label" for="q2d">D</label>
-        </div>
+    <div class="header">
+        <img src="https://asliddinburanov-prog.github.io/LegalMentor-test/2.jpg" alt="LegalMentor Logotipi">
+        <h1>Test Savollari</h1>
     </div>
-    
-    <div class="question-container">
-        <div class="question-text">3. "O'tkan kunlar" romani muallifi kim?</div>
-        <div class="answer-selection-group">
-            <input type="radio" id="q3a" name="question3" value="a">
-            <label class="answer-label" for="q3a">A</label>
-            <input type="radio" id="q3b" name="question3" value="b">
-            <label class="answer-label" for="q3b">B</label>
-            <input type="radio" id="q3c" name="question3" value="c">
-            <label class="answer-label" for="q3c">C</label>
-            <input type="radio" id="q3d" name="question3" value="d">
-            <label class="answer-label" for="q3d">D</label>
-        </div>
-    </div>
-    
-    <hr style="margin-top: 40px;">
 
-    <h2>Javob Beligilari</h2>
-    <p style="font-size: 0.9em; color: gray;">Javoblaringiz bu yerda avtomatik paydo bo'ladi. Nusxalash uchun matnni bosib turing.</p>
-    
-    <textarea id="result-field" readonly placeholder="Belgilagan javoblaringiz bu yerda avtomatik paydo bo‘ladi..."></textarea>
-    
+    <div style="margin: 0 10px; padding: 10px; background-color: #fff3cd; color: #856404; border-radius: 5px; font-weight: bold; text-align: center;">
+        ⚠️ DIQQAT: Testni bir urinishda yakunlang. Nusxalash va ekranni rasmga olish cheklangan!
+    </div>
+
+    <div id="questions-list">
+        </div>
+
+    <div class="result-section">
+        <label for="result-field" style="display: block; font-weight: bold;">Javob Belgilari (Nusxalanadigan maydon):</label>
+        <textarea id="result-field" readonly placeholder="Barcha javoblar belgilangandan so'ng bu yerda avtomatik ko'rinadi..."></textarea>
+        <button id="copy-button" class="copy-button">Belgilarni Nusxalash</button>
+        <p id="copy-message" class="copy-message">✅ Muvaffaqiyatli nusxalandi!</p>
+    </div>
+
     <script>
-        // Umumiy savollar sonini 30 ga o'zgartiring (savollarni qo'shgach).
-        const totalQuestions = 3; 
-        const currentAnswers = {}; 
+        // =============================================================
+        //  ✅ SAVOLLAR RO'YXATI (30 ta savol shabloni)
+        // =============================================================
+        // Savollarni tahrirlash juda oson, matnni almashtirsangiz kifoya.
+        
+        const customQuestions = [
+            // 1-3 savollar (Sizning namunangiz)
+            `Alohida mol-mulkka ega bo‘lgan hamda o‘z
+majburiyatlari yuzasidan ushbu mol-mulk bilan
+javob beradigan, majburiyatlarni bajara
+oladigan, sudda da’vogar va javobgar bo‘la
+oladigan tashkilot … hisoblanadi.
+A) yuridik shaxs
+B) tijorat tashkiloti
+C) jamiyat
+D) davlat organi`,
+
+            `Quyosh tizimida joylashgan eng katta sayyorani aniqlang.
+A) Mars
+B) Yupiter
+C) Yer
+C) Saturn`, // E'tibor bering, bu yerda variant tartibi muhim emas
+
+            `"O'tkan kunlar" romani muallifi kim?
+A) Abdulla Qahhor
+B) G'afur G'ulom
+C) Abdulla Qodiriy
+D) Mirkarim Osim`,
+            
+            // 4-30 savollar (Shablonlar)
+            // Haftalik testda faqat shu yerdagi matnni yangilab turasiz.
+            
+            // ########### SAVOL SHABLONLARI (4-30) ###########
+            `4-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `5-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `6-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `7-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `8-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `9-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `10-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `11-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `12-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `13-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `14-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `15-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `16-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `17-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `18-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `19-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `20-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `21-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `22-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `23-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `24-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `25-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `26-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `27-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `28-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `29-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`,
+            `30-savol matni shu yerga.
+A) variant 1
+B) variant 2
+C) variant 3
+D) variant 4`
+        ];
+        
+        const totalQuestions = customQuestions.length;
+        const questionsList = document.getElementById('questions-list');
         const resultField = document.getElementById('result-field');
+        const currentAnswers = {};
+        const copyButton = document.getElementById('copy-button');
+        const copyMessage = document.getElementById('copy-message');
 
+        // Savol matnini asosiy matn va variantlarga ajratish funksiyasi
+        function parseQuestion(fullText) {
+            const lines = fullText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            let questionBody = [];
+            let options = {};
+            let isOptionsStarted = false;
+
+            lines.forEach(line => {
+                if (line.match(/^[A-D][\.\)]\s/i)) {
+                    isOptionsStarted = true;
+                    const key = line[0].toLowerCase();
+                    options[key] = line; 
+                } else if (!isOptionsStarted) {
+                    questionBody.push(line);
+                }
+            });
+            return {
+                questionBody: questionBody.join('<br>'),
+                options: options
+            };
+        }
+
+        // Savollarni HTML ga joylash
+        function renderQuestions() {
+            for (let i = 0; i < totalQuestions; i++) {
+                const qId = i + 1;
+                const qData = parseQuestion(customQuestions[i]);
+
+                const qContainer = document.createElement('div');
+                qContainer.className = 'question-container';
+                qContainer.setAttribute('data-question-id', qId);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${qId}. ${qData.questionBody}`;
+                qContainer.appendChild(qText);
+                
+                // Variant matnini chiqarish
+                const optionsGroup = document.createElement('div');
+                optionsGroup.className = 'options-group';
+                const variantKeys = ['a', 'b', 'c', 'd'];
+                
+                variantKeys.forEach(key => {
+                    const variantText = qData.options[key];
+                    if (variantText) {
+                        const answerDisplayText = document.createElement('div');
+                        answerDisplayText.className = 'answer-text';
+                        answerDisplayText.textContent = variantText;
+                        optionsGroup.appendChild(answerDisplayText);
+                    }
+                });
+
+                // Radio tugmalarini yaratish (A, B, C, D)
+                const selectionGroup = document.createElement('div');
+                selectionGroup.className = 'answer-selection-group';
+
+                variantKeys.forEach(variant => {
+                    const radioId = `q${qId}${variant}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.id = radioId;
+                    input.name = `question${qId}`;
+                    input.value = variant;
+                    input.addEventListener('change', () => updateResult(qId, variant));
+                    
+                    const label = document.createElement('label');
+                    label.className = 'answer-label';
+                    label.htmlFor = radioId;
+                    label.textContent = variant.toUpperCase();
+
+                    selectionGroup.appendChild(input);
+                    selectionGroup.appendChild(label);
+                });
+                
+                optionsGroup.appendChild(selectionGroup);
+                qContainer.appendChild(optionsGroup);
+                questionsList.appendChild(qContainer);
+            }
+        }
+
+        // Javoblarni yig'ish va yangilash funksiyasi
         function updateResult(qId, answer) {
-            qId = parseInt(qId); 
             const resultTag = qId + answer;
-            currentAnswers[qId] = resultTag; 
-
+            currentAnswers[qId] = resultTag;
+            
             let resultString = '';
-            for (let i = 1; i <= totalQuestions; i++) { 
+            for (let i = 1; i <= totalQuestions; i++) {
                 if (currentAnswers[i]) {
                     resultString += currentAnswers[i];
                 }
             }
-            
             resultField.value = resultString;
         }
 
-        // Barcha radio tugmalariga "change" hodisasini biriktirish
-        document.addEventListener('DOMContentLoaded', () => {
-            const radioButtons = document.querySelectorAll('input[type="radio"]');
+        // 8. Nusxalash funksiyasi (Barcha savollarni tekshirish)
+        async function copyResult(event) {
+            event.preventDefault();
+            
+            let unmarkedQIds = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (!currentAnswers[i]) {
+                    unmarkedQIds.push(i);
+                }
+            }
+            
+            if (unmarkedQIds.length > 0) {
+                // 8. Belgilanmagan savollarni aniq ko'rsatish
+                alert(`⚠️ Nusxalashdan oldin barcha ${totalQuestions} savolni belgilashingiz kerak.\n\nBelgilanmagan savollar raqami: ${unmarkedQIds.join(', ')}`);
+                return;
+            }
 
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', (event) => {
-                    const qId = event.target.name.replace('question', ''); 
-                    const answer = event.target.value;
-                    updateResult(qId, answer);
+            try {
+                // Clipboard API orqali nusxalash
+                await navigator.clipboard.writeText(resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => {
+                    copyMessage.style.visibility = 'hidden';
+                }, 2000);
+            } catch (err) {
+                // Agar Clipboard API ishlamasa, eski usulda nusxalashga majburlash
+                resultField.select();
+                document.execCommand("copy");
+                alert("✅ Barcha javob belgilari muvaffaqiyatli nusxalandi! (" + resultField.value + ")");
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000);
+            }
+        }
+
+        // 9. Taymer Mantiqi
+        const timeLimit = 60 * 60; // 60 daqiqa * 60 soniya
+        let timeLeft = timeLimit;
+        const timerDisplay = document.getElementById('timer-display');
+        const warningTime = 5 * 60; // 5 daqiqa
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `Vaqt: ${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+
+            if (timeLeft <= warningTime) {
+                // 9. 5 daqiqa qolganda ogohlantirish
+                timerDisplay.classList.add('timer-warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Vaqt tugadi!";
+                timerDisplay.classList.remove('timer-warning');
+                timerDisplay.style.backgroundColor = '#000';
+                
+                // Vaqt tugagach testni bloklash
+                document.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
                 });
+                alert("🔴 Testga ajratilgan vaqt tugadi! Javoblarni nusxalab olishingiz mumkin.");
+            }
+        }
+
+        // --- Boshlash ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            
+            // Taymerni ishga tushirish
+            timerDisplay.textContent = formatTime(timeLeft);
+            const timerInterval = setInterval(updateTimer, 1000);
+            
+            // Nusxalash tugmasini funksiyaga bog'lash
+            copyButton.addEventListener('click', copyResult);
+
+            // 4. Qattiq Cheklovlar Qismi
+            // O'ng tugmani bosishni bloklash
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Klaviatura orqali asosiy nusxalashni bloklash
+            document.addEventListener('keydown', e => {
+                // Ctrl+C, Ctrl+X, Ctrl+V, Ctrl+A ni bloklash
+                if ((e.ctrlKey || e.metaKey) && (['c', 'x', 'v', 'a'].includes(e.key.toLowerCase()))) {
+                    e.preventDefault();
+                    // Bu yerda ogohlantirishni o'chirish yaxshiroq, chunki u doimiy chalaveradi
+                }
+                // F12 (Developer tools) ni bloklash (Ba'zi brauzerlarda ishlamaydi)
+                if (e.key === 'F12') {
+                     e.preventDefault();
+                }
             });
         });
         
