@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Javoblarini Belgilash - Lokal Server Versiyasi</title>
+    <style>
+        /* CSS uslublari */
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .question-container { margin-bottom: 25px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .question-text { font-weight: bold; margin-bottom: 10px; color: #333; }
+        .answer-text { color: #333; display: block; margin-bottom: 5px; white-space: pre-wrap; }
+        .answer-selection-group { margin-top: 15px; }
+        .answer-label { display: inline-block; margin-right: 15px; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; border-radius: 4px; transition: background-color 0.2s, border-color 0.2s; }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .answer-label { background-color: #4CAF50; color: white; border-color: #4CAF50; }
+        
+        /* Natija maydoni */
+        #result-field {
+            width: 100%;
+            min-height: 50px;
+            padding: 10px;
+            margin-top: 20px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body> 
+    <h1>Test Savollari</h1>
+
+    <p style="text-align: center; color: green; font-weight: bold;">✅ Lokal Serverda Avtomatik Hisoblash</p>
+    <hr>
+    
+    <div class="question-container">
+        <div class="question-text">1. Alohida mol-mulkka ega bo‘lgan...</div>
+        <div class="answer-selection-group">
+            <input type="radio" id="q1a" name="question1" value="a">
+            <label class="answer-label" for="q1a">A</label>
+            <input type="radio" id="q1b" name="question1" value="b">
+            <label class="answer-label" for="q1b">B</label>
+            <input type="radio" id="q1c" name="question1" value="c">
+            <label class="answer-label" for="q1c">C</label>
+            <input type="radio" id="q1d" name="question1" value="d">
+            <label class="answer-label" for="q1d">D</label>
+        </div>
+    </div>
+
+    <div class="question-container">
+        <div class="question-text">2. Quyosh tizimida joylashgan eng katta sayyorani aniqlang.</div>
+        <div class="answer-selection-group">
+            <input type="radio" id="q2a" name="question2" value="a">
+            <label class="answer-label" for="q2a">A</label>
+            <input type="radio" id="q2b" name="question2" value="b">
+            <label class="answer-label" for="q2b">B</label>
+            <input type="radio" id="q2c" name="question2" value="c">
+            <label class="answer-label" for="q2c">C</label>
+            <input type="radio" id="q2d" name="question2" value="d">
+            <label class="answer-label" for="q2d">D</label>
+        </div>
+    </div>
+    
+    <div class="question-container">
+        <div class="question-text">3. "O'tkan kunlar" romani muallifi kim?</div>
+        <div class="answer-selection-group">
+            <input type="radio" id="q3a" name="question3" value="a">
+            <label class="answer-label" for="q3a">A</label>
+            <input type="radio" id="q3b" name="question3" value="b">
+            <label class="answer-label" for="q3b">B</label>
+            <input type="radio" id="q3c" name="question3" value="c">
+            <label class="answer-label" for="q3c">C</label>
+            <input type="radio" id="q3d" name="question3" value="d">
+            <label class="answer-label" for="q3d">D</label>
+        </div>
+    </div>
+    
+    <hr style="margin-top: 40px;">
+
+    <h2>Javob Beligilari</h2>
+    <p style="font-size: 0.9em; color: gray;">Javoblaringiz bu yerda avtomatik paydo bo'ladi. Nusxalash uchun matnni bosib turing.</p>
+    
+    <textarea id="result-field" readonly placeholder="Belgilagan javoblaringiz bu yerda avtomatik paydo bo‘ladi..."></textarea>
+    
+    <script>
+        // Umumiy savollar sonini 30 ga o'zgartiring (savollarni qo'shgach).
+        const totalQuestions = 3; 
+        const currentAnswers = {}; 
+        const resultField = document.getElementById('result-field');
+
+        function updateResult(qId, answer) {
+            qId = parseInt(qId); 
+            const resultTag = qId + answer;
+            currentAnswers[qId] = resultTag; 
+
+            let resultString = '';
+            for (let i = 1; i <= totalQuestions; i++) { 
+                if (currentAnswers[i]) {
+                    resultString += currentAnswers[i];
+                }
+            }
+            
+            resultField.value = resultString;
+        }
+
+        // Barcha radio tugmalariga "change" hodisasini biriktirish
+        document.addEventListener('DOMContentLoaded', () => {
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    const qId = event.target.name.replace('question', ''); 
+                    const answer = event.target.value;
+                    updateResult(qId, answer);
+                });
+            });
+        });
+        
+    </script>
+</body>
+</html>
