@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalMentor TEST | Rasmiy Versiya</title>
+    
+    <style>
+        /* 7. Mobil Ekran uchun Asosiy Uslublar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; 
+            padding-top: 60px; /* Taymer uchun joy qoldirish */
+            background-color: #f0f2f5;
+            color: #333;
+            /* 5. Matn tanlashni o'chirish */
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 9. Qattiq Taymer Konteyneri (Fixed Position) */
+        .timer-bar {
+            position: fixed; /* Joyidan siljimasligi uchun */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #0056b3;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            z-index: 1000; /* Boshqa elementlardan ustun turishi uchun */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .timer-warning {
+            background-color: #dc3545; /* Qizil rang 5 daqiqa qolganda */
+        }
+
+        /* 6. Logotip va Sarlavha Uslubi */
+        .header {
+            text-align: center;
+            padding: 15px 10px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 15px;
+        }
+        .header img {
+            max-width: 150px; /* Logotip razmeri */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #0056b3;
+        }
+
+        /* Savol Konteynerlari */
+        .question-container {
+            margin: 0 10px 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .answer-text {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        /* Tanlash Tugmalari (Mobil uchun moslashuvchan) */
+        .answer-selection-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+        .answer-label {
+            flex: 1; /* Teng kenglikda bo'lishi uchun */
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 5px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: bold;
+            min-width: 40px;
+        }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .answer-label {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        /* Natija Maydoni Uslubi */
+        .result-section {
+            margin: 20px 10px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        #result-field {
+            width: 100%;
+            min-height: 50px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+            text-align: center;
+            /* Nusxalanadigan matnni tanlashga ruxsat berish */
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+        }
+        .copy-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            width: 100%; /* Mobil uchun to'liq kenglik */
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .copy-message {
+            color: #4CAF50; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timer-display" class="timer-bar">
+        Vaqt: 60:00
+    </div>
+
+    <div class="header">
+        <img src="https://asliddinburanov-prog.github.io/LegalMentor-test/2.jpg" alt="LegalMentor Logotipi">
+        <h1>Test Savollari</h1>
+    </div>
+
+    <div style="margin: 0 10px; padding: 10px; background-color: #fff3cd; color: #856404; border-radius: 5px; font-weight: bold; text-align: center;">
+        ⚠️ DIQQAT: Testni bir urinishda yakunlang. Nusxalash va ekranni rasmga olish cheklangan!
+    </div>
+
+    <div id="questions-list">
+        </div>
+
+    <div class="result-section">
+        <label for="result-field" style="display: block; font-weight: bold;">Javob Belgilari (Nusxalanadigan maydon):</label>
+        <textarea id="result-field" readonly placeholder="Barcha javoblar belgilangandan so'ng bu yerda avtomatik ko'rinadi..."></textarea>
+        <button id="copy-button" class="copy-button">Belgilarni Nusxalash</button>
+        <p id="copy-message" class="copy-message">✅ Muvaffaqiyatli nusxalandi!</p>
+    </div>
+
+    <script>
+        // =============================================================
+        //  ✅ SAVOLLAR RO'YXATI (30 ta savol shabloni)
+        // =============================================================
+        // Savollarni tahrirlash juda oson, matnni almashtirsangiz kifoya.
+        
+        const customQuestions = [
+            // 1-3 savollar (Sizning namunangiz)
+            `Quyidagilarni moslashtiring.
+    Jinoyat qonunchiligining prinsiplari
+    I. qonuniylik prinsipi; II. ayb uchun javobgarlik prinsipi. (Jinoyat kodeksining 4, 9-moddalari)
+    a) Hech kim aynan bitta jinoyat uchun ikki marta javobgarlikka tortilishi mumkin emas;
+    b) Shaxs qonunda belgilangan tartibda aybi isbotlangan ijtimoiy xavfli qilmishlari uchungina javobgar bo‘ladi;
+    c) Qilmishida jinoyat tarkibining mavjudligi aniqlangan har bir shaxs javobgarlikka tortilishi shart;
+    d) Hech kim sudning hukmi bo‘lmay turib jinoyat sodir qilishda aybli deb topilishi va qonunga xilof ravishda jazoga tortilishi mumkin emas.
+A) I-a, II-c   	
+B) I-d, II-b   
+C) I-d, II-b   	
+D) I-a, II-b`,
+
+      `To‘g‘ri berilgan ma’lumotni aniqlang.
+    (Jinoyat kodeksining 13, 18, 181-moddalari)
+A) Qilmishni jinoyat deb hisoblaydigan, jazoni kuchaytiradigan yoki shaxsning holatini boshqacha tarzda yomonlashtiradigan qonun orqaga qaytish kuchiga ega
+B) Aqli norasolik holatida ijtimoiy xavfli qilmish sodir etgan shaxsga nisbatan sud tomonidan tibbiy yo‘sindagi majburlov choralari tayinlanishi mumkin emas   
+C) Jinoyat sodir etish vaqtidagina ruhiy holati buzilganligi tufayli o‘z harakatlarining (harakatsizligining) ahamiyatini to‘liq darajada anglay olmagan yoki ularni boshqara olmagan aqli raso shaxs javobgarlikka tortilmaydi   
+D) Aqli rasolikni istisno etmaydigan tarzda ruhiy holati buzilgan shaxsga nisbatan sud tomonidan jazo bilan birga tibbiy yo‘sindagi majburlov choralari tayinlanishi mumkin`,
+
+
+      `Quyidagilardan qilmishning jinoiyligini istisno qiladigan holatlarni aniqlang.
+    (Jinoyat kodeksining 35-moddasi)
+    1) jismoniy yoki ruhiy majburlash yoxud qo‘rqitish natijasida qilmish sodir etish;
+    2) yetkazilgan zararni ixtiyoriy ravishda bartaraf qilish;
+    3) zaruriy mudofaaning, oxirgi zaruratning asosli chegarasidan chetga chiqib jinoyat sodir etish;
+    4) kam ahamiyatli qilmishlar.
+A) 2, 4    
+B) 2, 3    
+C) 1, 4    
+D) 1, 3`,
+
+      `Nuqtalar o‘rniga mos keluvchi javobni aniqlang. (Jinoyat kodeksining 16-moddasi)
+    … – jinoyat sodir etishda aybdor bo‘lgan shaxsga nisbatan sud tomonidan hukm qilish, jazo yoki boshqa huquqiy ta’sir chorasi qo‘llanilishida ifodalanadigan jinoyat sodir etishning huquqiy oqibatidir
+A) Jinoyat uchun javobgarlik
+B) Jinoiy oqibat    
+C) Javobgarlikning muqarrarligi
+D) Jinoyatga daxldorlik`,
+
+      `To‘g‘ri berilgan ma’lumotlarni aniqlang. (Jinoyat kodeksning 81, 821, 85-moddalari)
+    1) Voyaga yetmaganlarga nisbatan axloq tuzatish ishari jazosi qo‘llanilishi mumkin emas;
+    2) O‘n sakkiz yoshga to‘lmasdan jinoyat sodir etgan shaxslarga nisbatan qo‘shimcha jazolar tayinlanishi mumkin emas;
+    3) Hukm chiqarish paytida o‘n sakkiz yoshga to‘lmagan shaxslarga nisbatan ozodlikdan mahrum qilish jazosini tarbiya koloniyalarida o‘tash tayinlanadi;
+    4) O‘quv yili davomida voyaga yetmaganlarga nisbatan majburiy jamoat ishlari jazosi qo‘llanilishi mumkin emas.
+A) 2, 4    
+B) 1, 3    
+C) 1, 4    
+D) 2, 3`,
+
+      `Jinoiy jazodan ozod qilish turlari to‘g‘ri ko‘rsatilgan javobni aniqlang.
+    1) Shaxsning ijtimoiy xavflilik xususiyatini yo‘qotishi;
+    2) Javobgarlikka tortish muddatining o‘tib ketganligi munosabati bilan;
+    3) Aybdor o‘z qilmishiga amalda pushaymon bo‘lganligi;
+    4) Kasallik yoki mehnat qobiliyatini yo‘qotish oqibatida;
+    5) Yarashilganligi munosabati bilan;
+    6) Aybga iqrorlik oqibatida.
+A) 2, 4, 6    	
+B) 1, 5, 6    
+C) 2, 3, 5    	
+D) 1, 3, 4`,
+
+      `To‘g‘ri berilgan ma’lumotni aniqlang. (Jinoyat kodeksining 46, 47, 481, 49-moddalari)
+A) Xizmat bo‘yicha cheklash — muddatli harbiy xizmat harbiy xizmatchisini sud tomonidan belgilangan muddat mobaynida ichki tartibi ancha qattiq bo‘lgan maxsus harbiy qismga joylashtirish orqali, muayyan huquq va imtiyozlardan mahrum etishdir.
+B) Ozodlikni cheklash harbiy xizmatchilar, chet el fuqarolari, shuningdek O‘zbekiston Respublikasida doimiy yashash joyiga ega bo‘lmagan shaxslarga nisbatan tayinlanmaydi.
+C) Xizmat bo‘yicha cheklash tariqasidagi jazoni o‘tash muddati davomida mahkumning mansabini, harbiy yoki maxsus unvonini oshirish mumkin.  	
+D) Agar shaxs sud tomonidan tayinlangan axloq tuzatish ishlari muddatining jami o‘ttiz kundan ko‘prog‘ini o‘tashdan uzrli sabablarsiz bo‘yin tovlasa yoki O‘zbekiston Respublikasidan tashqariga chiqib ketsa, sud axloq tuzatish ishlarining o‘talmagan muddatini xuddi shu muddatga majburiy jamoat ishlari yoki muayyan huquqdan mahrum etish tariqasidagi jazo bilan almashtiradi. `,
+
+      `Quyidagilardan qaysi holatlarda jinoyat sodir etish jazoni og‘irlashtiruvchi holatlar deb topiladi? (Jinoyat kodeksining 56-moddasi)
+    1) mastlik holatida yoki giyovandlik vositalari, ularning analoglari, psixotrop yoxud kishining aql-idrokiga ta’sir qiluvchi boshqa moddalar ta’siri ostida jinoyat sodir etish;
+    2) jabrlanuvchining g‘ayriqonuniy yoki axloqqa zid xulq-atvori ta’siri ostida jinoyat sodir etish;
+    3) umumiy ofat sharoitidan foydalangan holda yoki favqulodda holat vaqtida yoxud ommaviy tartibsizliklar jarayonida;
+    4) jabrlanuvchining zo‘rlik, og‘ir haqorat yoki boshqacha g‘ayriqonuniy harakatlari tufayli vujudga kelgan kuchli ruhiy hayajonlanish holatida jinoyat sodir etish.
+A) 2, 4    
+B) 2, 3    
+C) 1, 4    
+D) 1, 3`,
+
+      `Quyida berilganlardan jinoiy jazolardan qaysilari o‘n sakkiz yoshga to‘lmasdan jinoyat sodir etgan shaxslarga qo‘llanilishi mumkin emas?  (Jinoyat kodeksining 81-moddasi)
+    1) ozodlikdan mahrum qilish;
+    2) muayyan huquqdan mahrum qilish;
+    3) axloq tuzatish ishlari;
+    4) umrbod ozodlikdan mahrum etish;
+    5) intizomiy qismga jo‘natish;
+    6) majburiy jamoat ishlari.
+A) 2, 4, 5		
+B) 1, 4, 5    
+C) 2, 3, 6    	
+D) 1, 3, 6`,
+
+      `Nuqtalar o‘rniga mos keluvchi javobni aniqlang. (Jinoyat kodeksining 33-moddasi)
+    Jinoyat kodeksi Maxsus qismining turli moddalarida yoki bitta moddasining turli qismlarida nazarda tutilgan, javobgarlikka tortiladigan ikki yoki bir necha jinoiy qilmishni sodir etish, agarda ulardan birortasi uchun ham shaxs sudlangan bo‘lmasa, … deb topiladi.
+A) jinoyatlar majmui	
+B) retsidiv jinoyat
+C) jinoyatga daxldorlik	
+D) takroriy jinoyat`,
+
+      `Jinoiy javobgarlikdan ozod qilishning turlari to‘g‘ri ko‘rsatilgan javobni aniqlang.
+    1) afv etish asosida;
+    2) javobgarlikka tortish muddatining o‘tib ketganligi munosabati bilan;
+    3) sudlanganlik holatining tugallanishi;
+    4) qilmish yoki shaxs ijtimoiy xavfliligini yo‘qotganligi munosabati bilan;
+    5) sudlanganlikning olib tashlanishi;
+    6) aybdor o‘z qilmishiga amalda pushaymon bo‘lganligi munosabati bilan.
+A) 2, 4, 6    	
+B) 1, 5, 6    
+C) 2, 3, 5    	
+D) 1, 3, 4`,
+
+      `Ma’lumki, Jinoyat Kodeksining 43-moddasida Jinoyat sodir etishda aybli deb topilgan shaxslarga nisbatan jarima, muayyan huquqdan mahrum qilish, axloq tuzatish ishlari, xizmat bo‘yicha cheklash, majburiy jamoat ishlari, ozodlikni cheklash, intizomiy qismga jo‘natish, ozodlikdan mahrum qilish, umrbod ozodlikdan mahrum qilish kabi asosiy jazolar qo‘llanilishi qayd etilgan.
+    Umrbod ozodlikdan mahrum qilish quyidagi qaysi toifadagi shaxslarga nisbatan qo‘llanilmaydi? (Jinoyat kodeksining 51-moddasi)
+    1) chet el fuqarolari va O‘zbekiston Respublikasida doimiy yashash joyiga ega bo‘lmagan shaxslarga;
+    2) ayollarga;
+    3) chet el fuqarolariga; 
+    4) oltmish yoshdan oshgan erkaklarga.
+A) 1, 3    
+B) 2, 3    
+C) 2, 4    
+D) 1, 4`,
+
+      `O‘zbekiston Respublikasining Jinoyat kodeksiga ko‘ra quyidagilardan qaysilari voyaga yetmaganlarga nisbatan qo‘llanilmaydi?
+    1) ozodlikdan cheklash;
+    2) muayyan huquqdan mahrum etish;
+    3) intizomiy qismga jo‘natish;
+    4) axloq tuzatish ishlari.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 1, 3`,
+
+      `Jinoyat Kodeksining 35-moddasiga ko’ra  jinoiyligini istisno qiladigan holatlar hisoblanadi? 
+    1) yetkazilgan zararni ixtiyoriy ravishda bartaraf qilish;
+    2) ijtimoiy xavfli qilmish sodir etgan shaxsni ushlash vaqtida zarar yetkazish;
+    3) buyruq yoki boshqa vazifani ijro etish; 
+    4) og‘ir oilaviy sharoitlar oqibatida yoki boshqa mushkul ahvolda jinoyat sodir etish.
+A) 1, 3    
+B) 2, 3   
+C) 2, 4    
+D) 1, 4`,
+
+      `Ma’lumki, Jinoyat Kodeksining 43-moddasida Jinoyat sodir etishda aybli deb topilgan shaxslarga nisbatan jarima, muayyan huquqdan mahrum qilish, axloq tuzatish ishlari, xizmat bo‘yicha cheklash, majburiy jamoat ishlari, ozodlikni cheklash, intizomiy qismga jo‘natish, ozodlikdan mahrum qilish, umrbod ozodlikdan mahrum qilish kabi asosiy jazolar qo‘llanilishi qayd etilgan.
+    Uzoq muddatli ozodlikdan mahrum qilish quyidagi qaysi toifadagi shaxslarga nisbatan qo‘llanilmaydi? (Jinoyat kodeksining 50-moddasi)
+    1) chet el fuqarolari va O‘zbekiston Respublikasida doimiy yashash joyiga ega bo‘lmagan shaxslarga;
+    2) ayollarga;
+    3) chet el fuqarolariga; 
+    4) oltmish yoshdan oshgan erkaklarga.
+A) 1, 3    
+B) 2, 3    
+C) 2, 4   
+D) 1, 4`,
+
+      `O‘n to‘rt yoshdan o‘n sakkiz yoshgacha bo‘lgan voyaga yetmaganlar quyidagi qaysi jinoyatlarning subyekti bo‘lishi mumkin emas?
+    1) qonunga xilof ravishda chet elga chiqish yoki O‘zbekiston Respublikasiga kirish;
+    2) harbiy yoki muqobil xizmatdan bo‘yin tovlash;
+    3) qamoqdan yoki qo‘riqlov ostidagi saqlash joyidan qochish;
+    4) ma’muriy nazorat qoidalarini buzish.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 1, 3`,
+
+      `Quyidagilardan qaysilari Jinoyat kodeksining 56-moddasiga ko‘ra jazoni og‘irlashtiruvchi holatlar hisoblanadi? 
+    1) xizmat vazifasi yoki fuqarolik burchini bajarganligi munosabati bilan shaxsga yoki uning yaqin qarindoshlariga nisbatan jinoyat sodir etish;
+    2) jabrlanuvchining g‘ayriqonuniy yoki axloqqa zid xulq-atvori ta’siri ostida jinoyat sodir etish;
+    3) zaruriy mudofaaning, oxirgi zaruratning asosli chegarasidan chetga chiqib jinoyat sodir etish, ijtimoiy xavfli qilmishni sodir etgan shaxsni ushlashda, kasb yoki xo‘jalik faoliyatiga bog‘liq bo‘lgan asosli tavakkalchilikda zarar yetkazish; 
+    4) aybdorga moddiy tomondan, xizmat jihatidan yoki boshqa jihatdan qaram shaxsga nisbatan.
+A) 1, 3    
+B) 2, 3    
+C) 2, 4    
+D) 1, 4`,
+
+      `Ma’lumki, Jinoyat Kodeksining 43-moddasida Jinoyat sodir etishda aybli deb topilgan shaxslarga nisbatan jarima, muayyan huquqdan mahrum qilish, axloq tuzatish ishlari, xizmat bo‘yicha cheklash, majburiy jamoat ishlari, ozodlikni cheklash, intizomiy qismga jo‘natish, ozodlikdan mahrum qilish, umrbod ozodlikdan mahrum qilish kabi asosiy jazolar qo‘llanilishi qayd etilgan.
+    Ozodlikni cheklash quyidagi qaysi toifadagi shaxslarga nisbatan qo‘llanilmaydi? (O‘zbekiston Respublikasi Jinoyat kodeksining 481-moddasi)
+    1) voyaga yetmagan shaxslarga;
+    2) harbiy xizmatchilarga;
+    3) O‘zbekiston Respublikasida doimiy yashash joyiga ega bo‘lmagan shaxslarga; 
+    4) homilador ayollarga.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 1, 3`,
+
+      `Quyida berilganlardan qaysilari fuqarolarning konstitutsiyaviy huquq va erkinliklariga qarshi jinoyatlar turkumiga kiradi?
+    1) shaxsiy hayot daxlsizligini buzish; 
+    2) mehnatni muhofaza qilish qoidasini buzish; 
+    3) shaxsga doir ma’lumotlar to‘g‘risidagi qonunchilikni buzish; 
+    4) milliy, irqiy, etnik yoki diniy adovat qo‘zg‘atish; 
+    5) aldash yoki ishonchni suiiste’mol qilish yo‘li bilan mulkiy zarar yetkazish; 
+    6) fuqarolarning turar joyi daxlsizligini buzish.
+A) 1, 3, 6   
+B) 2, 4, 5   
+C) 1, 4, 6   
+D) 2, 3, 5`,
+
+      `Quyida berilganlardan qaysilari iqtisodiyot asoslariga qarshi jinoyatlar turkumiga kiradi?
+    1) soxta tadbirkorlik; 
+    2) talonchilik; 
+    3) soliqlar yoki yig‘imlarni to‘lashdan bo‘yin tovlash; 
+    4) o‘zlashtirish yoki rastrata yo‘li bilan talon-taroj qilish; 
+    5) tovlamachilik; 
+    6) elektr, issiqlik energiyasi, gaz, vodoprovoddan foydalanish qoidalarini buzish.
+A) 1, 3, 6		
+B) 2, 4, 5
+C) 1, 4, 6		
+D) 2, 3, 5`,
+
+      `Ma’lumki, Jinoyat Kodeksining 43-moddasida Jinoyat sodir etishda aybli deb topilgan shaxslarga nisbatan jarima, muayyan huquqdan mahrum qilish, axloq tuzatish ishlari, xizmat bo‘yicha cheklash, majburiy jamoat ishlari, ozodlikni cheklash, intizomiy qismga jo‘natish, ozodlikdan mahrum qilish, umrbod ozodlikdan mahrum qilish kabi asosiy jazolar qo‘llanilishi qayd etilgan.
+    Majburiy jamoat ishlari quyidagi qaysi toifadagi shaxslarga nisbatan qo‘llanilmaydi? (O‘zbekiston Respublikasi Jinoyat kodeksining 451-moddasi)
+    1) o‘n sakkiz yoshga to‘lmagan shaxslarga;
+    2) harbiy xizmatchilarga;
+    3) fuqaroligi bo‘lmagan shaxslarga; 
+    4) chet el fuqarolariga.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 3, 4`,
+
+      `Quyida berilganlardan qaysilari O‘zbekiston Respublikasiga qarshi jinoyatlar turkumiga kiradi?
+    1) josuslik; 
+    2) terrorchilik faoliyatini amalga oshirish maqsadida o‘quvdan o‘tish, chiqish yoki harakatlanish; 
+    3) qo‘poruvchilik; 
+    4) milliy, irqiy, etnik yoki diniy adovat qo‘zg‘atish; 
+    5) chet davlatlarning harbiy xizmatiga, xavfsizlik, politsiya yoki shunga o‘xshash boshqa organlariga xizmatga kirish, yollanish; 
+    6) davlat sirlarini oshkor qilish.
+A) 1, 3, 6		
+B) 2, 4, 5
+C) 1, 4, 6		
+D) 2, 3, 5`,
+
+      `Nuqtalar o‘rniga mos keluvchi javobni aniqlang. (Jinoyat kodeksining 86-moddasi) 
+    O‘n olti yoshdan o‘n sakkiz yoshgacha bo‘lgan vaqtda jinoyat sodir etgan shaxslarga nisbatan jinoyatlar majmui tariqasida ozodlikdan mahrum qilish jazosi ... (a) muddatga, agar sodir etgan jinoyatlarining bittasi o‘ta og‘ir jinoyat bo‘lsa, ... (b) muddatga tayinlanishi mumkin.
+    1) o‘n ikki yilgacha; 2) o‘n yilgacha; 3) yetti yilgacha; 4) o‘n besh yilgacha.
+A) a-1, b-4	
+B) a-2, b-4
+C) a-3, b-2	
+D) a-2, b-1`,
+
+      `Quyida berilganlardan qaysilari Jamoat xavfsizligiga qarshi jinoyatlar turkumiga kiradi?
+    1) transport vositasini olib qochish;
+    2) shaxsni garov sifatida tutqunlikka olish;
+    3) mehnatni muhofaza qilish qoidalarini buzish;
+    4) bezorilik;
+    5) yong‘in xavfsizligi qoidalarini buzish;
+    6) harbiy qism yoki xizmat joyini o‘zboshimchalik bilan tashlab ketish.
+A) 2, 4, 6    	
+B) 1, 5, 6    
+C) 2, 3, 5    	
+D) 1, 3, 4`,
+
+      `Ma’lumki, Jinoyat Kodeksining 43-moddasida Jinoyat sodir etishda aybli deb topilgan shaxslarga nisbatan jarima, muayyan huquqdan mahrum qilish, axloq tuzatish ishlari, xizmat bo‘yicha cheklash, majburiy jamoat ishlari, ozodlikni cheklash, intizomiy qismga jo‘natish, ozodlikdan mahrum qilish, umrbod ozodlikdan mahrum qilish kabi asosiy jazolar, harbiy yoki maxsus unvondan mahrum qilish kabi qo’shimcha jazolar qo‘llanilishi qayd etilgan.
+    Faqat harbiy xizmatchilarga nisbatan qo’llaniladigan jinoiy jazolarni aniqlang. (O‘zbekiston Respublikasi Jinoyat kodeksining 43-moddasi)
+    1) harbiy yoki maxsus unvondan mahrum qilish;
+    2) xizmat bo‘yicha cheklash;
+    3) intizomiy qismga jo‘natish; 
+    4) mansab darajasini bir pog‘ona tushirish.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 1, 3`,
+
+      `O‘n to‘rt yoshdan o‘n olti yoshgacha bo‘lgan voyaga yetmaganlar quyidagi qaysi jinoyatlarning subyekti bo‘lishi mumkin?
+    1) Giyovandlik vositalari, ularning analoglari yoki psixotrop moddalarni qonunga xilof ravishda egallash;
+    2) Ma’muriy nazorat qoidalarini buzish;
+    3) Radioaktiv materiallarni qonunga xilof ravishda egallash;
+    4) Jismoniy va yuridik shaxslarning murojaatlari to‘g‘risidagi qonunchilikni buzish.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 1, 3`,
+
+      `Quyida berilganlardan qaysilari oilaga, yoshlarga va axloqqa qarshi jinoyatlar turkumiga kiradi?
+    1) ayolni erga tegishga majbur qilish yoki uning erga tegishiga to‘sqinlik qilish; 
+    2) nikoh yoshi to‘g‘risidagi qonunchilikni yoki nikoh tuzish tartibini buzish; 
+    3) voyaga yetmagan shaxsni g‘ayriijtimoiy xatti-harakatlarga jalb qilish; 
+    4) zo‘rlik ishlatib g‘ayriqonuniy ravishda ozodlikdan mahrum qilish; 
+    5) moddiy madaniy meros obyektlarini nobud qilish, buzish yoki ularga shikast yetkazish; 
+    6) haqorat qilish.
+A) 1, 3, 6
+B) 2, 4, 5
+C) 1, 4, 6
+D) 2, 3, 5`,
+
+      `O‘n to‘rt yoshdan o‘n olti yoshgacha bo‘lgan voyaga yetmaganlar quyidagi qaysi jinoyatlarning subyekti bo‘lishi mumkin?
+    1) voyaga yetmagan yoki mehnatga layoqatsiz shaxslarni moddiy ta’minlashdan bo‘yin tovlash;
+    2) millatlararo yoki irqiy adovat yoxud diniy taassublar zamirida mulkni qasddan nobud qilish yoki unga zarar yetkazish;
+    3) jismoniy va yuridik shaxslarning murojaatlari to‘g‘risidagi qonunchilikni buzish;
+    4) sovuq qurol yoki kishining sog‘lig‘i uchun amalda shikast yetkazishi mumkin bo‘lgan narsalarni (qurol sifatida) namoyish qilib, ularni qo‘llash bilan qo‘rqitib yoxud qo‘llab bezorolik qilish.
+A) 1, 4    
+B) 2, 3    
+C) 2, 4    
+D) 1, 3`,
+
+      `To‘g‘ri berilgan ma’lumotni aniqlang. (O‘zbekiston Respublikasi Jinoyat kodeksining 45, 451, 46, 481-moddalari)
+A) Muayyan huquqdan mahrum qilish aybdorning mansabi yoki ish faoliyati bilan bevosita bog‘liq bo‘lgan jinoyatni sodir etganligi uchun asosiy jazo tariqasida tayinlanganda – besh yildan o‘n yilgacha muddatga belgilanadi.
+B) Majburiy jamoat ishlari bir yuz yigirma soatdan olti yuz sakson soatgacha muddatga tayinlanadi.
+C) Axloq tuzatish ishlari shaxs ish haqining o‘ttiz foizidan ellik foizigacha miqdorini davlat daromadi hisobiga ushlab qolgan holda uni mehnatga majburan jalb qilishdan iborat.
+D) Ozodlikni cheklash bir oydan besh yilgacha muddatga tayinlanadi hamda sud tomonidan belgilanadigan organlar nazorati ostida o‘taladi. `,
+
+      `Quyida berilganlardan qaysilari Hayot yoki sog‘liq uchun xavfli jinoyatlar turkumiga kiradi?
+    1) o‘ldirish yoki zo‘rlik ishlatish bilan qo‘rqitish; 
+    2) qasddan badanga og‘ir shikast yetkazish;
+    3) tanosil yoki OIV kasalligi/OITSni tarqatish; 
+    4) qiynash;
+    5) kasb yuzasidan o‘z vazifalarini lozim darajada bajarmaslik; 
+    6) o‘zini o‘zi o‘ldirishga undash.
+A) 2, 4, 6    	
+B) 2, 3, 6    
+C) 1, 3, 5    	
+D) 1, 4, 5`
+        ];
+        
+        const totalQuestions = customQuestions.length;
+        const questionsList = document.getElementById('questions-list');
+        const resultField = document.getElementById('result-field');
+        const currentAnswers = {};
+        const copyButton = document.getElementById('copy-button');
+        const copyMessage = document.getElementById('copy-message');
+
+        // Savol matnini asosiy matn va variantlarga ajratish funksiyasi
+        function parseQuestion(fullText) {
+            const lines = fullText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            let questionBody = [];
+            let options = {};
+            let isOptionsStarted = false;
+
+            lines.forEach(line => {
+                if (line.match(/^[A-D][\.\)]\s/i)) {
+                    isOptionsStarted = true;
+                    const key = line[0].toLowerCase();
+                    options[key] = line; 
+                } else if (!isOptionsStarted) {
+                    questionBody.push(line);
+                }
+            });
+            return {
+                questionBody: questionBody.join('<br>'),
+                options: options
+            };
+        }
+
+        // Savollarni HTML ga joylash
+        function renderQuestions() {
+            for (let i = 0; i < totalQuestions; i++) {
+                const qId = i + 1;
+                const qData = parseQuestion(customQuestions[i]);
+
+                const qContainer = document.createElement('div');
+                qContainer.className = 'question-container';
+                qContainer.setAttribute('data-question-id', qId);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${qId}. ${qData.questionBody}`;
+                qContainer.appendChild(qText);
+                
+                // Variant matnini chiqarish
+                const optionsGroup = document.createElement('div');
+                optionsGroup.className = 'options-group';
+                const variantKeys = ['a', 'b', 'c', 'd'];
+                
+                variantKeys.forEach(key => {
+                    const variantText = qData.options[key];
+                    if (variantText) {
+                        const answerDisplayText = document.createElement('div');
+                        answerDisplayText.className = 'answer-text';
+                        answerDisplayText.textContent = variantText;
+                        optionsGroup.appendChild(answerDisplayText);
+                    }
+                });
+
+                // Radio tugmalarini yaratish (A, B, C, D)
+                const selectionGroup = document.createElement('div');
+                selectionGroup.className = 'answer-selection-group';
+
+                variantKeys.forEach(variant => {
+                    const radioId = `q${qId}${variant}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.id = radioId;
+                    input.name = `question${qId}`;
+                    input.value = variant;
+                    input.addEventListener('change', () => updateResult(qId, variant));
+                    
+                    const label = document.createElement('label');
+                    label.className = 'answer-label';
+                    label.htmlFor = radioId;
+                    label.textContent = variant.toUpperCase();
+
+                    selectionGroup.appendChild(input);
+                    selectionGroup.appendChild(label);
+                });
+                
+                optionsGroup.appendChild(selectionGroup);
+                qContainer.appendChild(optionsGroup);
+                questionsList.appendChild(qContainer);
+            }
+        }
+
+        // Javoblarni yig'ish va yangilash funksiyasi
+        function updateResult(qId, answer) {
+            const resultTag = qId + answer;
+            currentAnswers[qId] = resultTag;
+            
+            let resultString = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (currentAnswers[i]) {
+                    resultString += currentAnswers[i];
+                }
+            }
+            resultField.value = resultString;
+        }
+
+        // 8. Nusxalash funksiyasi (Barcha savollarni tekshirish)
+        async function copyResult(event) {
+            event.preventDefault();
+            
+            let unmarkedQIds = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (!currentAnswers[i]) {
+                    unmarkedQIds.push(i);
+                }
+            }
+            
+            if (unmarkedQIds.length > 0) {
+                // 8. Belgilanmagan savollarni aniq ko'rsatish
+                alert(`⚠️ Nusxalashdan oldin barcha ${totalQuestions} savolni belgilashingiz kerak.\n\nBelgilanmagan savollar raqami: ${unmarkedQIds.join(', ')}`);
+                return;
+            }
+
+            try {
+                // Clipboard API orqali nusxalash
+                await navigator.clipboard.writeText(resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => {
+                    copyMessage.style.visibility = 'hidden';
+                }, 2000);
+            } catch (err) {
+                // Agar Clipboard API ishlamasa, eski usulda nusxalashga majburlash
+                resultField.select();
+                document.execCommand("copy");
+                alert("✅ Barcha javob belgilari muvaffaqiyatli nusxalandi! (" + resultField.value + ")");
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000);
+            }
+        }
+
+        // 9. Taymer Mantiqi
+        const timeLimit = 60 * 60; // 60 daqiqa * 60 soniya
+        let timeLeft = timeLimit;
+        const timerDisplay = document.getElementById('timer-display');
+        const warningTime = 5 * 60; // 5 daqiqa
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `Vaqt: ${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+
+            if (timeLeft <= warningTime) {
+                // 9. 5 daqiqa qolganda ogohlantirish
+                timerDisplay.classList.add('timer-warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Vaqt tugadi!";
+                timerDisplay.classList.remove('timer-warning');
+                timerDisplay.style.backgroundColor = '#000';
+                
+                // Vaqt tugagach testni bloklash
+                document.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
+                });
+                alert("🔴 Testga ajratilgan vaqt tugadi! Javoblarni nusxalab olishingiz mumkin.");
+            }
+        }
+
+        // --- Boshlash ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            
+            // Taymerni ishga tushirish
+            timerDisplay.textContent = formatTime(timeLeft);
+            const timerInterval = setInterval(updateTimer, 1000);
+            
+            // Nusxalash tugmasini funksiyaga bog'lash
+            copyButton.addEventListener('click', copyResult);
+
+            // 4. Qattiq Cheklovlar Qismi
+            // O'ng tugmani bosishni bloklash
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Klaviatura orqali asosiy nusxalashni bloklash
+            document.addEventListener('keydown', e => {
+                // Ctrl+C, Ctrl+X, Ctrl+V, Ctrl+A ni bloklash
+                if ((e.ctrlKey || e.metaKey) && (['c', 'x', 'v', 'a'].includes(e.key.toLowerCase()))) {
+                    e.preventDefault();
+                    // Bu yerda ogohlantirishni o'chirish yaxshiroq, chunki u doimiy chalaveradi
+                }
+                // F12 (Developer tools) ni bloklash (Ba'zi brauzerlarda ishlamaydi)
+                if (e.key === 'F12') {
+                     e.preventDefault();
+                }
+            });
+        });
+        
+    </script>
+</body>
+
+</html>
