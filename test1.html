@@ -166,8 +166,7 @@
         ⚠️ DIQQAT: Testni bir urinishda yakunlang. Nusxalash va ekranni rasmga olish cheklangan!
     </div>
 
-    <div id="questions-list">
-        </div>
+    <div id="questions-list"></div>
 
     <div class="result-section">
         <label for="result-field" style="display: block; font-weight: bold;">Javob Belgilari (Nusxalanadigan maydon):</label>
@@ -177,13 +176,7 @@
     </div>
 
     <script>
-        // =============================================================
-        //  ✅ SAVOLLAR RO'YXATI (30 ta savol shabloni)
-        // =============================================================
-        // Savollarni tahrirlash juda oson, matnni almashtirsangiz kifoya.
-        
         const customQuestions = [
-            // 1-3 savollar (Sizning namunangiz)
             `Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang. @legalmentor_uz
         I. O‘zbekiston Respublikasi Oliy Majlisining Qonunchilik palatasi tomonidan qabul qilingan qonun qabul qilingan kundan e’tiboran o‘n kundan kechiktirmay O‘zbekiston Respublikasi Oliy Majlisining Senatiga yuboriladi; 
         II. Agar O‘zbekiston Respublikasi Oliy Majlisining Senati tomonidan rad etilgan qonunni qayta ko‘rib chiqishda Qonunchilik palatasi deputatlar umumiy sonining uchdan bir qismidan iborat ko‘pchilik ovozi bilan qonunni yana ma’qullasa, qonun O‘zbekiston Respublikasi Oliy Majlisi tomonidan qabul qilingan hisoblanadi hamda imzolanishi va e’lon qilinishi uchun O‘zbekiston Respublikasi Prezidentiga Qonunchilik palatasi tomonidan yuboriladi; 
@@ -204,12 +197,12 @@ D) I-to‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri`,
 A) 1, 3, 5 
 B) 2, 4, 5
 C) 2, 3, 6 
-D) 1, 4, 6`, // E'tibor bering, bu yerda variant tartibi muhim emas
+D) 1, 4, 6`,
 
             `Quyidagilardan qaysi biri O‘zbekiston Respublikasi Oliy Majlisining Senati mutlaq vakolati hisoblanmaydi? @legalmentor_uz
         (O‘zbekiston Respublikasi Konstitutsiyasisining 95-moddasi 01.06.2025-yil holatiga ko‘ra)
 A) mahalliy davlat hokimiyati vakillik organlarining qarorlarini, ular qonunchilik normalariga muvofq bo‘lmagan taqdirda, bekor qilish
-B) O‘zbekiston Respublikasi Prezidenti tomonidan taklif etilgan O‘zbekiston Respublikasi Davlat xavfsizlik xizmati raisi lavozimiga nomzod yuzasidan maslahatlashuvlar o‘tkazish
+B) O‘zbekiston Respublikasi Prezidenti tomonidan taklif etilgan O‘zbekiston Respublikasi Davlat xavfsizlik xizmata raisi lavozimiga nomzod yuzasidan maslahatlashuvlar o‘tkazish
 C) mahalliy davlat hokimiyati vakillik organlariga o‘z faoliyatini amalga oshirishda ko‘maklashish
 D) O‘zbekiston Respublikasi Hisob palatasining hisobotini ko‘rib chiqish`,
 
@@ -265,7 +258,7 @@ C) I-noto‘g‘ri; II-noto‘g‘ri, III-to‘g‘ri
 D) I-to‘g‘ri; II-noto‘g‘ri, III-to‘g‘ri`,
 
             `Quyidagilardan qaysilari faqat o‘z vakolati jumlasiga kiritilgan masalalar bo‘yicha qonunchilik tashabbusi huquqiga ega? @legalmentor_uz
-        (O‘zbekiston Respublikasi Konstitutsiyasisining 98-moddasi 01.06.2025- yil holatiga ko‘ra)
+        (O‘zbekiston Respublikasi Konstitutstiyasisining 98-moddasi 01.06.2025- yil holatiga ko‘ra)
         1) O‘zbekiston Respublikasining Konstitutsiyaviy sudi;
         2) O‘zbekiston Respublikasining Oliy Majlisining Senati;
         3) O‘zbekiston Respublikasining Bosh prokurori;
@@ -296,7 +289,7 @@ B) kamida besh yil O‘zbekiston Respublikasi hududida muqim yashayotgan bo‘li
 C) O‘zbekiston Respublikasi fuqarosi bo‘lishi kerak
 D) davlat tilini yaxshi bilishi kerak`,
 
-            `Quyidagi ma’lumotlarning yakuniy xulosasi (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang. @legalmentor_uz
+            `Quyidagi ma’lumotlarning yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang. @legalmentor_uz
         I. O‘zbekiston Respublikasi Oliy Majlisining Senati hududiy vakillik palatasi bo‘lib, Senat a’zolaridan (senatorlardan) iborat;
         II. O‘zbekiston Respublikasi Oliy Majlisining Qonunchilik palatasi deputatlari Qoraqalpog‘iston Respublikasi Jo‘qorg‘I Kengesi, viloyatlar, tumanlar va shaharlar davlat hokimiyati vakillik organlari deputatlarining tegishli qo‘shma majlislarida mazkur deputatlar orasidan yashirin ovoz berish yo‘li bilan saylanadi;
         III. O‘zbekiston Respublikasi Oliy Majlisi Senatining to‘qqiz nafar a’zosi fan, san’at, adabiyot, ishlab chiqarish sohasida hamda davlat va jamiyat faoliyatining boshqa tarmoqlarida katta amaliy tajribaga ega bo‘lgan hamda alohida xizmat ko‘rsatgan eng obro‘li fuqarolar orasidan O‘zbekiston Respublikasi Prezidenti tomonidan tayinlanadi.
@@ -306,7 +299,7 @@ C) I-noto‘g‘ri, II-noto‘g‘ri, III-to‘g‘ri
 D) I-to‘g‘ri, II-noto‘g‘ri, III-to‘g‘ri`,
 
             `Quyidagi ma’lumotlarni tahlil qilib, Eyler – Venn diagrammasiga mos tushuvchi javobni aniqlang. @legalmentor_uz
-        I) Qonunchilik palatasi; II) Senat; III) Ikki palatada ham mavjud bo‘lgan vakolatlar.            a) siyosiy, ijtimoiy-iqtisodiy hayot sohasidagi u yoki bu masalalar yuzasidan, shuningdek davlatning ichki va tashqi siyosati masalalari yuzasidan qarorlar qabul qilish;       b) O‘zbekiston Respublikasi Prezidenti taqdimiga binoan o‘z rahbari va uning o‘rinbosarlarini, qo‘mitalarning raislari va ularning o‘rinbosarlarini saylash;     c) mahalliy davlat hokimiyati vakillik organlariga o‘z faoliyatini amalga oshirishda ko‘maklashish;            d) O‘zbekiston Respublikasi Hisob palatasining hisobotini ko‘rib chiqish;            e) O‘zbekiston Respublikasi Davlat budjetining ijro etilishi ustidan nazoratni amalga oshirish;           f) o‘z faoliyatini tashkil etish va palataning ichki tartib-qoidalari bilan bog‘liq masalalar yuzasidan qarorlar qabul qilish.
+        I) Qonunchilik palatasi; II) Senat; III) Ikki palatada ham mavjud bo‘lgan vakolatlar.           a) siyosiy, ijtimoiy-iqtisodiy hayot sohasidagi u yoki bu masalalar yuzasidan, shuningdek davlatning ichki va tashqi siyosati masalalari yuzasidan qarorlar qabul qilish;       b) O‘zbekiston Respublikasi Prezidenti taqdimiga binoan o‘z rahbari va uning o‘rinbosarlarini, qo‘mitalarning raislari va ularning o‘rinbosarlarini saylash;     c) mahalliy davlat hokimiyati vakillik organlariga o‘z faoliyatini amalga oshirishda ko‘maklashish;             d) O‘zbekiston Respublikasi Hisob palatasining hisobotini ko‘rib chiqish;             e) O‘zbekiston Respublikasi Davlat budjetining ijro etilishi ustidan nazoratni amalga oshirish;           f) o‘z faoliyatini tashkil etish va palataning ichki tartib-qoidalari bilan bog‘liq masalalar yuzasidan qarorlar qabul qilish.
 A) I-b, c; II-d, e; II-a, f
 B) I-c, d; II-e, f; II-a, b
 C) I-d, e; II-b, c; II-a, f
@@ -386,7 +379,7 @@ D) 2, 5, 6`,
 
 
             `Quyidagi ma’lumotlarni tahlil qilib, Eyler – Venn diagrammasiga mos tushuvchi javobni aniqlang. @legalmentor_uz
-        I) Qonunchilik palatasi; II) Senat; III) Birgalikdagi vakolatlar.      a) mahalliy davlat hokimiyati vakillik organlariga o‘z faoliyatini amalga oshirishda ko‘maklashish;      b) O‘zbekiston Respublikasi Hisob palatasining hisobotini ko‘rib chiqish;         c) O‘zbekiston Respublikasi Markaziy saylov komissiyasini tuzish;        d) O‘zbekiston Respublikasi Bosh prokurorining, O‘zbekiston Respublikasi Markaziy banki boshqaruvi raisining hisobotlarini eshitish;       e) O‘zbekiston Respublikasi Bosh vazirining mamlakatni ijtimoiy-iqtisodiy jihatdan rivojlantirishning dolzarb masalalari yuzasidan, shuningdek Vazirlar Mahkamasi a’zolarining o‘z faoliyati masalalari yuzasidan hisobotlarini eshitish;        f) parlament tekshiruvini o‘tkazish.
+        I) Qonunchilik palatasi; II) Senat; III) Birgalikdagi vakolatlar.      a) mahalliy davlat hokimiyati vakillik organlariga o‘z faoliyatini amalga oshirishda ko‘maklashish;      b) O‘zbekiston Respublik Hisob palatasining hisobotini ko‘rib chiqish;          c) O‘zbekiston Respublikasi Markaziy saylov komissiyasini tuzish;         d) O‘zbekiston Respublikasi Bosh prokurorining, O‘zbekiston Respublikasi Markaziy banki boshqaruvi raisining hisobotlarini eshitish;        e) O‘zbekiston Respublikasi Bosh vazirining mamlakatni ijtimoiy-iqtisodiy jihatdan rivojlantirishning dolzarb masalalari yuzasidan, shuningdek Vazirlar Mahkamasi a’zolarining o‘z faoliyati masalalari yuzasidan hisobotlarini eshitish;        f) parlament tekshiruvini o‘tkazish.
 A) I – a, b; II – d, e; II – c, f
 B) I – b, e; II – a, d; II – c, f
 C) I – d, c; II – b, f; II – a, e
@@ -446,7 +439,6 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
         const copyButton = document.getElementById('copy-button');
         const copyMessage = document.getElementById('copy-message');
 
-        // Savol matnini asosiy matn va variantlarga ajratish funksiyasi
         function parseQuestion(fullText) {
             const lines = fullText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
             let questionBody = [];
@@ -468,7 +460,6 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
             };
         }
 
-        // Savollarni HTML ga joylash
         function renderQuestions() {
             for (let i = 0; i < totalQuestions; i++) {
                 const qId = i + 1;
@@ -483,7 +474,6 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
                 qText.innerHTML = `${qId}. ${qData.questionBody}`;
                 qContainer.appendChild(qText);
                 
-                // Variant matnini chiqarish
                 const optionsGroup = document.createElement('div');
                 optionsGroup.className = 'options-group';
                 const variantKeys = ['a', 'b', 'c', 'd'];
@@ -498,7 +488,6 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
                     }
                 });
 
-                // Radio tugmalarini yaratish (A, B, C, D)
                 const selectionGroup = document.createElement('div');
                 selectionGroup.className = 'answer-selection-group';
 
@@ -526,19 +515,21 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
             }
         }
 
+        // =============================================================
+        // ✅ O'ZGARTIRILGAN QISM (Raqamlarsiz, kichik harflarda)
+        // =============================================================
         function updateResult(qId, answer) {
-    // Faqat tanlangan harfni saqlaymiz (qId siz)
-    currentAnswers[qId] = answer; 
-    
-    let resultString = '';
-    for (let i = 1; i <= totalQuestions; i++) {
-        if (currentAnswers[i]) {
-            // Faqat harfni (a, b, c yoki d) natijaga qo'shamiz
-            resultString += currentAnswers[i];
+            currentAnswers[qId] = answer; 
+            
+            let resultString = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (currentAnswers[i]) {
+                    resultString += currentAnswers[i];
+                }
+            }
+            resultField.value = resultString;
         }
-    }
-        
-        // 8. Nusxalash funksiyasi (Barcha savollarni tekshirish)
+
         async function copyResult(event) {
             event.preventDefault();
             
@@ -550,33 +541,29 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
             }
             
             if (unmarkedQIds.length > 0) {
-                // 8. Belgilanmagan savollarni aniq ko'rsatish
                 alert(`⚠️ Nusxalashdan oldin barcha ${totalQuestions} savolni belgilashingiz kerak.\n\nBelgilanmagan savollar raqami: ${unmarkedQIds.join(', ')}`);
                 return;
             }
 
             try {
-                // Clipboard API orqali nusxalash
                 await navigator.clipboard.writeText(resultField.value);
                 copyMessage.style.visibility = 'visible';
                 setTimeout(() => {
                     copyMessage.style.visibility = 'hidden';
                 }, 2000);
             } catch (err) {
-                // Agar Clipboard API ishlamasa, eski usulda nusxalashga majburlash
                 resultField.select();
                 document.execCommand("copy");
-                alert("✅ Barcha javob belgilari muvaffaqiyatli nusxalandi! (" + resultField.value + ")");
+                alert("✅ Nusxalandi: " + resultField.value);
                 copyMessage.style.visibility = 'visible';
                 setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000);
             }
         }
 
-        // 9. Taymer Mantiqi
-        const timeLimit = 60 * 60; // 60 daqiqa * 60 soniya
+        const timeLimit = 60 * 60;
         let timeLeft = timeLimit;
         const timerDisplay = document.getElementById('timer-display');
-        const warningTime = 5 * 60; // 5 daqiqa
+        const warningTime = 5 * 60;
 
         function formatTime(seconds) {
             const min = Math.floor(seconds / 60);
@@ -589,70 +576,35 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
             timerDisplay.textContent = formatTime(timeLeft);
 
             if (timeLeft <= warningTime) {
-                // 9. 5 daqiqa qolganda ogohlantirish
                 timerDisplay.classList.add('timer-warning');
             }
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 timerDisplay.textContent = "Vaqt tugadi!";
-                timerDisplay.classList.remove('timer-warning');
-                timerDisplay.style.backgroundColor = '#000';
-                
-                // Vaqt tugagach testni bloklash
                 document.querySelectorAll('input[type="radio"]').forEach(input => {
                     input.disabled = true;
                 });
-                alert("🔴 Testga ajratilgan vaqt tugadi! Javoblarni nusxalab olishingiz mumkin.");
+                alert("🔴 Vaqt tugadi! Javoblarni nusxalashingiz mumkin.");
             }
         }
 
-        // --- Boshlash ---
         document.addEventListener('DOMContentLoaded', () => {
             renderQuestions();
-            
-            // Taymerni ishga tushirish
             timerDisplay.textContent = formatTime(timeLeft);
             const timerInterval = setInterval(updateTimer, 1000);
-            
-            // Nusxalash tugmasini funksiyaga bog'lash
             copyButton.addEventListener('click', copyResult);
 
-            // 4. Qattiq Cheklovlar Qismi
-            // O'ng tugmani bosishni bloklash
             document.addEventListener('contextmenu', e => e.preventDefault());
-
-            // Klaviatura orqali asosiy nusxalashni bloklash
             document.addEventListener('keydown', e => {
-                // Ctrl+C, Ctrl+X, Ctrl+V, Ctrl+A ni bloklash
                 if ((e.ctrlKey || e.metaKey) && (['c', 'x', 'v', 'a'].includes(e.key.toLowerCase()))) {
                     e.preventDefault();
-                    // Bu yerda ogohlantirishni o'chirish yaxshiroq, chunki u doimiy chalaveradi
                 }
-                // F12 (Developer tools) ni bloklash (Ba'zi brauzerlarda ishlamaydi)
                 if (e.key === 'F12') {
                      e.preventDefault();
                 }
             });
         });
-        
     </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
