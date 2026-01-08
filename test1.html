@@ -526,20 +526,18 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
             }
         }
 
-        // Javoblarni yig'ish va yangilash funksiyasi
         function updateResult(qId, answer) {
-            const resultTag = qId + answer;
-            currentAnswers[qId] = resultTag;
-            
-            let resultString = '';
-            for (let i = 1; i <= totalQuestions; i++) {
-                if (currentAnswers[i]) {
-                    resultString += currentAnswers[i];
-                }
-            }
-            resultField.value = resultString;
+    // Faqat tanlangan harfni saqlaymiz (qId siz)
+    currentAnswers[qId] = answer; 
+    
+    let resultString = '';
+    for (let i = 1; i <= totalQuestions; i++) {
+        if (currentAnswers[i]) {
+            // Faqat harfni (a, b, c yoki d) natijaga qo'shamiz
+            resultString += currentAnswers[i];
         }
-
+    }
+        
         // 8. Nusxalash funksiyasi (Barcha savollarni tekshirish)
         async function copyResult(event) {
             event.preventDefault();
@@ -642,6 +640,7 @@ D) Agar qonun avvalgi qabul qilingan tahririda tegishincha O‘zbekiston Respubl
 </body>
 
 </html>
+
 
 
 
