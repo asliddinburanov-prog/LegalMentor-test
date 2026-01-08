@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalMentor TEST | Rasmiy Versiya</title>
+    
+    <style>
+        /* 7. Mobil Ekran uchun Asosiy Uslublar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; 
+            padding-top: 60px; /* Taymer uchun joy qoldirish */
+            background-color: #f0f2f5;
+            color: #333;
+            /* 5. Matn tanlashni o'chirish */
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 9. Qattiq Taymer Konteyneri (Fixed Position) */
+        .timer-bar {
+            position: fixed; /* Joyidan siljimasligi uchun */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #0056b3;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            z-index: 1000; /* Boshqa elementlardan ustun turishi uchun */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .timer-warning {
+            background-color: #dc3545; /* Qizil rang 5 daqiqa qolganda */
+        }
+
+        /* 6. Logotip va Sarlavha Uslubi */
+        .header {
+            text-align: center;
+            padding: 15px 10px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 15px;
+        }
+        .header img {
+            max-width: 150px; /* Logotip razmeri */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #0056b3;
+        }
+
+        /* Savol Konteynerlari */
+        .question-container {
+            margin: 0 10px 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .answer-text {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        /* Tanlash Tugmalari (Mobil uchun moslashuvchan) */
+        .answer-selection-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+        .answer-label {
+            flex: 1; /* Teng kenglikda bo'lishi uchun */
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 5px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: bold;
+            min-width: 40px;
+        }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .answer-label {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        /* Natija Maydoni Uslubi */
+        .result-section {
+            margin: 20px 10px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        #result-field {
+            width: 100%;
+            min-height: 50px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+            text-align: center;
+            /* Nusxalanadigan matnni tanlashga ruxsat berish */
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+        }
+        .copy-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            width: 100%; /* Mobil uchun to'liq kenglik */
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .copy-message {
+            color: #4CAF50; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timer-display" class="timer-bar">
+        Vaqt: 60:00
+    </div>
+
+    <div class="header">
+        <img src="https://asliddinburanov-prog.github.io/LegalMentor-test/2.jpg" alt="LegalMentor Logotipi">
+        <h1>Test Savollari</h1>
+    </div>
+
+    <div style="margin: 0 10px; padding: 10px; background-color: #fff3cd; color: #856404; border-radius: 5px; font-weight: bold; text-align: center;">
+        ⚠️ DIQQAT: Testni bir urinishda yakunlang. Nusxalash va ekranni rasmga olish cheklangan!
+    </div>
+
+    <div id="questions-list"></div>
+
+    <div class="result-section">
+        <label for="result-field" style="display: block; font-weight: bold;">Javob Belgilari (Nusxalanadigan maydon):</label>
+        <textarea id="result-field" readonly placeholder="Barcha javoblar belgilangandan so'ng bu yerda avtomatik ko'rinadi..."></textarea>
+        <button id="copy-button" class="copy-button">Belgilarni Nusxalash</button>
+        <p id="copy-message" class="copy-message">✅ Muvaffaqiyatli nusxalandi!</p>
+    </div>
+
+    <script>
+        const customQuestions = [
+            `O‘zbekiston Respublikasining mustaqillikka erishishi bilan bog‘liq to‘g‘ri ma’lumotni aniqlang.
+A) O‘zbekiston Respublikasi 1991-yil 31-avgust sanasida mustaqillikka erishgan
+B) O‘zbekiston Respublikasi 1990-yil 24-mart kuni mustaqillikka erishgan 
+C) O‘zbekiston Respublikasi 1991-yil 18-noyabr sanasida mustaqillikka erishgan
+D) O‘zbekiston Respublikasi 1992-yil 2-iyulda mustaqillikka erishgan`,
+
+`O‘zbekiston Respublikasining mustaqillikka erishishida muhim qadam bo‘lgan Mustaqillik deklaratsiyasi qachon qabul qilingan?
+A) 1991-yil 31-avgust 
+B) 1990-yil 20-iyun 
+C) 1991-yil 29-dekabr 
+D) 1989-yil 21-oktyabr`,
+
+`Inson huquqlari xalqaro huquqning obyekti sifatida qaysi xalqaro hujjatning qabul qilinishi bilan rasman tan olingan?
+A) Birlashgan Millatlar Tashkiloti Nizomi
+B) Versal tinchlik shartnomasi
+C) Inson huquqlari umumjahon deklaratsiyasi
+D) Bola huquqlari to‘g‘risidagi Konvensiya`,
+
+`O‘zbekiston Respublikasi mustaqil davlat sifatida quyida berilgan qaysi huquqlarga ega?
+1) boshqa davlat fuqarolarini o‘z fuqaroligiga qabul qilish huquqi;
+2) boshqa davlat hududini bosib olish yoki mustamlakaga aylantirish huquqi;
+3) xalqaro huquq normalariga muvofiq notinch davlatlarning ichki ishlariga aralashish huquqi;
+4) qonun chiqaruvchi, ijro etuvchi va sud hokimiyatlarining faoliyatini yo‘lga qo‘yish huquqi.
+A) 1, 2   
+B) 2, 4   
+C) 1, 3   
+D) 1, 4`,
+
+`Inson huquqlari umumjahon deklaratsiyasi bilan bog‘liq bo‘lgan to‘g‘ri ma’lumotlarni aniqlang.
+1) Inson huquqlari umumjahon deklaratsiyasi Birlashgan Millatlar Tashkiloti Bosh Assambleyasi tomonidan qabul qilingan;
+2) Inson huquqlari umumjahon deklaratsiyasi 1950-yil 24-iyun kuni qabul qilingan;
+3) Inson huquqlari umumjahon deklaratsiyasi 1948-yil 10-dekabr kuni qabul qilingan;
+4) Inson huquqlari umumjahon deklaratsiyasi Yevropada Xavfsizlik va Hamkorlik Tashkiloti tomonidan qabul qilingan.
+A) 1, 2   
+B) 2, 4   
+C) 1, 3   
+D) 3, 4`,
+
+`Quyida berilgan ma’lumolarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) berilgan qatorni aniqlang. 
+I. “2017–2021-yillarda O‘zbekiston Respublikasini rivojlantirishning beshta ustuvor yo‘nalishi bo‘yicha Harakatlar strategiyasi” O‘zbekiston Respublikasi Prezidenti Shavkat Mirziyoyevning 07.02.2017- yildagi PF-4947-son farmoni bilan tasdiqlangan;
+II. “2017–2021-yillarda O‘zbekiston Respublikasini rivojlantirishning beshta ustuvor yo‘nalishi bo‘yicha Harakatlar strategiyasi”ning beshinchi yo‘nalishi “Qonun ustuvorligini ta’minlash hamda sud-huquq tizimini yanada isloh qilish”dir;
+III. O‘zbekiston Respublikasi Prezidentining 28.01.2022-yildagi PF-60-son Farmoni bilan tasdiqlangan “2022–2026-yillarga mo‘ljallangan Yangi O‘zbekistonning taraqqiyot strategiyasi”ning 2-yo‘nalishi “Mamlakatimizda adolat va qonun ustuvorligi tamoyillarini taraqqiyotning eng asosiy va zarur shartiga aylantirish” deb nomlangan.
+A) I-to‘g‘ri, II-to‘g‘ri, III-to‘g‘ri
+B) I-noto‘g‘ri, II-noto‘g‘ri, III-to‘g‘ri
+C) I-to‘g‘ri, II-to‘g‘ri, III-noto‘g‘ri
+D) I-to‘g‘ri, II-noto‘g‘ri, III-to‘g‘ri`,
+
+`“O‘zbekiston Respublikasining Davlat mustaqilligi asoslari to‘g‘risida”gi Qonun qachon qabul qilingan? 
+A) 1991-yil 31-avgust 
+B) 1990-yil 20-iyun 
+C) 1991-yil 29-dekabr 
+D) 1989-yil 21-oktyabr`,
+
+`8. Quyidagi izohlarga mos atamalar berilgan javobni aniqlang.
+1) ijtimoiy munosabalarning biror o‘xshash sohasiga oid tartibga solingan qonunlar to‘plami;
+2) davlatning yuksak yuridik kuchga ega bo‘lgan asosiy qonuni;
+3) davlat hokimiyati tomonidan qabul qilingan, hamma uchun majburiy bo‘lgan ijtimoiy-huquqiy me’yor va munosabatlarni belgilovchi rasmiy qoida;
+4) davlat ahamiyatiga ega bo‘lgan muhim masalalar bo‘yicha o‘tkaziladigan umumxalq so‘rovi, ovoz berish yo‘li bilan xalq fikrini aniqlash.
+a) saylov; b) kodeks; c) nizom; d) qonun; e) konstitutsiya; f) referendum; g) konvensiya. 
+A) 1-b, 2-c, 3-g, 4-a	
+B) 1-b, 2-e, 3-d, 4-f 
+C) 1-c, 2-e, 3-g, 4-f		
+D) 1-c, 2-e, 3-d, 4-a`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang. 
+O‘z mulkida yoki operativ boshqaruvida alohida mol-mulkka ega bo‘lgan hamda o‘z majburiyatlari yuzasidan ushbu mol-mulk bilan javob beradigan, o‘z nomidan mulkiy yoki shaxsiy nomulkiy huquqlarga ega bo‘la oladigan va ularni amalga oshira oladigan, majburiyatlarni bajara oladigan, sudda da’vogar va javobgar bo‘la oladigan tashkilot ... hisoblanadi. (Fuqarolik kodeksining 39-moddasi)
+A) jismoniy shaxs	   
+B) jamoat birlashmasi
+C) tijorachi shaxs	   
+D) yuridik shaxs`,
+
+`“Har bir inson tabiatan shunday tuzilganki, u yashash va oliy daradagi yetuklikka erishmoq uchun ko‘p narsalarga muhtoj bo‘ladi, u bir o‘zi bunday narsalarni qo‘lga kirita olmaydi, ularga ega bo‘lish uchun insonlar jamoasiga ehtiyoj tug‘iladi…”
+Ushbu fikr kim tomonidan aytilgan?
+A) Abu Ali ibn Sino   
+B) Abu Bakr Xorazmiy
+C) Abu Nasr Forobiy  
+D) al-Marg‘inoniy`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang. (Fuqarolik kodeksining 16, 40-moddalari)
+1) jismoniy shaxslar deganda O‘zbekiston Respublikasining fuqarolari, boshqa davlatlarning fuqarolari tushuniladi;
+2) O‘zbekiston Respublikasida fuqaroligi bo‘lmagan shaxslar jismoniy shaxs hisoblanmaydi; 
+3) tijoratchi tashkilot bo‘lmagan yuridik shaxs jamoat birlashmasi, ijtimoiy fond va mulkdor tomonidan moliyaviy ta’minlab turiladigan muassasa shaklida tashkil etilishi mumkin emas; 
+4) tijoratchi bo‘lmagan tashkilot o‘zining ustavda belgilangan maqsadlariga mos keladigan doiralarda tadbirkorlik faoliyati bilan shug‘ullanishi mumkin.
+A) 1, 3   
+B) 2, 4   
+C) 1, 4   
+D) 2, 3`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+Burhoniddin Marg‘inoniyning ... kitobida oilaviy munosabatlarga oid, shuningdek, mulkchilik, savdo-sotiq, jinoyat va jazo, insonning burch va mas’uliyatlariga taalluqli juda ko‘p murakkab muammolar islomiy huquq nuqtayi nazaridan hal etib berilgan. Bu kitob fiqh ilmi bo‘yicha eng aniq, izchil, mukammal asar bo‘lib, undan bugungi kunda ham islom huquqshunosligi bo‘yicha nufuzli huquqiy manba – asosiy qo‘llanma sifatida foydalaniladi.
+A) “Kitob al-Hidoya”	
+B) “Kitob at-Tarix”
+C) “Kitob al-Fiqh”		
+D) “Kitob at-Tavhid”`,
+
+`“Ta’lim faqat so‘z va o‘rgatish bilan bo‘ladi. Tarbiya esa amaliy ish, tajriba bilan bo‘ladi”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Umar Xayyom		
+B) Alisher Navoiy
+C) Jaloliddin Rumiy	
+D) Konfutsiy`,
+
+`“Ma’lum bir axloqiy sifatlarga ega bo‘lmasdan, munosib inson bo‘lmay turib, ijtimoiy hayotda harakat qilib bo‘lmaydi”. Ushbu fikr kim tomonidan aytilgan?
+A) Suqrot		
+B) Diogen
+C) Platon		
+D) Aristotel`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang. (Fuqarolik kodeksining 39, 40-moddalari)
+1) foyda olishni o‘z faoliyatining asosiy maqsadi qilib olmagan tashkilot yuridik shaxs bo‘lishi mumkin emas; 
+2) tijoratchi tashkilot bo‘lgan yuridik shaxs xo‘jalik shirkati va jamiyati, ishlab chiqarish kooperativi shaklida tuzilishi mumkin;
+3) yuridik shaxslar uyushmalar (ittifoqlar)ga va boshqa birlashmalarga birlashishlari mumkin emas;
+4) yuridik shaxslar mustaqil balans yoki smetaga ega bo‘lishlari kerak.
+A) 1, 2   
+B) 2, 3   
+C) 2, 4   
+D) 1, 3`,
+
+`Deyarli bir xil ma’noni anglatuvchi inson (a), odam (b) va shaxs (c) tushunchalariga oid ma’lumotlarni ijtimoiy, biologik va huquqiy jihatdan to‘g‘ri moslashtiring.
+1) Umumijtimoiy tushuncha bo‘lib, muayyan jamiyatda insoniy fazilatlarga ega ekanlikni ifoda etadi;
+2) Fikrlash, so‘zlash qobiliyatiga ega bo‘lgan, shu tufayli jonli tabiatning boshqa hamma jonzotlardan ustun turuvchi bir qismi;
+3) Huquqiy munosabatlarning alohida ishtirokchisi bo‘lib, inson tushunchasining yuksak ko‘rinishi.
+A) a-1, b-2, c-3		
+B) a-2, b-1, c-3
+C) a-2, b-3, c-1		
+D) a-1, b-3, c-2`,
+
+`Quyida berilgan ma’lumolarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. “Fozil odamlar shahri” asarining muallifi Abu Nasr Farobiydir;
+II. “Kitob al-Hidoya” asari Abu Mansur al-Moturidiy tomonidan yozilgan;
+III. “Majolis un-nafois” asari Alisher Navoiy qalamiga mansub.
+A) I-to‘g‘ri, II-to‘g‘ri, III-to‘g‘ri
+B) I-noto‘g‘ri, II-noto‘g‘ri, III-to‘g‘ri
+C) I-to‘g‘ri, II-to‘g‘ri, III-noto‘g‘ri
+D) I-to‘g‘ri, II-noto‘g‘ri, III-to‘g‘ri`,
+
+`“Odamiy ersang, demagil odami, Onikim, yo‘q xalq g‘amidin g‘ami”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Umar Xayyom	
+B) Alisher Navoiy
+C) Jaloliddin Rumiy	
+D) Xusrav Dehlaviy`,
+
+`“Agar qilmadi el himoyat senga, O‘zingdin kerakdir shikoyat senga”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Zahiriddin Muhammad Bobur
+B) Jaloliddin Rumiy 
+C) Alisher Navoiy
+D) Najmiddin Kubro`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+... – muayyan hududda yashovchi, o‘z ehtiyoj va manfaatlariga ko‘ra birlashgan kishilardan iborat jamoa.
+A) davlat
+B) jamiyat
+C) mahalla
+D) jamg‘arma`,
+
+`“Al-ishorat va al-tanbihot” asarining muallifi to‘g‘ri ko‘rsatilgan javobni aniqlang.
+A) Abu Rayhon Beruniy
+B) Maxmud az-Zamaxshariy
+C) Burhoniddin al-Marg‘inoniy
+D) Abu Ali ibn Sino`,
+
+`“Inson o‘z shaxsiy talablari jihatidan boshqalardan ajralgan holda yashay olmaydi, chunki u insoniyatning boshqa vakillari bilan munosabatdagina ehtiyojlarini qondira olishi mumkin. Jamoa a’zolarining barchasi uchun majburiy-huquqiy qonunlar zarur bo‘ladi. Jamoaning barcha a’zolari mehnat bilan shug‘ullanmoqlari zarur”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Abu Nasr Forobiy
+B) Abu Mansur al-Moturidiy
+C) Alisher Navoiy
+D) Abu ali ibn Sino`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) jamiyat biologik qonunlar emas, balki odamlarning ijtimoiy qonunlari ustuvor bo‘lgan, muayyan shakllangan mushtarak birligidir;
+2) har qanday jamiyat ham jamoa bo‘lavermaydi, lekin istalgan jamoa jamiyat hisoblanadi;
+3) jamiyat davlat negizida shakllangan siyosiy institut hisoblanadi;
+4) jamiyatni tashkil qiluvchi odamlar ko‘p yoki kam, boy yoki kambag‘al, teng huquq yoki turli huquqlarga ega, o‘xshash yoki har xil bo‘lishlaridan qat’i nazar, muayyan jamiyatning a’zolari hisoblanadilar, ya’ni jamiyat insonsiz, inson esa jamiyatsiz mavjud bo‘la olmaydi.
+A) 1, 4   
+B) 2, 4   
+C) 1, 3   
+D) 2, 3`,
+
+`“Jamiyat” so‘ziga oid to‘g‘ri berilgan ma’lumotni aniqlang.
+A) Jamiyat – arabcha “jamoa”, “jamlangan”, “birlashgan” degan ma’nolarni bildiradi
+B) Jamiyat – forscha “umumlashgan”, “umumiy” degan ma’nolarni bildiradi
+C) Jamiyat – forscha “guruh”, “jamoa”, “birlashma” degan ma’nolarni bildiradi
+D) Jamiyat – arabcha “uyushma”, “ittifoq”, “davlat” degan ma’nolarni bildiradi`,
+
+`Quyida berilganlardan jamiyatga oid ma’lumotlarni aniqlang.
+1) ma’lum hududda yashovchi o‘z manfaatlarini birgalikda himoya qilish va ehtiyojlarini birgalikda qondirish uchun birlashgan kishilarning jamoasi;
+2) mavqei, ijtimoiy kelib chiqishi va qiziqishlariga ko‘ra birlashgan kishilar doirasi;
+3) muayyan huquq-tartibot asosida uyushgan, yagona hududda hukmronlik o‘rnatgan va yagona hokimiyatga bo‘ysunuvchi odamlar ittifoqi;
+4) majbur qilish kuchiga, ya’ni hokimiyatga ega bo‘lgan, o‘z fuqarolari, shuningdek, hududida istiqomat qiluvchi barcha insonlarning manfaatlarini himoya qiladigan mustaqil siyosiy tashkilot.
+A) 1, 3    
+B) 2, 3    
+C) 1, 2    
+D) 1, 4`,
+
+`Tarixiy shaxsni aniqlang.
+U mashhur qomusiy olim, tabib, tibbiyotshunos, tabiatshunos, faylasuf, agronom, tilshunos, matematik, musiqashunos, huquqshunos, yozuvchi va shoirdir. Buxoroning Afshona qishlog‘ida tug‘ilib, Eronning Hamadon shahrida vafot etgan. U jahonga “Shayx-ur-rais” (“Olimlar rahbari”) nomi bilan ham tanilgan. U huquqshunoslikka oid bir qancha g‘oyalar va fikrlar muallifidir. Uning jamiyat, fuqarolik, davlat boshqaruviga oid g‘oyalari, ayniqsa, qimmatlidir. U ilmiy-adabiy merosini 450 dan ortiq asarlar tashkil etadi. Shulardan 160 taga yaqini hozirgi davrgacha yetib kelgan. Ushbu tarixiy shaxs 980 – 1037-yillarda yashagan.
+A) Abu Ali ibn Sino    
+B) Abu Mansur al-Moturidiy    
+C) Bahouddin Naqshbandiy    
+D) Abu Rayhon Beruniy`
+        ];
+        
+        const totalQuestions = customQuestions.length;
+        const questionsList = document.getElementById('questions-list');
+        const resultField = document.getElementById('result-field');
+        const currentAnswers = {};
+        const copyButton = document.getElementById('copy-button');
+        const copyMessage = document.getElementById('copy-message');
+
+        function parseQuestion(fullText) {
+            const lines = fullText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            let questionBody = [];
+            let options = {};
+            let isOptionsStarted = false;
+
+            lines.forEach(line => {
+                if (line.match(/^[A-D][\.\)]\s/i)) {
+                    isOptionsStarted = true;
+                    const key = line[0].toLowerCase();
+                    options[key] = line; 
+                } else if (!isOptionsStarted) {
+                    questionBody.push(line);
+                }
+            });
+            return {
+                questionBody: questionBody.join('<br>'),
+                options: options
+            };
+        }
+
+        function renderQuestions() {
+            for (let i = 0; i < totalQuestions; i++) {
+                const qId = i + 1;
+                const qData = parseQuestion(customQuestions[i]);
+
+                const qContainer = document.createElement('div');
+                qContainer.className = 'question-container';
+                qContainer.setAttribute('data-question-id', qId);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${qId}. ${qData.questionBody}`;
+                qContainer.appendChild(qText);
+                
+                const optionsGroup = document.createElement('div');
+                optionsGroup.className = 'options-group';
+                const variantKeys = ['a', 'b', 'c', 'd'];
+                
+                variantKeys.forEach(key => {
+                    const variantText = qData.options[key];
+                    if (variantText) {
+                        const answerDisplayText = document.createElement('div');
+                        answerDisplayText.className = 'answer-text';
+                        answerDisplayText.textContent = variantText;
+                        optionsGroup.appendChild(answerDisplayText);
+                    }
+                });
+
+                const selectionGroup = document.createElement('div');
+                selectionGroup.className = 'answer-selection-group';
+
+                variantKeys.forEach(variant => {
+                    const radioId = `q${qId}${variant}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.id = radioId;
+                    input.name = `question${qId}`;
+                    input.value = variant;
+                    input.addEventListener('change', () => updateResult(qId, variant));
+                    
+                    const label = document.createElement('label');
+                    label.className = 'answer-label';
+                    label.htmlFor = radioId;
+                    label.textContent = variant.toUpperCase();
+
+                    selectionGroup.appendChild(input);
+                    selectionGroup.appendChild(label);
+                });
+                
+                optionsGroup.appendChild(selectionGroup);
+                qContainer.appendChild(optionsGroup);
+                questionsList.appendChild(qContainer);
+            }
+        }
+
+        // =============================================================
+        // ✅ O'ZGARTIRILGAN QISM (Raqamlarsiz, kichik harflarda)
+        // =============================================================
+        function updateResult(qId, answer) {
+            currentAnswers[qId] = answer; 
+            
+            let resultString = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (currentAnswers[i]) {
+                    resultString += currentAnswers[i];
+                }
+            }
+            resultField.value = resultString;
+        }
+
+        async function copyResult(event) {
+            event.preventDefault();
+            
+            let unmarkedQIds = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (!currentAnswers[i]) {
+                    unmarkedQIds.push(i);
+                }
+            }
+            
+            if (unmarkedQIds.length > 0) {
+                alert(`⚠️ Nusxalashdan oldin barcha ${totalQuestions} savolni belgilashingiz kerak.\n\nBelgilanmagan savollar raqami: ${unmarkedQIds.join(', ')}`);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => {
+                    copyMessage.style.visibility = 'hidden';
+                }, 2000);
+            } catch (err) {
+                resultField.select();
+                document.execCommand("copy");
+                alert("✅ Nusxalandi: " + resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000);
+            }
+        }
+
+        const timeLimit = 60 * 60;
+        let timeLeft = timeLimit;
+        const timerDisplay = document.getElementById('timer-display');
+        const warningTime = 5 * 60;
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `Vaqt: ${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+
+            if (timeLeft <= warningTime) {
+                timerDisplay.classList.add('timer-warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Vaqt tugadi!";
+                document.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
+                });
+                alert("🔴 Vaqt tugadi! Javoblarni nusxalashingiz mumkin.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            timerDisplay.textContent = formatTime(timeLeft);
+            const timerInterval = setInterval(updateTimer, 1000);
+            copyButton.addEventListener('click', copyResult);
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && (['c', 'x', 'v', 'a'].includes(e.key.toLowerCase()))) {
+                    e.preventDefault();
+                }
+                if (e.key === 'F12') {
+                     e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
