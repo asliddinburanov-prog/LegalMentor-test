@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalMentor TEST | Rasmiy Versiya</title>
+    
+    <style>
+        /* 7. Mobil Ekran uchun Asosiy Uslublar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; 
+            padding-top: 60px; /* Taymer uchun joy qoldirish */
+            background-color: #f0f2f5;
+            color: #333;
+            /* 5. Matn tanlashni o'chirish */
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 9. Qattiq Taymer Konteyneri (Fixed Position) */
+        .timer-bar {
+            position: fixed; /* Joyidan siljimasligi uchun */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #0056b3;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            z-index: 1000; /* Boshqa elementlardan ustun turishi uchun */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .timer-warning {
+            background-color: #dc3545; /* Qizil rang 5 daqiqa qolganda */
+        }
+
+        /* 6. Logotip va Sarlavha Uslubi */
+        .header {
+            text-align: center;
+            padding: 15px 10px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 15px;
+        }
+        .header img {
+            max-width: 150px; /* Logotip razmeri */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #0056b3;
+        }
+
+        /* Savol Konteynerlari */
+        .question-container {
+            margin: 0 10px 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .answer-text {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        /* Tanlash Tugmalari (Mobil uchun moslashuvchan) */
+        .answer-selection-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+        .answer-label {
+            flex: 1; /* Teng kenglikda bo'lishi uchun */
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 5px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: bold;
+            min-width: 40px;
+        }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .answer-label {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        /* Natija Maydoni Uslubi */
+        .result-section {
+            margin: 20px 10px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        #result-field {
+            width: 100%;
+            min-height: 50px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+            text-align: center;
+            /* Nusxalanadigan matnni tanlashga ruxsat berish */
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+        }
+        .copy-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            width: 100%; /* Mobil uchun to'liq kenglik */
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .copy-message {
+            color: #4CAF50; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timer-display" class="timer-bar">
+        Vaqt: 60:00
+    </div>
+
+    <div class="header">
+        <img src="https://asliddinburanov-prog.github.io/LegalMentor-test/2.jpg" alt="LegalMentor Logotipi">
+        <h1>Test Savollari</h1>
+    </div>
+
+    <div style="margin: 0 10px; padding: 10px; background-color: #fff3cd; color: #856404; border-radius: 5px; font-weight: bold; text-align: center;">
+        ⚠️ DIQQAT: Testni bir urinishda yakunlang. Nusxalash va ekranni rasmga olish cheklangan!
+    </div>
+
+    <div id="questions-list"></div>
+
+    <div class="result-section">
+        <label for="result-field" style="display: block; font-weight: bold;">Javob Belgilari (Nusxalanadigan maydon):</label>
+        <textarea id="result-field" readonly placeholder="Barcha javoblar belgilangandan so'ng bu yerda avtomatik ko'rinadi..."></textarea>
+        <button id="copy-button" class="copy-button">Belgilarni Nusxalash</button>
+        <p id="copy-message" class="copy-message">✅ Muvaffaqiyatli nusxalandi!</p>
+    </div>
+
+    <script>
+        const customQuestions = [
+            `Ijtimoiy davlat modeli qaysi javobda to‘g‘ri izohlangan?
+A) xalq hokimiyat manbai bo‘lgan, saylov va vakillik asosida boshqariladigan, inson huquqlari kafolatlangan davlat modeli
+B) davlat va jamiyat hayotida qonun ustuvor bo‘lgan, inson huquq va erkinliklari eng oliy qadriyat sifatida tan olingan davlat modeli
+C) siyosiy hokimiyat diniy tamoyillardan mustaqil bo‘lgan, barcha fuqarolar uchun vijdon erkinligi va teng huquqlar kafolatlangan davlat modeli
+D) har bir inson uchun farovon turmush darajasi, sifatli ta’lim, kafolatli tibbiy xizmat, munosib mehnat sharoiti va adolatli ish haqi, pensiya va nafaqalar, ijtimoiy yordam va xizmatlar tizimi yaratilgan, uy-joyli bo‘lish sharoiti mavjud bo‘lgan davlat modeli`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+... – bu muayyan hududda ommaviy hokimiyatni amalga oshiradigan, umummajburiy normalar o‘rnatadigan va suverenitetga ega bo‘lgan, o‘z fuqarolari, shuningdek, hududda istiqomat qiluvchi barcha insonlarning manfaatlarini himoya qiladigan, boshqa davlatlar bilan siyosiy, iqtisodiy, madaniy aloqalarni amalga oshiradigan mustaqil siyosiy tashkilot.
+A) Jamiyat		
+B) Hokimiyat
+C) Davlat		
+D) Parlament`,
+
+`Quyidagi berilganlardan davlatning asosiy belgilarini aniqlang.
+1) aholi va hudud; 2) konstitutsiya; 3) suverenitet; 4) huquq tizimi; 5) davlat rahbari; 6) parlament; 7) budjet tizimi; 8) davlat apparati.
+A) 1, 3, 4, 7, 8	
+B) 2, 3, 5, 6, 7
+C) 1, 2, 4, 6, 7	
+D) 1, 2, 3, 6, 8`,
+
+`Quyida berilgan atamalar va ularning izohi to‘g‘ri moslashtirilgan javobni aniqlang.
+1) ijtimoiy hokimiyat; 2) suverenitet;  3) ibtidoiy demokratiya; 4) davlat apparati.
+a) davlat hokimiyatining ichki va tashqi mustaqilligi, ustunligi va bo‘linmasligi;
+b) davlatning maqsad va vazifalarini amalga oshirish uchun tashkil etilgan organlar tizimi;
+c) davlat paydo bo‘lishidan oldingi davrda, urug‘-qabila majlislarida amalga oshirilgan xalq yig‘inlari va umumiy boshqaruv shakli;
+d) jamiyatdagi turli subyektlarning boshqalar faoliyatini tartibga solish va o‘z irodasini o‘tkazish imkoniyati.
+A) 1-d, 2-a, 3-c, 4-b	
+B) 1-a, 2-c, 3-d, 4-b 
+C) 1-c, 2-a, 3-b, 4-d 	
+D) 1-d, 2-c, 3-b, 4-d`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) ishlab chiqarishning o‘sishi, taraqqiyot natijasida jamiyatda siyosiy munosabatlar paydo bo‘lgan;
+2) davlat keng tushuncha bo‘lib, jamiyat davlatning bir shakllangan siyosiy instituti hisoblanadi;
+3) davlat ma’lum hududda yashovchi o‘z manfaatlarini birgalikda himoya qilish va ehtiyojlarini birgalikda qondirish uchun birlashgan kishilarning jamoasidir;
+4) davlat muayyan huquq-tartibot asosida uyushgan, yagona hududda hukmronlik o‘rnatgan va yagona hokimiyatga bo‘ysunuvchi odamlar ittifoqidir.
+A) 1, 4   
+B) 2, 4   
+C) 1, 3   
+D) 2, 3`,
+
+`“Davlatu saltanat uch narsa bilan: mulk, xazina va lashkar bilan tikdir. 
+Dono vazir bularning har uchalasini tadbirkorlik bilan yaxshi ahvolda saranjom tutadi”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Abu Nasr Forobiy	
+B) Amir Temur
+C) Alisher Navoiy		
+D) Abu Ali ibn Sino`,
+
+`“El nazaridan qolsang, 
+Davlating bo‘lgan barbod!”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Alisher Navoiy		
+B) Konfutsiy
+C) Umar Xayyom		
+D) Abu Nasr Forobiy`,
+
+`“Siyosatnoma” (“Siyar ul-muluk”) asarining muallifi to‘g‘ri ko‘rsatilgan javobni aniqlang.
+A) Umar Xayyom		
+B) Nizomulmulk
+C) Abulqosim Firdavsiy	
+D) Kaykovus`,
+
+`Quyida berilganlardan qaysilari davlatning urug‘chilik jamiyatidan ajratib turadigan asosiy belgilari hisoblanadi?
+1) Davlat paydo bo‘lgan jamiyatda fuqarolar ma’lum bir hududga birlashadilar;
+2) Davlat o‘z faoliyatini amalga oshirishi uchun murakkab tizimdan tashkil topgan boshqaruv apparatiga ega bo‘ladi va ana shu boshqaruv tizimi yordamida o‘zining barcha fuqarolari uchun majburiy bo‘lgan davlat hokimiyatini amalga oshiradi;
+3) Davlat hokimiyatni to‘laqonli amalga oshirish uchun qonunlar va turli normativ hujjatlar qabul qiladi. Ya’ni, davlat mavjud bo‘lgan joyda huquq ham mavjud bo‘ladi;
+4) Davlat birgalikdagi hayotiy faoliyatlari jarayonida birlashgan odamlarning muayyan murakkab tuzilmasidir. Bu tuzilma unga kirgan a’zolar, ya’ni odamlarning oddiy guruhi yoki to‘plami emas, balki muayyan qoidalarga asosan birlashgan jamoasidir;
+5) Odamlar davlatga birlashganlarida o‘zlariga yo‘lboshchi, davlat boshlig‘i tayinlaydi. Davlatda asosiy maqsadi va mashg‘uloti xususiy mulkchilik munosabatlari muhofaza qilishdan iborat bo‘lgan kishilarning maxsus guruhlari vujudga keladi. 
+A) 1, 4, 5		
+B) 2, 4, 5   
+C) 1, 2, 3   	
+D) 2, 3, 4`,
+
+`“Davlat ishlarining to‘qqiz ulushi kengash, tadbir va mashvarat, qolgan bir ulushi esa qilich bilan bajo keltirilur”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Jaloliddin Manguberdi
+B) Amir Temur
+C) Pahlavon Mahmud
+D) Ali ibn Abu Tolib`,
+
+`Quyida berilganlardan davlatning ichki funksiyalarini aniqlang.
+1) xorijiy mamlakatlar bilan siyosiy aloqalarni yo‘lga qo‘yish;
+2) barcha mulkchilik shakllaridagi mulkni himoyalash;
+3) tinchlik va millatlararo totuvlikni saqlash;
+4) tashqi xavf-xatardan mudofaa.
+A) 1, 4   
+B) 2, 4   
+C) 1, 3   
+D) 2, 3`,
+
+`Davlat funksiyalari faoliyat ko‘rsatish makoni bo‘yicha qaysi guruhlarga bo‘linadi?
+A) doimiy va vaqtinchalik   
+B) asosiy va asosiy bo‘lmagan
+C) iqtisodiy-ijtimoiy va siyosiy-huquqiy
+D) ichki va tashqi`,
+
+`Davlat funksiyalari – bu ... .
+A) davlat hokimiyatini amalga oshirish uchun maxsus tashkil etilgan organlar, muassasalar va tashkilotlar majmui
+B) davlatning jamiyatdagi maqsad va vazifalarini amalga oshirishga qaratilgan, qonuniy kuchga ega bo‘lgan asosiy faoliyat yo‘nalishlaridir
+C) davlat vazifalarini bajaruvchi va funksiyalarini amalga oshiruvchi organlar tizimi
+D) davlatning tashkiliy tuzilishi, boshqaruv usuli va hududiy tuzilishini ifodalovchi kategoriya`,
+
+`Quyida berilganlardan davlatning tashqi funksiyalarini aniqlang.
+1) diplomatik va konsullik faoliyatini amalga oshirish;
+2) aholini ijtimoiy ne’matlar bilan ta’minlash;
+3) sog‘liqni saqlash va ta’lim tizimini qo‘llab-quvvatlash;
+4) global muammolarni hal etishda ishtirok etish.
+A) 1, 3   
+B) 2, 3   
+C) 1, 4   
+D) 2, 4`,
+
+`Davlat funksiyalari faoliyat ko‘rsatish muddati (a) va ijtimoiy jihatdan muhimligi (b) bo‘yicha qaysi guruhlarga bo‘linadi?
+1) doimiy va vaqtinchalik   
+2) asosiy va asosiy bo‘lmagan
+3) iqtisodiy-ijtimoiy va siyosiy-huquqiy
+4) ichki va tashqi
+A) a-1, b-3		
+B) a-2, b-3
+C) a-1, b-2		
+D) a-2, b-4`,
+
+`Davlat funksiyalari amalga oshirishning huquqiy shakli bo‘yicha qaysi guruhlarga bo‘linadi?
+A) doimiy va vaqtinchalik   
+B) asosiy va asosiy bo‘lmagan
+C) huquqni ijod, ijro va muhofaza qilish
+D) ichki va tashqi`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+... deyilganda, davlatning boshqaruv, hududiy tuzilishi va siyosiy tartibi jihatidan qanday shakllarga bo‘linishi tushuniladi.
+A) Davlatning boshqaruv shakli	
+B) Davla shakllari
+C) Davlatning huquqqa bo‘lgan munosabati
+D) Davlat mexanizmi`,
+
+`“Biror mamlakat ishlarining orqaga ketishiga sabab – tuzuklari-yu tartibotlarining susayishidandir”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Abu Nasr Forobiy		
+B) Amir Temur
+C) Maxmud az-Zamaxshariy	
+D) Burhoniddin al-Marg‘inoniy`,
+
+`Oliy hokimiyat yakka davlat boshlig‘ining qo‘lida bo‘lgan va bu hokimiyat avloddan avlodga meros qilib beriladigan davlat boshqaruv shakli nima deb ataladi?
+A) demokratiya	
+B) aristokratiya
+C) respublika	
+D) monarxiya`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) “monarxiya” – yunoncha so‘z bo‘lib, “yakka hokimlik” ma’nosini bildiradi;
+2) agar monarx o‘z davlatini boshqarishda uning boshqaruvi boshqa biron-bir idora bilan cheklanmasa, bunday monarxiya teokratik monarxiya deyiladi;
+3) cheklangan monarxiyada monarxning hukmronligi konstitutsiya yoki parlament bilan cheklanadi;
+4) noan’anaviy monarxiya tushunchasi davlat boshqaruvi va diniy hokimiyat monarx qo‘lida to‘planishini anglatadi.
+A) 1, 4   
+B) 2, 4   
+C) 1, 3   
+D) 2, 3`,
+
+`Qaysi javobda parlamentar respublikaga oid ma’lumotlar to‘g‘ri ko‘rsatilgan?
+1) davlatni xalq saylaydigan va juda keng vakolatlarga ega bo‘lgan Prezident boshqaradi; 2) Prezident saylanuvchi mansabdor shaxs bo‘lib, asosan, oliy vakillik organi tomonidan saylanadi; 
+3) Hukumat oliy qonun chiqaruvchi tomonidan shakllantiriladi va unga hisobot beradi; 
+4) Prezident ijro hokimiyatining bevosita boshqaruvchisi hisoblanadi.
+A) 1, 3     
+B) 2, 3     
+C) 1, 4     
+D) 2, 4`,
+
+`Quyida berilganlardan qaysilari monarxiya boshqaruvi shaklidagi davlatlar hisoblanmaydi?
+1) Malayziya; 2) Chili; 3) Eron; 4) Yaponiya; 5) Italiya; 6) Quvayt.
+A) 1, 4, 6   
+B) 2, 3, 5   
+C) 2, 3, 6   
+D) 1, 4, 5`,
+
+`Mutlaq monarxiya shaklidagi davlatlarni aniqlang.
+1) Saudiya Arabistoni; 2) Norvegiya; 3) Qatar; 4) Isroil; 5) O‘mon; 6) Islandiya.
+A) 1, 3, 5   
+B) 1, 4, 5   
+C) 2, 4, 6	  
+D) 2, 3, 4`,
+
+`Noan’anaviy monarxiyaga oid to‘g‘ri berilgan ma’lumotni aniqlang.
+A) Davlat boshqaruvining bu shakli monarx ramziy yoki cheklangan vakolatlarga egaligini, amalda hokimiyatni parlament boshqarishini anglatadi
+B) Davlat boshqaruvining bu shakli monarx saylov yo‘li bilan tayinlanishini anglatadi
+C) Davlat boshqaruvining bu shakli monarx va parlament o‘rtasida hokimiyat bo‘linishini anglatadi
+D) Davlat boshqaruvining bu shakli oliy hokimiyat diniy rahbar yoki diniy qonunlarga asoslangan monarx tomonidan boshqarilishini anglatadi`,
+
+`“Monarxiya” so‘zi yunonchadan tarjima qilinganda qanday ma’noni anglatadi?
+A) yakka hokimlik		
+B) mustaqillik
+C) umumiy ish		
+D) xalq hokimiyati`,
+
+`Islandiya (a) va Marokash (b) ning boshqaruv shaklini to‘g‘ri belgilang.
+A) a-parlamentar respublika; b-cheklangan monarxiya
+B) a-parlamentar monarixiya; b-prezidentlik respublikasi
+C) a-parlamentar respublika; b-prezidentlik respublikasi
+D) a-aralash respublika; b-parlamentar respublika`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+… – bu davlat hokimiyatining oliy organlari qanday tashkil etilishi, ular o‘rtasida vakolatlar qanday taqsimlanishi va hokimiyatning kim tomonidan amalga oshirilishini ifodalovchi tushunchadir
+A) Davlatning huquqiy shakli
+B) Davlatning tuzilish shakli 
+C) Davlatning boshqaruv shakli
+D) Davlatning siyosiy rejimi`,
+
+`Monarxiyaning asosiy belgilari ko‘rsatilgan javobni aniqlang.
+1) monarx o‘z boshqaruvining natijasi uchun yuridik jihatdan javobgar emas;
+2) monarx hokimiyati muqaddas va ilohiy deb e’lon qilinadi;
+3) monarx o‘z qarorlarini saylangan muddati davomida qabul qiladi;
+4) monarx tomonidan hokimiyat vakolatlari taqsimlab beriladi;
+5) monarx mamlakatni umrbod boshqaradi.
+A) 1, 3, 5   
+B) 1, 2, 5   
+C) 2, 4, 5   
+D) 2, 3, 4`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) agar monarx o‘z davlatini boshqarishda uning boshqaruvi boshqa biron bir idora bilan cheklanmasa, bunday monarxiya absolyut monarxiya deyiladi;
+2) noan’anaviy monarxiyada hokimiyat aksariyat hollarda yakka-hokim (monarx)ning farzandlariga, ayrim hollarda esa yakka-hokimning qaroriga ko‘ra boshqa shaxsga meros bo‘lib o‘tadi;
+3) respublika davlat boshqaruvining shunday shakliki, unda hokimiyat oliy idoralari ma’lum muddatga saylanadi;
+4) parlamentar respublikada prezident ijro hokimiyatining bevosita boshqaruvchisi hisoblanadi;
+5) parlamentar respublikada prezident, asosan, parlament tomonidan saylanadi.
+A) 1, 3, 5   
+B) 1, 3, 4   
+C) 2, 3, 5   
+D) 1, 4, 5`,
+
+`Quyida berilganlardan prezidentlik respublikasi boshqaruv shaklidagi davlatlarni aniqlang.
+1) Avstraliya; 2) Argentina; 3) Meksika; 4) Hindison; 5) Italiya; 6) Braziliya
+A) 1, 2, 6   
+B) 2, 3, 5   
+C) 2, 3, 6   
+D) 1, 4, 5`,
+
+`Quyida berilganlardan qaysilari monarxiya boshqaruvi shaklidagi davlatlar hisoblanmaydi?
+1) Marokash; 2) Islandiya; 3) Kuba; 4) Kanada; 5) Belgiya; 6) Polsha.
+A) 1, 4, 6   
+B) 2, 3, 5   
+C) 2, 3, 6  
+D) 1, 4, 5`,
+
+`Davlatning turlarga bo‘linishida nimalar asos qilib olinadi?
+A) boshqaruv shakli, hududiy tuzilishi, siyosiy tartib
+B) davlat mexanizmi, davlat funksiyalari, davlat organlari
+C) ichki va tashqi funksiyalar, demokratiya darajasi, xalqning davlat idoralarini shakllantirishda ishtiroki
+D) xalqaro aloqalar, siyosiy rejimlar, fuqarolik jamiyati institutlari mavjudligi`,
+
+`Qaysi javobda prezidentlik respublikasiga oid ma’lumotlar to‘g‘ri ko‘rsatilgan?
+1) davlatni xalq saylaydigan va juda keng vakolatlarga ega bo‘lgan Prezident boshqaradi; 
+2) Prezident saylanuvchi mansabdor shaxs bo‘lib, asosan, oliy vakillik organi tomonidan saylanadi; 
+3) Prezident o‘z boshqaruvining natijasi uchun yuridik jihatdan javobgar bo‘lmaydi; 
+4) Prezident ijro hokimiyatining bevosita boshqaruvchisi hisoblanadi.
+A) 1, 3     
+B) 2, 3     
+C) 1, 4     
+D) 2, 4`,
+
+`Quyidadagilardan teokratik monarxiya boshqaruvi shaklidagi davlatni aniqlang.
+A) Tailand	
+B) Eron
+C) Lyuksenburg	
+D) Saudiya Arabistoni`,
+
+`“Respublika” so‘zi lotinchadan tarjima qilinganda qanday ma’noni anglatadi?
+A) jamlangan, birlashgan
+B) mustaqillik
+C) umumiy ish
+D) xalq hokimiyati`,
+
+`Teokratik monarxiyaga oid to‘g‘ri berilgan ma’lumotni aniqlang.
+A) Davlat boshqaruvining bu shakli monarx ramziy yoki cheklangan vakolatlarga egaligini, amalda hokimiyatni parlament boshqarishini anglatadi
+B) Davlat boshqaruvining bu shakli monarx saylov yo‘li bilan tayinlanishini anglatadi
+C) Davlat boshqaruvining bu shakli monarx va parlament o‘rtasida hokimiyat bo‘linishini anglatadi
+D) Davlat boshqaruvining bu shakli oliy hokimiyat diniy rahbar yoki diniy qonunlarga asoslangan monarx tomonidan boshqarilishini anglatadi`,
+
+`Cheklangan monarxiya shaklidagi davlatlarni aniqlang.
+1) Daniya; 2) Portugaliya; 3) Gretsiya; 4) Shvetsiya; 5) Norvegiya; 6) Italiya.
+A) 1, 3, 5   
+B) 1, 4, 5   
+C) 2, 4, 6   
+D) 2, 3, 4`,
+
+`Quyidadagilardan mutlaq monarxiya boshqaruvi shaklidagi davlatni aniqlang.
+A) Vyetnam	
+B) Liviya
+C) Qatar		
+D) Belgiya`,
+
+`Fransiya (a) va Germaniya (b) ning boshqaruv shaklini to‘g‘ri belgilang.
+A) a-parlamentar respublika; b-cheklangan monarxiya
+B) a-parlamentar monarixiya; b-prezidentlik respublikasi
+C) a-parlamentar respublika; b-prezidentlik respublikasi
+D) a-aralash respublika; b-parlamentar respublika`,
+
+`Boshqaruv shakli deganda, … . 
+Nuqtalar o‘rniga mos keluvchi javobni belgilang.
+A) davlatning boshqaruv, hududiy tuzilishi va siyosiy tartibi jihatidan qanday shakllarga bo‘linishi tushuniladi
+B) davlat hokimiyati, uning idoralarining aholi bilan o‘zaro munosabatlari, aholining ushbu idoralarni shakllantirishda ishtirok etish darajasi tushuniladi
+C) hokimiyat ustida turgan siyosiy kuchlarning davlatni boshqarishdagi qo‘llaydigan usullari va uslublarining yaxlit tizimi tushuniladi
+D) jamiyatni boshqarish va xalq manfaatlarini himoya qilishni amalga oshiradigan davlat organlarining yaxlit tizimi tushuniladi`,
+
+`Quyida berilganlardan qaysilari monarxiya boshqaruvi shaklidagi davlatlar hisoblanmaydi?
+1) Vatikan; 2) Eron; 3) Isroil; 4) Misr; 5) Shimoliy Koreya; 6) Daniya.
+A) 1, 4, 6   
+B) 2, 3, 5   
+C) 2, 3, 4   
+D) 1, 4, 5`,
+
+`Quyidagi ma’lumotlarni o‘qing.
+Davlatni bevosita xalq saylaydigan va juda keng vakolatlarga ega bo‘lgan Prezident boshqaradi. U ijro hokimiyatining bevosita boshqaruvchisi hisoblanadi.
+Berilgan ma’lumotlarga mos keluvchi davlatni aniqlang.
+A) Buyuk Britaniya
+B) Saudiya Arabistoni
+C) Portugaliya
+D) Braziliya`,
+
+`Quyida berilganlardan qaysilari parlamentar respublika boshqaruvi shaklidagi davlatlar hisoblanadi?
+1) Germaniya; 2) Argentina; 3) Meksika; 4) Irlandiya; 5) Xitoy; 6) Gretsiya. 
+A) 1, 3, 5   
+B) 2, 4, 5   
+C) 1, 4, 6   
+D) 2, 3, 6`,
+
+`Quyida berilganlardan qaysilari monarxiya boshqaruvi shaklidagi davlatlar hisoblanadi?
+1) Belgiya; 2) Turkmaniston; 3) Yaponiya; 4) Marokash; 5) Gretsiya; 6) Argentina.
+A) 2, 4, 6   
+B) 2, 3, 5   
+C) 1, 3, 4   
+D) 1, 4, 5`,
+
+`Dualistik monarxiyaga oid to‘g‘ri berilgan ma’lumotni aniqlang.
+A) Davlat boshqaruvining bu shakli monarx ramziy yoki cheklangan vakolatlarga egaligini, amalda hokimiyatni parlament boshqarishini anglatadi
+B) Davlat boshqaruvining bu shakli monarx saylov yo‘li bilan tayinlanishini anglatadi
+C) Davlat boshqaruvining bu shakli monarx va parlament o‘rtasida hokimiyat bo‘linishini anglatadi
+D) Davlat boshqaruvining bu shakli oliy hokimiyat diniy rahbar yoki diniy qonunlarga asoslangan monarx tomonidan boshqarilishini anglatadi`,
+
+`“Fozil davlat uning aholisi o‘zaro yordam berishiga, insonparvarlikka, insoniy mehr-oqibatga, uning eng oliy boylik ekanini payqab olishga, yaxshilashga asoslanish kerak”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Abu Nasr Farobiy	
+B) Amir Temur
+C) Abu Ali ibn Sino	
+D) Alisher Navoiy`,
+
+`Portugaliya (a) va Ispaniya (b) ning boshqaruv shaklini to‘g‘ri belgilang.
+A) a-parlamentar respublika; b-cheklangan monarxiya
+B) a-parlamentar monarixiya; b-prezidentlik respublikasi
+C) a-parlamentar respublika; b-prezidentlik respublikasi
+D) a-aralash respublika; b-parlamentar respublika`,
+
+`Quyida berilganlardan qaysilari monarxiya boshqaruvi shaklidagi davlatlar hisoblanadi?
+1) Shvetsiya; 2) Italiya; 3) Meksika; 4) Daniya; 5) Norvegiya; 6) Chexiya.
+A) 1, 4, 6   
+B) 2, 3, 5   
+C) 2, 3, 6   
+D) 1, 4, 5`,
+
+`Quyidagi ma’lumotlarni o‘qing.
+Davlatni xalq tomonidan saylanadigan prezident boshqarsa-da, oliy hokimiyat vakolatlari parlament va prezident o‘rtasida taqsimlangan. Hukumat parlament oldida siyosiy javobgarlikka ega.
+Berilgan ma’lumotlarga mos keluvchi davlatni aniqlang.
+A) Birlashgan Arab Amirliklari
+B) Koreya Xalq Demokratik Respublikasi
+C) Amerika Qo‘shma Shtatlari
+D) Janubiy Koreya`,
+
+`“Agar hokimiyat atrofida adolat hukm surmasa, u inqirozga yuz tutadi”.
+Ushbu fikr kim tomonidan aytilgan?
+A) Abdulloh Muqni’	
+B) Muhammad Kamol Pilav
+C) Abu Bakr Xorazmiy 	
+D) Ali ibn Abu Tolib`,
+
+`Quyidagi mamlakatlarning boshqaruv shaklini aniqlang.
+a) Saudiya Arabistoni; b) Marokash.
+A) a-mutlaq monarxiya; b-parlamentar respublika
+B) a-konstitutsiyaviy monarxiya; b-prezidentlik respublikasi
+C) a-teokratik monarxiya; b-konstitutsiyaviy monarxiya
+D) a-prezidentlik respublikasi; b-parlamentar monarxiya`,
+
+`Cheklangan monarxiya boshqaruvi shaklidagi davlatni aniqlang.
+A) Belgiya	
+B) Vatikan
+C) Irlandiya	
+D) Polsha`
+        ];
+        
+        const totalQuestions = customQuestions.length;
+        const questionsList = document.getElementById('questions-list');
+        const resultField = document.getElementById('result-field');
+        const currentAnswers = {};
+        const copyButton = document.getElementById('copy-button');
+        const copyMessage = document.getElementById('copy-message');
+
+        function parseQuestion(fullText) {
+            const lines = fullText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            let questionBody = [];
+            let options = {};
+            let isOptionsStarted = false;
+
+            lines.forEach(line => {
+                if (line.match(/^[A-D][\.\)]\s/i)) {
+                    isOptionsStarted = true;
+                    const key = line[0].toLowerCase();
+                    options[key] = line; 
+                } else if (!isOptionsStarted) {
+                    questionBody.push(line);
+                }
+            });
+            return {
+                questionBody: questionBody.join('<br>'),
+                options: options
+            };
+        }
+
+        function renderQuestions() {
+            for (let i = 0; i < totalQuestions; i++) {
+                const qId = i + 1;
+                const qData = parseQuestion(customQuestions[i]);
+
+                const qContainer = document.createElement('div');
+                qContainer.className = 'question-container';
+                qContainer.setAttribute('data-question-id', qId);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${qId}. ${qData.questionBody}`;
+                qContainer.appendChild(qText);
+                
+                const optionsGroup = document.createElement('div');
+                optionsGroup.className = 'options-group';
+                const variantKeys = ['a', 'b', 'c', 'd'];
+                
+                variantKeys.forEach(key => {
+                    const variantText = qData.options[key];
+                    if (variantText) {
+                        const answerDisplayText = document.createElement('div');
+                        answerDisplayText.className = 'answer-text';
+                        answerDisplayText.textContent = variantText;
+                        optionsGroup.appendChild(answerDisplayText);
+                    }
+                });
+
+                const selectionGroup = document.createElement('div');
+                selectionGroup.className = 'answer-selection-group';
+
+                variantKeys.forEach(variant => {
+                    const radioId = `q${qId}${variant}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.id = radioId;
+                    input.name = `question${qId}`;
+                    input.value = variant;
+                    input.addEventListener('change', () => updateResult(qId, variant));
+                    
+                    const label = document.createElement('label');
+                    label.className = 'answer-label';
+                    label.htmlFor = radioId;
+                    label.textContent = variant.toUpperCase();
+
+                    selectionGroup.appendChild(input);
+                    selectionGroup.appendChild(label);
+                });
+                
+                optionsGroup.appendChild(selectionGroup);
+                qContainer.appendChild(optionsGroup);
+                questionsList.appendChild(qContainer);
+            }
+        }
+
+        // =============================================================
+        // ✅ O'ZGARTIRILGAN QISM (Raqamlarsiz, kichik harflarda)
+        // =============================================================
+        function updateResult(qId, answer) {
+            currentAnswers[qId] = answer; 
+            
+            let resultString = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (currentAnswers[i]) {
+                    resultString += currentAnswers[i];
+                }
+            }
+            resultField.value = resultString;
+        }
+
+        async function copyResult(event) {
+            event.preventDefault();
+            
+            let unmarkedQIds = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (!currentAnswers[i]) {
+                    unmarkedQIds.push(i);
+                }
+            }
+            
+            if (unmarkedQIds.length > 0) {
+                alert(`⚠️ Nusxalashdan oldin barcha ${totalQuestions} savolni belgilashingiz kerak.\n\nBelgilanmagan savollar raqami: ${unmarkedQIds.join(', ')}`);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => {
+                    copyMessage.style.visibility = 'hidden';
+                }, 2000);
+            } catch (err) {
+                resultField.select();
+                document.execCommand("copy");
+                alert("✅ Nusxalandi: " + resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000);
+            }
+        }
+
+        const timeLimit = 60 * 60;
+        let timeLeft = timeLimit;
+        const timerDisplay = document.getElementById('timer-display');
+        const warningTime = 5 * 60;
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `Vaqt: ${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+
+            if (timeLeft <= warningTime) {
+                timerDisplay.classList.add('timer-warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Vaqt tugadi!";
+                document.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
+                });
+                alert("🔴 Vaqt tugadi! Javoblarni nusxalashingiz mumkin.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            timerDisplay.textContent = formatTime(timeLeft);
+            const timerInterval = setInterval(updateTimer, 1000);
+            copyButton.addEventListener('click', copyResult);
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && (['c', 'x', 'v', 'a'].includes(e.key.toLowerCase()))) {
+                    e.preventDefault();
+                }
+                if (e.key === 'F12') {
+                     e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
