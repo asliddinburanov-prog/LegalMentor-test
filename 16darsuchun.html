@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalMentor TEST | Rasmiy Versiya</title>
+    
+    <style>
+        /* 7. Mobil Ekran uchun Asosiy Uslublar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; 
+            padding-top: 60px; /* Taymer uchun joy qoldirish */
+            background-color: #f0f2f5;
+            color: #333;
+            /* 5. Matn tanlashni o'chirish */
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* 9. Qattiq Taymer Konteyneri (Fixed Position) */
+        .timer-bar {
+            position: fixed; /* Joyidan siljimasligi uchun */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #0056b3;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            z-index: 1000; /* Boshqa elementlardan ustun turishi uchun */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .timer-warning {
+            background-color: #dc3545; /* Qizil rang 5 daqiqa qolganda */
+        }
+
+        /* 6. Logotip va Sarlavha Uslubi */
+        .header {
+            text-align: center;
+            padding: 15px 10px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 15px;
+        }
+        .header img {
+            max-width: 150px; /* Logotip razmeri */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 0;
+            color: #0056b3;
+        }
+
+        /* Savol Konteynerlari */
+        .question-container {
+            margin: 0 10px 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .answer-text {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        /* Tanlash Tugmalari (Mobil uchun moslashuvchan) */
+        .answer-selection-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: space-between;
+        }
+        .answer-label {
+            flex: 1; /* Teng kenglikda bo'lishi uchun */
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 5px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: bold;
+            min-width: 40px;
+        }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .answer-label {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        /* Natija Maydoni Uslubi */
+        .result-section {
+            margin: 20px 10px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        #result-field {
+            width: 100%;
+            min-height: 50px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+            text-align: center;
+            /* Nusxalanadigan matnni tanlashga ruxsat berish */
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+        }
+        .copy-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            width: 100%; /* Mobil uchun to'liq kenglik */
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .copy-message {
+            color: #4CAF50; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timer-display" class="timer-bar">
+        Vaqt: 60:00
+    </div>
+
+    <div class="header">
+        <img src="https://asliddinburanov-prog.github.io/LegalMentor-test/2.jpg" alt="LegalMentor Logotipi">
+        <h1>Test Savollari</h1>
+    </div>
+
+    <div style="margin: 0 10px; padding: 10px; background-color: #fff3cd; color: #856404; border-radius: 5px; font-weight: bold; text-align: center;">
+        ⚠️ DIQQAT: Testni bir urinishda yakunlang. Nusxalash va ekranni rasmga olish cheklangan!
+    </div>
+
+    <div id="questions-list"></div>
+
+    <div class="result-section">
+        <label for="result-field" style="display: block; font-weight: bold;">Javob Belgilari (Nusxalanadigan maydon):</label>
+        <textarea id="result-field" readonly placeholder="Barcha javoblar belgilangandan so'ng bu yerda avtomatik ko'rinadi..."></textarea>
+        <button id="copy-button" class="copy-button">Belgilarni Nusxalash</button>
+        <p id="copy-message" class="copy-message">✅ Muvaffaqiyatli nusxalandi!</p>
+    </div>
+
+    <script>
+        const customQuestions = [
+       `Quyidagilardanq qaysilari O‘zbekiston Respublikasi sud tizimida mavjud emas?
+1) Qoraqalpog‘iston Respublikasi ma’muriy sudi, viloyatlar va Toshkent shahar ma’muriy sudlari;
+2) Qoraqalpog‘iston Respublikasi iqtisodiy sudi, viloyatlar va Toshkent shahar iqtisodiy sudlari;
+3) fuqarolik ishlari bo‘yicha tumanlararo, tuman, shahar sudlari;
+4) jinoyat ishlari bo‘yicha tumanlararo, tuman, shahar sudlari;
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. Sudyalar korpusini shakllantirish sudyalarning mustaqilligi prinsipiga qat’iy muvofiq holda O‘zbekiston Respublikasi Sudyalar oliy kengashi tomonidan amalga oshiriladi;
+II. O‘zbekiston Respublikasining Konstitutsiyasiga muvofiq O‘zbekiston Respublikasi Oliy sudi qonunlar loyihalarini O‘zbekiston Respublikasi Oliy Majlisining Qonunchilik palatasiga kiritish orqali amalga oshiriladigan qonunchilik tashabbusi huquqiga ega;
+III. Barcha sudlarda ishlar ochiq ko‘riladi. Ishlarni yopiq sud majlisida ko‘rib chiqishga har qanday holatda ham yo‘l qo‘yilmaydi.
+A) I-to‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri	
+B) I-noto‘g‘ri; II-to‘g‘ri; III-to‘g‘ri
+C) I-noto‘g‘ri; II-noto‘g‘ri; III-to‘g‘ri	
+D) I-to‘g‘ri; II-noto‘g‘ri; III-noto‘g‘ri`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) O‘zbekiston Respublikasida sud ishlarini yuritish faqat davlat tilida olib boriladi; 
+2) Sud ishlari yuritilayotgan tilni bilmaydigan ishda ishtirok etuvchi shaxslarga tarjimon orqali ish materiallari bilan to‘la tanishish, sud harakatlarida ishtirok etish huquqi va sudda ona tilida yoki ular biladigan boshqa tilda so‘zlash huquqi ta’minlanadi; 
+3) Qonunda belgilangan hollarda davlat bepul malakali yuridik yordam ko‘rsatilishini ta’minlaydi;
+4) Odil sudlovni amalga oshirishda har bir kishiga malakali yuridik yordam olish huquqi kafolatlanadi. Gumon qilinuvchiga, ayblanuvchiga, sudlanuvchiga sud ishlarini yuritishning faqat birinchi instansiya sudi bosqichida himoyalanish huquqi ta’minlanadi.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+… fuqarolik, jinoiy, iqtisodiy va ma’muriy sud ishlarini yuritish sohasida sud hokimiyatining oliy organidir. 
+A) O‘zbekiston Respublikasi Oliy xo‘jalik sudi	
+B) O‘zbekiston Respublikasi Sudyalar oliy kengashi 
+C) O‘zbekiston Respublikasi Oliy sudi
+D) O‘zbekiston Respublikasi Konstitutsiyaviy sudi`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang. 
+1) O‘zbekiston Respublikasi Oliy sudi quyi sudlarning sudlov faoliyati ustidan nazorat olib borish huquqiga ega;
+2) Sudlov hay’atlarida ixtisoslashtirilgan sudlov tarkiblari tuzilishi mumkin emas;
+3) O‘zbekiston Respublikasi Oliy sudi sudyalarining son jihatdan tarkibi O‘zbekiston Respublikasi Oliy sudi raisining taqdimnomasiga binoan O‘zbekiston Respublikasi Prezidenti tomonidan belgilanadi;
+4) O‘zbekiston Respublikasi Oliy sudi Plenumi faqat O‘zbekiston Respublikasi Oliy sudi sudyalaridan iborat tarkibda ish yuritadi.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Quyidagilar O‘zbekiston Respublikasi Oliy sudining vakolatlarini aniqlang
+1) o‘z vakolatlari doirasida ishlarni birinchi instansiya, apellyatsiya yoki kassatsiya va taftish instansiyasi sudi sifatida, shuningdek yangi ochilgan holatlar bo‘yicha ko‘rib chiqadi; 
+2) O‘zbekiston Respublikasi Oliy sudi Plenumida sud amaliyotining dolzarb masalalarini ko‘rib chiqadi va qonunchilikning qo‘llanilishi yuzasidan tushuntirishlar beradi;
+3) viloyatlar va Toshkent shahar sudlarining sudyalarini, tumanlararo, tuman, shahar sudlarining raislarini, ularning o‘rinbosarlari va sudyalarini, viloyatlar va Toshkent shahar ma’muriy sudlari sudyalarini, tumanlararo ma’muriy sudlarning raislarini, ularning o‘rinbosarlari va sudyalarini, shuningdek O‘zbekiston Respublikasi Harbiy sudining sudyalarini, hududiy harbiy sudlarning raislarini lavozimga tayinlaydi;
+4) viloyatlar va Toshkent shahar sudlarining raislari va rais o‘rinbosarlari, viloyatlar va Toshkent shahar ma’muriy sudlari raislari va rais o‘rinbosarlari, O‘zbekiston Respublikasi Harbiy sudining raisi va rais o‘rinbosari lavozimlariga tavsiya etiladigan nomzodlar bo‘yicha O‘zbekiston Respublikasi Prezidentiga taqdimnomalar kiritadi.
+A) 1 va 2    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Quyidagilardan qaysilari O‘zbekiston Respublikasi Oliy tarkibida ish yuritmaydi?
+1) O‘zbekiston Respublikasi Sudyalar oliy kengashi;
+2) Ma’muriy ishlar bo‘yicha sudlov hay’ati;
+3) Fuqarolik ishlari bo‘yicha sudlov hay’ati;
+4) O‘zbekiston Respublikasi Oliy sudi devoni.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. O‘zbekiston Respublikasi Oliy sudi Plenumi zaruriyatga qarab, lekin to‘rt oyda kamida bir marta chaqiriladi;
+II. O‘zbekiston Respublikasi Oliy sudi Plenumi Plenum a’zolarining yarmidan ko‘pi hozir bo‘lgan taqdirda vakolatlidir;
+III. O‘zbekiston Respublikasi Oliy sudi Plenumi o‘z vakolatlariga kiritilgan masalalar yuzasidan farmoyish va qarorlar qabul qiladi.
+A) I-noto‘g‘ri; II-to‘g‘ri; III-to‘g‘ri		
+B) I-to‘g‘ri; II-noto‘g‘ri; III-to‘g‘ri
+C) I-noto‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri		
+D) I-to‘g‘ri; II-noto‘g‘ri; III-noto‘g‘ri`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+O‘zbekiston Respublikasi Oliy sudi Plenumining qarori … tomonidan imzolanadi.
+A) O‘zbekiston Respublikasi Oliy sudi raisi va O‘zbekiston Respublikasi Oliy sudi Plenumining kotibi 
+B) O‘zbekiston Respublikasi Oliy sudi raisi va O‘zbekiston Respublikasi Sudyalar oliy kengashining raisi
+C) O‘zbekiston Respublikasi Prezidenti va O‘zbekiston Respublikasi Oliy sudi raisi
+D) O‘zbekiston Respublikasi Konstitutsiyaviy sudi raisi va O‘zbekiston Respublikasi Oliy sudi raisi`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+… (a) yoshdan kichik bo‘lmagan, fuqarolarning yashash yoki ish joyidagi yig‘ilishida ochiq ovoz berish yo‘li bilan … (b) muddatga saylangan O‘zbekiston Respublikasi fuqarosi xalq maslahatchisi bo‘lishi mumkin.
+1) O‘ttiz besh; 
+2) Yigirma besh; 
+3) ikki yarim yil; 
+4) besh yil.
+A) (a) – 2, (b) – 3
+B) (a) – 1, (b) – 4 
+C) (a) – 1, (b) – 3 
+D) (a) – 2, (b) – 4`,
+
+`Noto‘g‘ri berilgan ma’lumotlarni aniqlang.
+A) O‘zbekiston Respublikasi Oliy sudi Rayosati majlislari zaruriyatga qarab, lekin har uch oyda kamida bir marta o‘tkaziladi va O‘zbekiston Respublikasi Oliy sudi Rayosati a’zolarining ko‘pchiligi hozir bo‘lgan taqdirda vakolatlidir.
+B) O‘zbekiston Respublikasi Sudyalar oliy kengashi, Bosh prokurori qonunchilikni qo‘llash masalalari bo‘yicha O‘zbekiston Respublikasi Oliy sudi Plenumi tomonidan tushuntirishlar berilishi haqida takliflar kiritishga haqli.
+C) O‘zbekiston Respublikasi Oliy sudining Plenumi ko‘rib chiqishi uchun masalalar O‘zbekiston Respublikasi Oliy sudi raisi tomonidan kiritiladi.
+D) O‘zbekiston Respublikasi Oliy sudi Rayosati O‘zbekiston Respublikasi Oliy sudi sudyalaridan O‘zbekiston Respublikasi Oliy sudi Plenumi tomonidan belgilanadigan miqdorda tuziladi`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) Sudya O‘zbekiston Respublikasi Sudyalar oliy kengashining xulosasi olinmasdan va O‘zbekiston Respublikasi Oliy sudi Plenumining roziligisiz jinoiy javobgarlikka tortilishi, qamoqqa olinishi mumkin emas;
+2) Sudyaga nisbatan jinoyat ishi faqat O‘zbekiston Respublikasi Ichki ishlar vaziri tomonidan qo‘zg‘atilishi mumkin;
+3) Sudyaga nisbatan jinoyat ishi O‘zbekiston Respublikasi Oliy sudi sudloviga tegishlidir;
+4) Muayyan ishni har tomonlama, to‘la va xolisona ko‘rib chiqishga to‘sqinlik qilish yoki g‘ayriqonuniy sud hujjati chiqarilishiga erishish maqsadida sudyalarga qanday bo‘lmasin ta’sir ko‘rsatish qonunga muvofiq ma’muriy javobgarlikka sabab bo‘ladi.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Nuqtalar o‘rniga mos keluvchi javobni aniqlang.
+O‘zbekiston Respublikasi Oliy sudi sudyasi lavozimida bo‘lishning eng yuqori yoshi … (a) yoshni, boshqa sudlar sudyalari uchun — … (b) yoshni tashkil etadi.
+A) (a) – yetmish; (b) – yemish besh 
+B) (a) – oltmish; (b) – oltmish besh
+C) (a) – oltmish; (b) – ellik besh
+D) (a) – yetmish; (b) – oltmish besh`,
+
+`Qaysi holatlarda sudyaning vakolatlari quyidagi hollarda muddatidan ilgari tugatiladi?
+1) sudya o‘z lavozimiga zid faoliyat bilan shug‘ullanayotgan bo‘lsa; 
+2) tegishli sudyalar malaka hay’ati tomonidan ogohlantirish qilinganidan yoki vakolatlari to‘xtatilganidan keyin u sudyalik lavozimiga zid faoliyat bilan shug‘ullanishni davom ettiravergan taqdirda; 
+3) sudya sudning hal qiluv qarori bilan bedarak yo‘qolgan deb topilgan bo‘lsa;
+4) u sud tomonidan muomalaga layoqatsiz yoki muomala layoqati cheklangan deb topilgan taqdirda;
+5) sudya davlat hokimiyati vakillik organlari saylovida deputatlikka nomzod sifatida ishtirok etayotgan bo‘lsa;
+6) u vafot etganda yoki sudning qarori bilan vafot etgan deb e’lon qilingan taqdirda.
+A) 1, 2, 5	
+B) 2, 4, 6 	
+C) 1, 3, 5	
+D) 2, 3, 6`,
+
+`Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. Yuridik ixtisoslik bo‘yicha kamida o‘n besh yillik ish stajiga, shu jumladan, qoida tariqasida, sudya sifatida kamida yetti yillik ish stajiga ega bo‘lgan shaxs O‘zbekiston Respublikasi Oliy sudi sudyasi bo‘lishi mumkin;
+II. Yuridik ixtisoslik bo‘yicha kamida o‘n yillik ish stajiga, shu jumladan, qoida tariqasida, sudya sifatida kamida ikki yillik ish stajiga ega bo‘lgan shaxs O‘zbekiston Respublikasi Harbiy sudining, Qoraqalpog‘iston Respublikasi sudining, Qoraqalpog‘iston Respublikasi ma’muriy sudining, viloyat, Toshkent shahar sudining, viloyat, Toshkent shahar ma’muriy sudining sudyasi bo‘lishi mumkin;
+III. O‘ttiz besh yoshga to‘lgan va yuridik ixtisoslik bo‘yicha kamida o‘n yillik ish stajiga ega bo‘lgan shaxs tumanlararo, tuman, shahar sudining, hududiy harbiy sudning sudyasi bo‘lishi mumkin.
+A) I-noto‘g‘ri; II-to‘g‘ri; III-to‘g‘ri		
+B) I-to‘g‘ri; II-noto‘g‘ri; III-to‘g‘ri
+C) I-noto‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri		
+D) I-to‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri`,
+
+`Sudlar faoliyatini moddiy-texnika va moliyaviy jihatdan ta’minlash qaysi idora tomonidan amalga oshiriladi?
+A) Oliy sud Rayosati
+B) Oliy sud Plenumi
+C) Oliy sud Devoni
+D) Sudlar faoliyatini ta’minlash departamenti`,
+
+`Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. Vakolatlari muddati tugagan sudyalarning o‘rtacha oylik ish haqi ularni yangi vakolatlar muddatiga qayta saylash yoki qayta tayinlash to‘g‘risidagi masala hal qilinayotgan davrda yoxud boshqa ish berilgunga qadar, lekin ko‘pi bilan uch oygacha saqlab qolinadi;
+II. Uy-joyga muhtoj bo‘lgan sudya mahalliy davlat hokimiyati organlari tomonidan O‘zbekiston Respublikasi Oliy Majlisi belgilagan tartibda sud joylashgan yerda xizmat turar joyi bilan ta’minlanadi;
+III. O‘n yildan ortiq sudyalik ish stajiga ega bo‘lgan sudyalarga o‘z xohishiga ko‘ra olti kalendar kunigacha qo‘shimcha mehnat ta’tili berilishi mumkin.
+A) I-noto‘g‘ri; II-to‘g‘ri; III-to‘g‘ri		
+B) I-to‘g‘ri; II-noto‘g‘ri; III-to‘g‘ri
+C) I-noto‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri		
+D) I-to‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri`,
+
+`To‘g‘ri berilgan ma’lumotlarni aniqlang.
+1) Sud apparati xodimlari O‘zbekiston Respublikasi Sudyalar oliy kengashi tomonidan belgilanadigan tartibda attestatsiyadan o‘tadi;
+2) O‘zbekiston Respublikasi sudlarining tuzilmasi va shtat birligi O‘zbekiston Respublikasi Prezidenti tomonidan tasdiqlanadi;
+3) Sudlarning shtatlar jadvali O‘zbekiston Respublikasi Oliy sudining raisi va O‘zbekiston Respublikasi Oliy sudi huzuridagi Sudlar faoliyatini ta’minlash departamenti tomonidan tasdiqlanadi;
+4) Sudya odil sudlovni maxsus kiyimda amalga oshiradi, kiyim tavsifi va namunalari O‘zbekiston Respublikasi Oliy sudi tomonidan tasdiqlanadi.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Sudyalar malaka hay’atlari qaysi masalalarni ko‘rib chiqish uchun tuziladi?
+1) sudyaning intizomiy javobgarligi;
+2) sudyaning vakolati muddatini uzaytirish;
+3) sudyaga malaka darajasini berish;
+4) sudyalarni lavozimiga saylash va tayinlash;
+5) xalq maslahatchilarini tanlash va ularning saylovini o‘tkazish bo‘yicha ishlarni tashkil qilish;
+6) Sudyalar oliy kengashi faoliyatini muvofiqlashtirish va nazorat qilish.
+A) 1, 3, 5
+B) 2, 3, 4
+C) 1, 2, 6
+D) 2, 4, 6`,
+
+`Qaysi holatlarda sudyaning vakolatlarini to‘xtatib turiladi?
+1) sudyaga nisbatan tibbiy yo‘sindagi majburlov choralari qo‘llanilgan bo‘lsa;
+2) sudya yozma ariza bergan taqdirda;
+3) sudyaga nisbatan jinoyat ishi qo‘zg‘atilgan bo‘lsa;
+4) sudya O‘zbekiston Respublikasining fuqaroligidan chiqqan yoki uni yo‘qotgan taqdirda.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Sudyalarning malaka hay’ati intizomiy javobgarlikka tortilgan sudyaga qo‘llashi mumkin bo‘lgan intizomiy jazo chorasi to‘g‘ri ko‘rsatilgan javobni aniqlang.
+A) axloq tuzatish ishlari
+B) ogohlantirish
+C) xizmat bo‘yicha cheklash
+D) o‘rtacha oylik ish haqining ellik foizidan ortiq bo‘lmagan miqdorda jarima`,
+
+`Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. Bir sudning o‘zida sudyalik lavozimida bo‘lish muddati, qoida tariqasida, ikki yildan kam bo‘lmasligi kerak;
+II. Sudya vakolatlari muddati davrida o‘zining roziligi bilan O‘zbekiston Respublikasi Oliy sudi tomonidan boshqa sudyalik lavozimiga o‘tkazilishi mumkin.
+III. Qoraqalpog‘iston Respublikasi sudi, Qoraqalpog‘iston Respublikasi ma’muriy sudi sudyasi, Qoraqalpog‘iston Respublikasi tumanlararo, tuman (shahar) sudi raisi, rais o‘rinbosari, sudyasi vakolat muddati davrida o‘zining roziligi bilan O‘zbekiston Respublikasi Sudyalar oliy kengashi taqdimnomasiga binoan Qoraqalpog‘iston Respublikasi Jo‘qorg‘i Kengesi tomonidan boshqa sudyalik lavozimiga o‘tkazilishi mumkin.
+A) I-noto‘g‘ri; II-to‘g‘ri; III-to‘g‘ri		
+B) I-to‘g‘ri; II-noto‘g‘ri; III-to‘g‘ri
+C) I-noto‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri		
+D) I-to‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri`,
+
+`O‘zbekiston Respublikasi Sudyalar oliy kengashi tomonidan lavozimga tayinlanadigan sudyalar to‘g‘ri ko‘rsatilgan javobni aniqlang.
+1) O‘zbekiston Respublikasi Oliy sudi sudyasi;
+2) Viloyat, Toshkent shahar ma’muriy sudi, tumanlararo, tuman, shahar sudi, hududiy harbiy sud sudyasi;
+3) Viloyat, Toshkent shahar sudi, O‘zbekiston Respublikasi Harbiy sudi sudyasi;
+4) Qoraqalpog‘iston Respublikasi sudi, Qoraqalpog‘iston Respublikasi ma’muriy sudi, Qoraqalpog‘iston Respublikasi tumanlararo, tuman, shahar sudi sudyasi.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Tumanlararo, tuman, shahar sudining, hududiy harbiy sudning sudyasi bo‘lish uchun minimal talablar to‘g‘ri ko‘rsatilgan javobni aniqlang.
+A) o‘ttiz besh yoshga to‘lganlik va yuridik ixtisoslik bo‘yicha kamida yetti yillik ish stajiga ega bo‘lish
+B) yuridik ixtisoslik bo‘yicha kamida o‘n yillik ish stajiga, shu jumladan, qoida tariqasida, sudya sifatida kamida ikki yillik ish stajiga ega bo‘lish
+C) yuridik ixtisoslik bo‘yicha kamida o‘n besh yillik ish stajiga, shu jumladan, qoida tariqasida, sudya sifatida kamida yetti yillik ish stajiga ega bo‘lish
+D) yuridik ixtisoslik bo‘yicha kamida yetti yillik ish stajiga, shu jumladan, qoida tariqasida, sudya sifatida kamida ikki yillik ish stajiga ega bo‘lish`,
+
+`Sudyalik lavozimiga nomzod bo‘lishi mumkin bo‘lmagan shaxslar ko‘rsatilgan javobni aniqlang.
+1) ilgari sudlangan yoki o‘ziga nisbatan jinoyat ishi reabilitatsiya qilmaydigan asoslar bo‘yicha tugatilgan shaxs; 
+2) chet davlat hududida doimiy yashash huquqini tasdiqlovchi yashash guvohnomasiga yoxud boshqa hujjatga ega bo‘lmagan shaxs;
+3) sud tomonidan muomalaga layoqatsiz yoki muomala layoqati cheklangan deb e’tirof etilgan shaxs;
+4) ma’muriy huquqbuzarlik sodir etganlikda ayblanayotgan shaxs.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`To‘g‘ri berilgan ma’lumotni aniqlang.
+A) Sudyani huquqni muhofaza qiluvchi organlarga guvoh yoki gumon qilinuvchi sifatida so‘roq qilish uchun chaqirishga yo‘l qo‘yilmaydi.
+B) Sudya huquqbuzarlik sodir etganlikda gumon qilinib ushlab turilgan taqdirda, bu haqda ushlab turish uchun asos bo‘lgan hujjatlar ko‘chirma nusxalari ilova qilingan holda O‘zbekiston Respublikasi Sudyalar oliy kengashiga u ushlangan paytdan e’tiboran uch kundan kechiktirmasdan xabar qilinishi shart.
+C) Sudya tegishli sudyalar malaka hay’atining xulosasi olinmasdan ma’muriy javobgarlikka tortilishi mumkin emas.
+D) Sudyaning turar joyiga yoki xizmat xonasiga, foydalanadigan transportiga kirish, ularni ko‘zdan kechirish, ularda tintuv o‘tkazish yoki ulardan ashyoni olish, uning telefondagi so‘zlashuvlarini eshitish, sudyani shaxsan ko‘zdan kechirish va uni shaxsiy tintuv qilish, shuningdek uning xat-xabarlarini, unga tegishli ashyolar va hujjatlarni ko‘zdan kechirish, olib qo‘yish yoxud olish faqat sudning qaroriga binoan yoki O‘zbekiston Respublikasi Oliy Majlisining ruxsati bilan amalga oshirilishi mumkin`,
+
+`Sudyaning majburiyatlari to‘g‘ri ko‘rsatilgan javobni aniqlang.
+1) senator, davlat hokimiyati vakillik organlari deputati bo‘lishga haqli emas;
+2) haq to‘lanadigan pedagogik, ilmiy va boshqa ijodiy faoliyat bilan shug‘ullanishga haqli emas;
+3) sudda ko‘rib chiqilayotgan masala yuzasidan sud hujjati qonuniy kuchga kirgunga qadar oshkora mulohazalar bildirishga haqli emas;
+4) muddatidan ilgari lavozimidan bo‘shash to‘g‘risida ariza bilan murojaat qilishga haqli emas.
+A) 1 va 3    
+B) 2 va 4    
+C) 2 va 3    
+D) 1 va 4`,
+
+`Quyidagilardan qaysi biri tumanlararo ma’muriy sud raisi vakolati hisoblanmaydi?
+A) jismoniy shaxslarni, yuridik shaxslarning vakillarini shaxsan qabul qiladi va ularning murojaatlarini ko‘rib chiqish bo‘yicha ishlarni tashkil etadi
+B) sudyalarning aholi bilan uchrashuvlarini tashkil etadi, shuningdek jamoatchilikni har chorakda sudning faoliyati to‘g‘risida ommaviy axborot vositalari orqali xabardor qilib boradi
+C) sud apparati ishiga rahbarlik qiladi, sud xodimlari bilan mehnat shartnomalarini tuzadi va bekor qiladi
+D) quyi turuvchi sudlarning faoliyatini tashkil etishga ko‘maklashadi`,
+
+`Harbiy sudlar sudloviga taalluqli ishlar to‘g‘ri ko‘rsatilgan javobni aniqlang.
+1) alohida holatlar tufayli sudlar faoliyat ko‘rsatmayotgan joylarda barcha fuqarolik va jinoyat ishlarini ko‘radi;
+2) qonun bilan o‘z vakolatiga kiritilgan ma’muriy huquqbuzarliklar to‘g‘risidagi ishlarni ko‘radi;
+3) tumanlararo, tuman, shahar sudlarining sudlov faoliyati ustidan nazoratni amalga oshiradi;
+4) sud amaliyoti va sud statistikasini umumlashtiradi, ularning tizimli tahlilini amalga oshiradi.
+A) 1 va 2
+B) 2 va 4
+C) 1 va 3
+D) 3 va 4`,
+
+`Quyidagi ma’lumotlarga mos yakuniy xulosa (to‘g‘ri/noto‘g‘ri) keltirilgan javobni aniqlang.
+I. O‘zbekiston Respublikasi Oliy sudi raisi buyruqlar, farmoyishlar va qarorlar qabul qiladi;
+II. O‘zbekiston Respublikasi Oliy sudi raisi ishni taftish tartibida ko‘rish zarurligi haqidagi masalani hal etish uchun qonunda nazarda tutilgan tartibda sud ishlarini talab qilib oladi;
+III. O‘zbekiston Respublikasi Oliy sudi raisi ishni bir suddan boshqa sudga o‘tkazish to‘g‘risidagi masalani hal qilmaydi.
+A) I-noto‘g‘ri; II-to‘g‘ri; III-to‘g‘ri		
+B) I-to‘g‘ri; II-noto‘g‘ri; III-to‘g‘ri
+C) I-noto‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri		
+D) I-to‘g‘ri; II-to‘g‘ri; III-noto‘g‘ri`
+        ];
+        
+        const totalQuestions = customQuestions.length;
+        const questionsList = document.getElementById('questions-list');
+        const resultField = document.getElementById('result-field');
+        const currentAnswers = {};
+        const copyButton = document.getElementById('copy-button');
+        const copyMessage = document.getElementById('copy-message');
+
+        function parseQuestion(fullText) {
+            const lines = fullText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            let questionBody = [];
+            let options = {};
+            let isOptionsStarted = false;
+
+            lines.forEach(line => {
+                if (line.match(/^[A-D][\.\)]\s/i)) {
+                    isOptionsStarted = true;
+                    const key = line[0].toLowerCase();
+                    options[key] = line; 
+                } else if (!isOptionsStarted) {
+                    questionBody.push(line);
+                }
+            });
+            return {
+                questionBody: questionBody.join('<br>'),
+                options: options
+            };
+        }
+
+        function renderQuestions() {
+            for (let i = 0; i < totalQuestions; i++) {
+                const qId = i + 1;
+                const qData = parseQuestion(customQuestions[i]);
+
+                const qContainer = document.createElement('div');
+                qContainer.className = 'question-container';
+                qContainer.setAttribute('data-question-id', qId);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${qId}. ${qData.questionBody}`;
+                qContainer.appendChild(qText);
+                
+                const optionsGroup = document.createElement('div');
+                optionsGroup.className = 'options-group';
+                const variantKeys = ['a', 'b', 'c', 'd'];
+                
+                variantKeys.forEach(key => {
+                    const variantText = qData.options[key];
+                    if (variantText) {
+                        const answerDisplayText = document.createElement('div');
+                        answerDisplayText.className = 'answer-text';
+                        answerDisplayText.textContent = variantText;
+                        optionsGroup.appendChild(answerDisplayText);
+                    }
+                });
+
+                const selectionGroup = document.createElement('div');
+                selectionGroup.className = 'answer-selection-group';
+
+                variantKeys.forEach(variant => {
+                    const radioId = `q${qId}${variant}`;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.id = radioId;
+                    input.name = `question${qId}`;
+                    input.value = variant;
+                    input.addEventListener('change', () => updateResult(qId, variant));
+                    
+                    const label = document.createElement('label');
+                    label.className = 'answer-label';
+                    label.htmlFor = radioId;
+                    label.textContent = variant.toUpperCase();
+
+                    selectionGroup.appendChild(input);
+                    selectionGroup.appendChild(label);
+                });
+                
+                optionsGroup.appendChild(selectionGroup);
+                qContainer.appendChild(optionsGroup);
+                questionsList.appendChild(qContainer);
+            }
+        }
+
+        // =============================================================
+        // ✅ O'ZGARTIRILGAN QISM (Raqamlarsiz, kichik harflarda)
+        // =============================================================
+        function updateResult(qId, answer) {
+            currentAnswers[qId] = answer; 
+            
+            let resultString = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (currentAnswers[i]) {
+                    resultString += currentAnswers[i];
+                }
+            }
+            resultField.value = resultString;
+        }
+
+        async function copyResult(event) {
+            event.preventDefault();
+            
+            let unmarkedQIds = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (!currentAnswers[i]) {
+                    unmarkedQIds.push(i);
+                }
+            }
+            
+            if (unmarkedQIds.length > 0) {
+                alert(`⚠️ Nusxalashdan oldin barcha ${totalQuestions} savolni belgilashingiz kerak.\n\nBelgilanmagan savollar raqami: ${unmarkedQIds.join(', ')}`);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => {
+                    copyMessage.style.visibility = 'hidden';
+                }, 2000);
+            } catch (err) {
+                resultField.select();
+                document.execCommand("copy");
+                alert("✅ Nusxalandi: " + resultField.value);
+                copyMessage.style.visibility = 'visible';
+                setTimeout(() => { copyMessage.style.visibility = 'hidden'; }, 2000);
+            }
+        }
+
+        const timeLimit = 60 * 60;
+        let timeLeft = timeLimit;
+        const timerDisplay = document.getElementById('timer-display');
+        const warningTime = 5 * 60;
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `Vaqt: ${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+
+            if (timeLeft <= warningTime) {
+                timerDisplay.classList.add('timer-warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "Vaqt tugadi!";
+                document.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.disabled = true;
+                });
+                alert("🔴 Vaqt tugadi! Javoblarni nusxalashingiz mumkin.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            timerDisplay.textContent = formatTime(timeLeft);
+            const timerInterval = setInterval(updateTimer, 1000);
+            copyButton.addEventListener('click', copyResult);
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && (['c', 'x', 'v', 'a'].includes(e.key.toLowerCase()))) {
+                    e.preventDefault();
+                }
+                if (e.key === 'F12') {
+                     e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
