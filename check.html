@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalMentor | Kunlik Hisobot Tizimi</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary:    #0f172a;
+            --primary-d:  #020617;
+            --accent:     #3b82f6;
+            --bg:         #f8fafc;
+            --card:       #ffffff;
+            --text:       #0f172a;
+            --text-light: #475569;
+            --border:     #cbd5e1;
+            --gray:       #f1f5f9;
+            --light-blue: #eff6ff;
+        }
+
+        * { box-sizing: border-box; margin:0; padding:0; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px -12px rgba(15,23,42,0.12);
+            overflow: hidden;
+        }
+
+        h2 {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px 16px;
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .content { padding: 24px 20px 0; }
+
+        /* ====================== KIRISH SAHIFASI ====================== */
+        .warning-page .content {
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .warning-text {
+            font-size: 1.05rem;
+            line-height: 1.65;
+            color: var(--text-light);
+            margin: 20px 0 28px;
+        }
+
+        .rule-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            margin: 24px 0;
+            box-shadow: 0 4px 12px rgba(185,28,28,0.05);
+        }
+
+        .rule-box strong {
+            color: #b91c1c;
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .rule-box li {
+            padding: 8px 0 8px 28px;
+            position: relative;
+            font-size: 0.96rem;
+        }
+
+        .rule-box li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #b91c1c;
+            font-size: 1.4rem;
+        }
+
+        /* ====================== PROGRESS BAR (Yangi!) ====================== */
+        .progress-container {
+            margin: -20px -20px 24px;
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            transition: width 0.5s ease, background 0.4s;
+            border-radius: 9999px;
+        }
+
+        #progress-text {
+            display: block;
+            text-align: center;
+            margin-top: 6px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--primary);
+        }
+
+        /* ====================== FORMA ====================== */
+        label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.4px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        .flatpickr-input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+
+        textarea { min-height: 92px; resize: vertical; }
+
+        .section {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .section:last-child { border-bottom: none; }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .options label {
+            background: var(--gray);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.18s;
+        }
+
+        .options label.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .mirror-text {
+            display: none;
+            margin-top: 8px;
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 1.08rem;
+            color: #fff;
+            background: #0f172a;
+            border-radius: 10px;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #mir-timestamp {
+            background: #111827;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+
+        .result-box {
+            margin-top: 10px;
+            padding: 12px 16px;
+            background: var(--light-blue);
+            border-left: 5px solid var(--accent);
+            border-radius: 8px;
+            font-weight: 600;
+            color: #1d4ed8;
+        }
+
+        #mir-comment {
+            background: #f8fafc;
+            border: 1px dashed #64748b;
+            border-radius: 10px;
+            padding: 16px;
+            font-style: italic;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            min-height: 80px;
+        }
+
+        /* ====================== RASM REJIMI ====================== */
+        .drawing-mode {
+            padding: 32px 28px !important;
+            background: white !important;
+            border: 3px solid #000 !important;
+            box-shadow: none !important;
+        }
+
+        .drawing-mode .options,
+        .drawing-mode input,
+        .drawing-mode textarea,
+        .drawing-mode button,
+        .drawing-mode .result-box { display: none !important; }
+
+        .drawing-mode .mirror-text,
+        .drawing-mode .progress-container { display: block !important; }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 20px 0 28px;
+        }
+
+        .btn:hover { background: var(--primary-d); }
+
+        /* ====================== MOBIL OPTIMALLASHTIRISH ====================== */
+        @media (max-width: 480px) {
+            body { padding: 8px; }
+            .content { padding: 20px 16px; }
+            .options { grid-template-columns: 1fr; gap: 10px; }
+            .progress-container { margin: -16px -16px 20px; padding: 14px 16px; }
+            .mirror-text { font-size: 1.02rem; padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="warning-page">
+    <h2>DIQQAT VA MAS’ULIYAT</h2>
+    <div class="content warning-page">
+        <p class="warning-text">
+            Ushbu tizim sizning <b>bilimingiz</b>, <b>intizomingiz</b> va <b>halolligingizni</b> sinaydi.
+        </p>
+        <div class="rule-box">
+            <strong>QOIDALAR (majburiy!)</strong>
+            <ul>
+                <li>Hisobot har kuni kechiktirmasdan topshirilishi shart.</li>
+                <li>Yolg‘on ma’lumot — ustozga va o‘z kelajagingizga xiyonatdir.</li>
+                <li>Aldov aniqlansa, kursdan butunlay chetlatilasiz.</li>
+            </ul>
+        </div>
+        <button class="btn" onclick="startReport()">TUSHUNDIM VA DAVOM ETAMAN</button>
+    </div>
+</div>
+
+<div class="card" id="main-report" style="display:none;">
+    <h2>KUNLIK HISOBOT</h2>
+    <div class="content" id="capture-area">
+
+        <!-- PROGRESS BAR (Yangi – vizual motivatsiya) -->
+        <div class="progress-container">
+            <div class="progress-label">UMUMIY SAMARADORLIK</div>
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            <span id="progress-text">Umumiy samaradorlik: 0%</span>
+        </div>
+
+        <div class="section">
+            <label>O‘QUVCHI F.I.SH</label>
+            <input type="text" id="inp-name" placeholder="Ism Familiya" oninput="updateMirror('name', this.value)">
+            <div id="mir-name" class="mirror-text"></div>
+        </div>
+
+        <div class="section">
+            <label>SANA</label>
+            <input type="text" id="inp-date" class="flatpickr-input" placeholder="Sanani tanlang" readonly>
+            <div id="mir-date" class="mirror-text"></div>
+        </div>
+
+        <div class="section">
+            <label>1. VIDEODARSNI KO‘RISH</label>
+            <div class="options">
+                <label onclick="selectOpt(this, 'v1')">To‘liq ✅</label>
+                <label onclick="selectOpt(this, 'v1')">Qisman ⚠️</label>
+                <label onclick="selectOpt(this, 'v1')">Yo‘q ❌</label>
+            </div>
+            <div id="mir-v1" class="mirror-text"></div>
+        </div>
+
+        <div class="section">
+            <label>2. MAVZUNI O‘QISH</label>
+            <div class="options">
+                <label onclick="selectOpt(this, 'v2')">To‘liq ✅</label>
+                <label onclick="selectOpt(this, 'v2')">Qisman ⚠️</label>
+                <label onclick="selectOpt(this, 'v2')">Yo‘q ❌</label>
+            </div>
+            <div id="mir-v2" class="mirror-text"></div>
+        </div>
+
+        <div class="section">
+            <label>3. MAXSUS TEST</label>
+            <div class="stats-grid">
+                <input type="number" min="0" placeholder="To‘g‘ri" oninput="calc(this, 'res1', 'mir-t1')">
+                <input type="number" min="0" placeholder="Xato" oninput="calc(this, 'res1', 'mir-t1')">
+            </div>
+            <div id="mir-t1" class="mirror-text"></div>
+            <div class="result-box" id="res1">Samaradorlik: 0%</div>
+        </div>
+
+        <div class="section">
+            <label>4. QUIZ TEST</label>
+            <div class="stats-grid">
+                <input type="number" min="0" placeholder="To‘g‘ri" oninput="calc(this, 'res2', 'mir-t2')">
+                <input type="number" min="0" placeholder="Xato" oninput="calc(this, 'res2', 'mir-t2')">
+            </div>
+            <div id="mir-t2" class="mirror-text"></div>
+            <div class="result-box" id="res2">Samaradorlik: 0%</div>
+        </div>
+
+        <div class="section">
+            <label>5. PLATFORMA TESTI</label>
+            <div class="stats-grid">
+                <input type="number" min="0" placeholder="To‘g‘ri" oninput="calc(this, 'res3', 'mir-t3')">
+                <input type="number" min="0" placeholder="Xato" oninput="calc(this, 'res3', 'mir-t3')">
+            </div>
+            <div id="mir-t3" class="mirror-text"></div>
+            <div class="result-box" id="res3">Samaradorlik: 0%</div>
+        </div>
+
+        <div class="section">
+            <label>6. TESTLAR TAHLILI</label>
+            <div class="options">
+                <label onclick="selectOpt(this, 'v6')">To‘liq ✅</label>
+                <label onclick="selectOpt(this, 'v6')">Qisman ⚠️</label>
+                <label onclick="selectOpt(this, 'v6')">Yo‘q ❌</label>
+            </div>
+            <div id="mir-v6" class="mirror-text"></div>
+        </div>
+
+        <div class="section">
+            <label>IZOHLAR</label>
+            <textarea id="inp-comment" placeholder="Takliflar, shikoyatlar va mulohazalar" oninput="updateMirror('comment', this.value)"></textarea>
+            <div id="mir-comment" class="mirror-text"></div>
+        </div>
+
+        <!-- VAQT MUHRI (avtomatik – faqat rasm yuklanganda yoziladi) -->
+        <div class="section" style="border:none;">
+            <label>YUBORILGAN VAQT MUHRI</label>
+            <div id="mir-timestamp" class="mirror-text">— — : — —</div>
+        </div>
+
+    </div>
+
+    <div style="padding:0 20px 28px;">
+        <button class="btn" id="dl-btn" onclick="downloadImage()">📥 PNG SIFATLI RASM SAQLASH</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/uz.js"></script>
+
+<script>
+flatpickr("#inp-date", {
+    dateFormat: "d.m.Y",
+    defaultDate: "today",
+    locale: "uz",
+    onChange: (selectedDates, dateStr) => updateMirror('date', dateStr)
+});
+
+function startReport() {
+    document.getElementById('warning-page').style.display = 'none';
+    document.getElementById('main-report').style.display = 'block';
+}
+
+function selectOpt(el, mirId) {
+    const container = el.parentElement;
+    container.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('mir-' + mirId).innerText = el.innerText.trim();
+}
+
+function updateMirror(id, val) {
+    const el = document.getElementById('mir-' + id);
+    if (el) el.innerText = val ? val.trim() : '';
+}
+
+function calc(el, resId, mirId) {
+    const parent = el.parentElement;
+    const c = parseInt(parent.children[0].value) || 0;
+    const w = parseInt(parent.children[1].value) || 0;
+    const total = c + w;
+    const p = total > 0 ? Math.round((c / total) * 100) : 0;
+
+    document.getElementById(resId).innerText = `Samaradorlik: ${p}% (Jami: ${total})`;
+    document.getElementById(mirId).innerText = `Natija: ${c} ta to‘g‘ri / ${w} ta xato`;
+
+    updateProgress(); // Har o‘zgartirishda progress yangilanadi
+}
+
+function getPercent(resId) {
+    const text = document.getElementById(resId).innerText;
+    const match = text.match(/(\d+)%/);
+    return match ? parseInt(match[1]) : 0;
+}
+
+function updateProgress() {
+    const p1 = getPercent('res1');
+    const p2 = getPercent('res2');
+    const p3 = getPercent('res3');
+    const avg = Math.round((p1 + p2 + p3) / 3);
+
+    const fill = document.getElementById('progress-fill');
+    const text = document.getElementById('progress-text');
+
+    fill.style.width = avg + '%';
+
+    if (avg >= 85) fill.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+    else if (avg >= 70) fill.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+    else fill.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
+
+    text.innerText = `Umumiy samaradorlik: ${avg}%`;
+}
+
+function downloadImage() {
+    const area = document.getElementById('capture-area');
+    const btn  = document.getElementById('dl-btn');
+
+    // 1. VAQT MUHRI avtomatik yoziladi (mobil qurilma vaqti)
+    const now = new Date();
+    const timeStr = `${now.getDate().toString().padStart(2,'0')}.${(now.getMonth()+1).toString().padStart(2,'0')}.${now.getFullYear()} ` +
+                    `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+    document.getElementById('mir-timestamp').innerText = timeStr;
+
+    // 2. Progress bar yangilanishi
+    updateProgress();
+
+    const name = (document.getElementById('inp-name').value.trim() || 'Oquvchi').replace(/\s+/g, '_');
+    const date = document.getElementById('inp-date').value.replace(/\./g, '-');
+
+    area.classList.add('drawing-mode');
+    btn.style.display = 'none';
+
+    html2canvas(area, {
+        scale: 4,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `LegalMentor_${name}_${date}.png`;
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.click();
+
+        area.classList.remove('drawing-mode');
+        btn.style.display = 'block';
+    }).catch(() => {
+        alert("Rasm saqlashda xatolik. Qayta urinib ko‘ring.");
+        area.classList.remove('drawing-mode');
+        btn.style.display = 'block';
+    });
+}
+</script>
+
+</body>
+</html>
