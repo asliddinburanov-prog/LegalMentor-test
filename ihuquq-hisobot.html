@@ -323,7 +323,7 @@ html,body { font-family:'Montserrat',sans-serif; background:var(--off); color:va
   <div id="ml">
    <div class="spin"></div>
    <div class="mttl">Tayyorlanmoqda...</div>
-   <div class="msub">Rasm yaratilmoqda va Telegramga yuborilmoqda</div>
+   <div class="msub" id="mstatus">Rasm yaratilmoqda...</div>
   </div>
   <div id="md" style="display:none">
    <div class="chk">✓</div>
@@ -520,55 +520,105 @@ async function doSubmit() {
   const name=(document.getElementById('sn').value||'').trim();
   if(!name){ alert("Iltimos, ism-familiyangizni kiriting!"); return; }
 
-  sm('loading');
+  sm('loading', 'Rasm yaratilmoqda...');
   buildCard();
-  await new Promise(r=>setTimeout(r,250));
+  await new Promise(r=>setTimeout(r,400));
 
   try {
+    // 1. Show report card in viewport temporarily
     const rcr=document.getElementById('rcr');
-    rcr.style.cssText='position:absolute;left:0;top:0;width:740px;background:#fff;z-index:-100;';
+    rcr.style.cssText='position:fixed;left:0;top:0;width:740px;background:#fff;z-index:9999;opacity:0;pointer-events:none;';
+    await new Promise(r=>setTimeout(r,300));
 
-    const canvas=await html2canvas(document.getElementById('rc'),{
-      scale:2.5, useCORS:true, allowTaint:true,
-      backgroundColor:'#ffffff', logging:false, imageTimeout:10000
+    sm('loading','Canvas yaratilmoqda...');
+
+    // 2. Capture with html2canvas — no CORS images to avoid taint
+    const canvas = await html2canvas(document.getElementById('rc'), {
+      scale: 2,
+      useCORS: false,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: true,
+      imageTimeout: 0,
+      onclone: (doc) => {
+        // Hide any external images that may cause taint
+        doc.querySelectorAll('img').forEach(img => {
+          if(img.src && img.src.startsWith('http')) {
+            img.style.display = 'none';
+          }
+        });
+      }
     });
 
     rcr.style.cssText='position:fixed;left:-9999px;top:0;width:740px;background:#fff;';
 
-    const blob=await new Promise(res=>canvas.toBlob(res,'image/png',1.0));
-    await tgSend(blob,name);
+    sm('loading','Rasm siqilmoqda...');
+    const blob = await new Promise((res,rej) => {
+      canvas.toBlob(b => {
+        if(b) res(b);
+        else rej(new Error('Blob yaratilmadi'));
+      }, 'image/png', 1.0);
+    });
+
+    if(!blob || blob.size < 100) throw new Error('Rasm yaratishda xatolik (blob bo\'sh)');
+
+    sm('loading', `Telegram'ga yuborilmoqda... (${Math.round(blob.size/1024)}KB)`);
+    await tgSend(blob, name);
     sm('done');
+
   } catch(e) {
-    console.error(e);
-    sm('err', e.message||"Noma'lum xatolik");
+    console.error('XATO:', e);
+    document.getElementById('rcr').style.cssText='position:fixed;left:-9999px;top:0;width:740px;background:#fff;';
+    sm('err', e.message || "Noma'lum xatolik");
   }
 }
 
 /* ── telegram ── */
-async function tgSend(blob,name) {
-  const TOKEN='8772643167:AAFQtJZrtayonVdX7JJ-HV0dBlLm0Q1nXtE';
-  const CHAT='-1002864507338';
-  const THREAD='357';
-  const now=new Date();
-  const cap=`📋 *Hisobot*\n👤 ${name}\n🕐 ${now.toLocaleString('uz-UZ')}`;
-  const fd=new FormData();
-  fd.append('chat_id',CHAT);
-  fd.append('message_thread_id',THREAD);
-  fd.append('photo',blob,'hisobot.png');
-  fd.append('caption',cap);
-  fd.append('parse_mode','Markdown');
-  const res=await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`,{method:'POST',body:fd});
-  const data=await res.json();
-  if(!data.ok) throw new Error('Telegram: '+JSON.stringify(data));
+async function tgSend(blob, name) {
+  const TOKEN = '8772643167:AAFQtJZrtayonVdX7JJ-HV0dBlLm0Q1nXtE';
+  const CHAT   = '-1003864507338';
+  const THREAD = '357';
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const ts  = `${now.getDate()}.${pad(now.getMonth()+1)}.${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const cap = `📋 Hisobot\n👤 ${name}\n🕐 ${ts}`;
+
+  const fd = new FormData();
+  fd.append('chat_id',           CHAT);
+  fd.append('message_thread_id', THREAD);
+  fd.append('photo',             blob, 'hisobot.png');
+  fd.append('caption',           cap);
+
+  const res  = await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method:'POST', body:fd });
+  const data = await res.json();
+
+  console.log('Telegram javobi:', JSON.stringify(data));
+
+  if (!data.ok) {
+    // Friendly error messages
+    const code = data.error_code;
+    const desc = data.description || '';
+    if(code===400 && desc.includes('chat not found'))
+      throw new Error('Guruh topilmadi. Chat ID yoki Thread ID noto\'g\'ri bo\'lishi mumkin.');
+    if(code===400 && desc.includes('message thread not found'))
+      throw new Error('Thread topilmadi (357). Mavjud thread ID kiriting.');
+    if(code===403)
+      throw new Error('Bot guruhga admin sifatida qo\'shilmagan yoki ruxsat yo\'q.');
+    if(code===401)
+      throw new Error('Bot token noto\'g\'ri.');
+    throw new Error(`Telegram xatosi ${code}: ${desc}`);
+  }
 }
 
 /* ── modal ── */
-function sm(state,msg) {
+function sm(state, msg) {
   document.getElementById('modal').classList.add('on');
   document.getElementById('ml').style.display=state==='loading'?'block':'none';
   document.getElementById('md').style.display=state==='done'   ?'block':'none';
   document.getElementById('me').style.display=state==='err'    ?'block':'none';
-  if(state==='err') document.getElementById('metxt').textContent=msg||'';
+  if(state==='loading' && msg) document.getElementById('mstatus').textContent = msg;
+  if(state==='err')            document.getElementById('metxt').textContent = msg || '';
 }
 function closeModal(){ document.getElementById('modal').classList.remove('on'); }
 function resetAll(){
