@@ -2,765 +2,174 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>iHuquq — Hisobot Tizimi</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  :root {
-    --ink: #0a0a0a;
-    --ink-soft: #1c1c1c;
-    --ink-muted: #3a3a3a;
-    --gray-deep: #555;
-    --gray-mid: #888;
-    --gray-light: #bbb;
-    --gray-pale: #ddd;
-    --gray-ghost: #f0f0f0;
-    --white: #fafafa;
-    --pure: #ffffff;
-    --accent: #1a1a1a;
-    --gold: #b8952a;
-    --gold-light: #d4ae4a;
-    --red-warn: #c0392b;
-    --green-ok: #27ae60;
-    --border: #e0e0e0;
-    --shadow: 0 4px 24px rgba(0,0,0,0.08);
-    --shadow-deep: 0 12px 48px rgba(0,0,0,0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Montserrat', sans-serif;
-    background: #f4f4f2;
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ===== PAGE 1 — INTRO ===== */
-  #page-intro {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--ink);
-    position: relative;
-    overflow: hidden;
-    padding: 40px 20px;
-  }
-
-  #page-intro::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.03) 80px),
-      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.03) 80px);
-  }
-
-  #page-intro::after {
-    content: '';
-    position: absolute;
-    top: -200px; right: -200px;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(184,149,42,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .intro-logo-wrap {
-    margin-bottom: 36px;
-    animation: fadeDown 0.8s ease both;
-  }
-
-  .intro-logo-wrap img {
-    height: 56px;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
-  }
-
-  .intro-logo-fallback {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    color: var(--pure);
-    text-transform: uppercase;
-    border-bottom: 2px solid var(--gold);
-    padding-bottom: 6px;
-    display: flex; align-items: center; gap: 10px;
-  }
-
-  .intro-logo-fallback span {
-    color: var(--gold);
-  }
-
-  .intro-portrait {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--gold);
-    box-shadow: 0 0 0 8px rgba(184,149,42,0.12), 0 20px 60px rgba(0,0,0,0.5);
-    margin-bottom: 36px;
-    animation: fadeUp 0.9s 0.2s ease both;
-  }
-
-  .portrait-fallback {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 3px solid var(--gold);
-    background: rgba(255,255,255,0.05);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 36px;
-    animation: fadeUp 0.9s 0.2s ease both;
-  }
-
-  .portrait-fallback svg {
-    opacity: 0.4;
-  }
-
-  .intro-tagline {
-    font-family: 'EB Garamond', serif;
-    font-size: 20px;
-    font-style: italic;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: 0.02em;
-    text-align: center;
-    max-width: 480px;
-    line-height: 1.6;
-    margin-bottom: 44px;
-    animation: fadeUp 0.9s 0.35s ease both;
-  }
-
-  .warning-block {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(184,149,42,0.3);
-    border-left: 4px solid var(--gold);
-    border-radius: 4px;
-    padding: 28px 36px;
-    max-width: 520px;
-    width: 100%;
-    margin-bottom: 44px;
-    animation: fadeUp 0.9s 0.5s ease both;
-  }
-
-  .warning-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 18px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .warning-title::before {
-    content: '⚠';
-    font-size: 13px;
-  }
-
-  .warning-block ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 11px;
-  }
-
-  .warning-block li {
-    font-size: 13px;
-    color: rgba(255,255,255,0.7);
-    line-height: 1.55;
-    padding-left: 20px;
-    position: relative;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-  }
-
-  .warning-block li::before {
-    content: '—';
-    position: absolute; left: 0;
-    color: var(--gold-light);
-    opacity: 0.6;
-  }
-
-  .btn-proceed {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink);
-    background: var(--gold);
-    border: none;
-    padding: 18px 44px;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-    animation: fadeUp 0.9s 0.65s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-proceed::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0);
-    transition: background 0.3s;
-  }
-
-  .btn-proceed:hover {
-    background: var(--gold-light);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(184,149,42,0.35);
-  }
-
-  .intro-footer {
-    position: absolute;
-    bottom: 24px;
-    font-family: 'EB Garamond', serif;
-    font-size: 13px;
-    font-style: italic;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 0.03em;
-    text-align: center;
-    padding: 0 20px;
-  }
-
-  /* ===== PAGE 2 — FORM ===== */
-  #page-form {
-    display: none;
-    min-height: 100vh;
-    background: #f4f4f2;
-    padding: 0 0 80px;
-  }
-
-  .form-header {
-    background: var(--ink);
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
-  }
-
-  .form-header-logo img {
-    height: 36px;
-    filter: brightness(0) invert(1);
-    object-fit: contain;
-  }
-
-  .form-header-logo-fallback {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--pure);
-    letter-spacing: 0.1em;
-  }
-
-  .form-header-logo-fallback span { color: var(--gold); }
-
-  .form-header-subtitle {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  .form-body {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 48px 24px 0;
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gray-deep);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px;
-  }
-
-  .section-title::before {
-    content: '';
-    width: 24px; height: 2px;
-    background: var(--gold);
-    display: inline-block;
-  }
-
-  /* Name Field */
-  .name-field-wrap {
-    background: var(--pure);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px 28px;
-    margin-bottom: 32px;
-    box-shadow: var(--shadow);
-  }
-
-  .field-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gray-deep);
-    margin-bottom: 10px;
-    display: block;
-  }
-
-  .text-input {
-    width: 100%;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ink);
-    background: var(--gray-ghost);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 13px 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    letter-spacing: 0.02em;
-  }
-
-  .text-input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(184,149,42,0.12);
-    background: var(--pure);
-  }
-
-  /* Task Cards */
-  .tasks-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .task-card {
-    background: var(--pure);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 22px 24px;
-    box-shadow: var(--shadow);
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .task-card:hover {
-    border-color: var(--gray-pale);
-    box-shadow: 0 6px 28px rgba(0,0,0,0.1);
-  }
-
-  .task-card.completed {
-    border-left: 4px solid var(--green-ok);
-  }
-
-  .task-card-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 16px;
-  }
-
-  .task-num {
-    min-width: 28px;
-    height: 28px;
-    background: var(--ink);
-    color: var(--pure);
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .task-name {
-    font-family: 'EB Garamond', serif;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    line-height: 1.4;
-    letter-spacing: 0.01em;
-  }
-
-  /* Radio options */
-  .radio-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .radio-opt {
-    position: relative;
-  }
-
-  .radio-opt input {
-    position: absolute; opacity: 0; width: 0; height: 0;
-  }
-
-  .radio-opt label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.18s;
-    color: var(--gray-deep);
-    white-space: nowrap;
-  }
-
-  .radio-opt input:checked + label {
-    background: var(--ink);
-    color: var(--pure);
-    border-color: var(--ink);
-  }
-
-  .radio-opt label:hover {
-    border-color: var(--gray-mid);
-    color: var(--ink);
-  }
-
-  .radio-opt.opt-full input:checked + label { background: #1a5c38; border-color: #1a5c38; }
-  .radio-opt.opt-partial input:checked + label { background: #7d5a00; border-color: #7d5a00; }
-  .radio-opt.opt-none input:checked + label { background: #8b1a1a; border-color: #8b1a1a; }
-
-  /* Number inputs */
-  .num-pair {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .num-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .num-input-wrap .lbl {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--gray-mid);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .num-input {
-    width: 72px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
-    background: var(--gray-ghost);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 8px 12px;
-    outline: none;
-    text-align: center;
-    transition: border-color 0.2s;
-  }
-
-  .num-input:focus {
-    border-color: var(--gold);
-    background: var(--pure);
-    box-shadow: 0 0 0 3px rgba(184,149,42,0.1);
-  }
-
-  .num-sep {
-    font-size: 13px;
-    color: var(--gray-light);
-    font-weight: 400;
-  }
-
-  /* Fixed 30 display */
-  .fixed-num {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .fixed-badge {
-    background: var(--gray-ghost);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: 0.05em;
-  }
-
-  .fixed-note {
-    font-size: 11px;
-    color: var(--gray-mid);
-    font-style: italic;
-  }
-
-  /* Comment */
-  .comment-wrap {
-    background: var(--pure);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px 28px;
-    margin-bottom: 32px;
-    box-shadow: var(--shadow);
-  }
-
-  .textarea-input {
-    width: 100%;
-    font-family: 'EB Garamond', serif;
-    font-size: 16px;
-    color: var(--ink);
-    background: var(--gray-ghost);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px 16px;
-    resize: vertical;
-    min-height: 110px;
-    outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
-  }
-
-  .textarea-input:focus {
-    border-color: var(--gold);
-    background: var(--pure);
-    box-shadow: 0 0 0 3px rgba(184,149,42,0.1);
-  }
-
-  /* Submit */
-  .submit-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 20px 0;
-  }
-
-  .btn-submit {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--pure);
-    background: var(--ink);
-    border: none;
-    padding: 18px 56px;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.3s;
-    display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  }
-
-  .btn-submit:hover {
-    background: var(--gold);
-    color: var(--ink);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(184,149,42,0.35);
-  }
-
-  .btn-submit:disabled {
-    opacity: 0.5; cursor: not-allowed; transform: none;
-  }
-
-  .submit-note {
-    font-size: 11px;
-    color: var(--gray-mid);
-    text-align: center;
-    font-style: italic;
-    font-family: 'EB Garamond', serif;
-    letter-spacing: 0.02em;
-  }
-
-  /* Progress bar */
-  .progress-wrap {
-    background: var(--pure);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 18px 24px;
-    margin-bottom: 28px;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .progress-bar-bg {
-    flex: 1;
-    height: 6px;
-    background: var(--gray-ghost);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--red-warn), #e67e22, var(--green-ok));
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-
-  .progress-pct {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink);
-    min-width: 36px;
-    text-align: right;
-  }
-
-  .progress-label {
-    font-size: 11px;
-    color: var(--gray-mid);
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  /* Modal overlay */
-  #modal-sending {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 999;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  #modal-sending.show { display: flex; }
-
-  .modal-inner {
-    background: var(--pure);
-    border-radius: 8px;
-    padding: 48px 56px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-  }
-
-  .modal-spinner {
-    width: 48px; height: 48px;
-    border: 3px solid var(--gray-pale);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 24px;
-  }
-
-  .modal-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 10px;
-  }
-
-  .modal-sub {
-    font-size: 13px;
-    color: var(--gray-mid);
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-  }
-
-  .modal-success { display: none; }
-  .modal-success.show { display: block; }
-
-  .check-icon {
-    width: 52px; height: 52px;
-    background: var(--green-ok);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 24px;
-    color: white;
-  }
-
-  /* ===== REPORT CANVAS (hidden) ===== */
-  #report-canvas-wrap {
-    position: fixed;
-    left: -9999px; top: -9999px;
-    width: 800px;
-    background: #fff;
-    font-family: 'Montserrat', sans-serif;
-  }
-
-  /* Animations */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--gray-pale); border-radius: 3px; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --ink:#0d0d0d; --gold:#c49a2a; --gold2:#e0b93c;
+  --white:#fff; --off:#f6f5f3; --border:#e2e2e0;
+  --g1:#444; --g2:#777; --g3:#aaa; --g4:#ddd;
+}
+html,body { font-family:'Montserrat',sans-serif; background:var(--off); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+/* ── PAGE 1 ── */
+#pg1 { min-height:100dvh; display:flex; flex-direction:column; align-items:center; background:var(--ink); padding:48px 22px 44px; position:relative; overflow:hidden; }
+#pg1::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px); background-size:50px 50px; pointer-events:none; }
+#pg1::after  { content:''; position:absolute; bottom:-100px; left:50%; transform:translateX(-50%); width:480px; height:280px; background:radial-gradient(ellipse,rgba(196,154,42,.18) 0%,transparent 68%); pointer-events:none; }
+.p1c { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%; max-width:460px; }
+
+/* logo */
+.logo-img { height:42px; object-fit:contain; display:block; margin-bottom:38px; animation:fd .7s ease both; }
+.logo-txt  { display:none; font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#fff; margin-bottom:38px; animation:fd .7s ease both; }
+.logo-txt em { color:var(--gold); font-style:normal; }
+
+/* avatar */
+.ava { width:108px; height:108px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); box-shadow:0 0 0 7px rgba(196,154,42,.1),0 14px 44px rgba(0,0,0,.55); margin-bottom:26px; display:block; animation:si .6s .1s ease both; }
+.ava-ph { width:108px; height:108px; border-radius:50%; border:2px solid var(--gold); background:rgba(255,255,255,.05); display:none; align-items:center; justify-content:center; margin-bottom:26px; animation:si .6s .1s ease both; }
+.ava-ph svg { opacity:.3; }
+
+/* tagline */
+.tagline { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:500; color:rgba(255,255,255,.62); text-align:center; line-height:1.65; letter-spacing:.02em; margin-bottom:34px; animation:fu .7s .2s ease both; }
+
+/* warning */
+.warn { width:100%; background:rgba(255,255,255,.035); border:1px solid rgba(196,154,42,.24); border-left:3px solid var(--gold); border-radius:6px; padding:20px 20px 20px 22px; margin-bottom:30px; animation:fu .7s .3s ease both; }
+.warn-h { display:flex; align-items:center; gap:9px; margin-bottom:15px; }
+.warn-ico { min-width:20px; height:20px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--ink); font-weight:800; }
+.warn-ttl { font-size:10px; font-weight:800; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); }
+.warn ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.warn li { font-size:13px; line-height:1.55; color:rgba(255,255,255,.6); font-weight:400; padding-left:16px; position:relative; }
+.warn li::before { content:'–'; position:absolute; left:0; color:var(--gold); opacity:.7; }
+
+/* cta */
+.btn-go { font-family:'Montserrat',sans-serif; font-size:11px; font-weight:800; letter-spacing:.25em; text-transform:uppercase; color:var(--ink); background:var(--gold); border:none; padding:17px 0; cursor:pointer; border-radius:3px; width:100%; max-width:340px; transition:background .25s,transform .15s; animation:fu .7s .4s ease both; }
+.btn-go:active { transform:scale(.97); background:var(--gold2); }
+.p1foot { margin-top:26px; font-family:'Cormorant Garamond',serif; font-size:13px; font-style:italic; color:rgba(255,255,255,.2); text-align:center; animation:fu .7s .5s ease both; }
+
+/* ── PAGE 2 ── */
+#pg2 { display:none; }
+.fh { background:var(--ink); padding:13px 18px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+.fh-li { height:28px; object-fit:contain; display:block; }
+.fh-lt { display:none; font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:700; color:#fff; letter-spacing:.1em; }
+.fh-lt em { color:var(--gold); font-style:normal; }
+.fh-sub { font-size:9px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.33); }
+
+.fb { padding:24px 16px 80px; max-width:600px; margin:0 auto; }
+.slbl { font-size:9px; font-weight:800; letter-spacing:.28em; text-transform:uppercase; color:var(--g2); margin-bottom:12px; display:flex; align-items:center; gap:9px; }
+.slbl::before { content:''; width:16px; height:2px; background:var(--gold); flex-shrink:0; }
+
+.card { background:#fff; border:1px solid var(--border); border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.055); overflow:hidden; margin-bottom:10px; }
+
+/* name */
+.nc { padding:18px; margin-bottom:22px; }
+.flbl { font-size:10px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--g2); margin-bottom:9px; display:block; }
+.ti { width:100%; font-family:'Montserrat',sans-serif; font-size:15px; font-weight:600; color:var(--ink); background:var(--off); border:1.5px solid var(--border); border-radius:6px; padding:12px 13px; outline:none; transition:border-color .2s,box-shadow .2s; -webkit-appearance:none; }
+.ti:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(196,154,42,.1); background:#fff; }
+
+/* progress */
+.pcard { padding:14px 18px; margin-bottom:22px; display:flex; align-items:center; gap:13px; }
+.plbl { font-size:9px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--g2); white-space:nowrap; flex-shrink:0; }
+.pt { flex:1; height:6px; background:#eee; border-radius:3px; overflow:hidden; }
+.pf { height:100%; width:0%; background:linear-gradient(90deg,#b91c1c,#d97706,#16a34a); border-radius:3px; transition:width .3s ease; }
+.pp { font-size:14px; font-weight:800; color:var(--ink); min-width:36px; text-align:right; flex-shrink:0; }
+
+/* task */
+.tc { padding:15px 16px; }
+.tc + .tc { border-top:1px solid var(--border); }
+.tt { display:flex; align-items:flex-start; gap:11px; margin-bottom:13px; }
+.tn { min-width:25px; height:25px; background:var(--ink); color:#fff; border-radius:50%; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.tname { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; color:var(--ink); line-height:1.35; }
+
+/* radio */
+.rrow { display:flex; gap:7px; flex-wrap:wrap; }
+.ro { position:relative; }
+.ro input { position:absolute; opacity:0; width:0; height:0; }
+.ro label { display:block; padding:8px 14px; border:1.5px solid var(--border); border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.04em; cursor:pointer; color:var(--g1); user-select:none; -webkit-user-select:none; white-space:nowrap; transition:all .17s; }
+.ro label:active { transform:scale(.95); }
+.ro.fl input:checked + label { background:#1e6b40; color:#fff; border-color:#1e6b40; }
+.ro.pa input:checked + label { background:#7a5200; color:#fff; border-color:#7a5200; }
+.ro.no input:checked + label { background:#8b1b1b; color:#fff; border-color:#8b1b1b; }
+
+/* num */
+.nrow { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.nlbl { font-size:10px; font-weight:700; color:var(--g3); letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+.ni { width:66px; font-family:'Montserrat',sans-serif; font-size:16px; font-weight:700; color:var(--ink); background:var(--off); border:1.5px solid var(--border); border-radius:6px; padding:9px 0; text-align:center; outline:none; -webkit-appearance:none; -moz-appearance:textfield; transition:border-color .2s; }
+.ni:focus { border-color:var(--gold); background:#fff; box-shadow:0 0 0 3px rgba(196,154,42,.1); }
+.ni::-webkit-inner-spin-button,.ni::-webkit-outer-spin-button { -webkit-appearance:none; }
+.fb30 { background:var(--off); border:1.5px solid var(--border); border-radius:6px; padding:9px 16px; font-size:16px; font-weight:700; color:var(--ink); }
+.sep { color:var(--g4); font-size:16px; }
+
+/* comment */
+.cmtc { padding:16px; margin-bottom:26px; }
+.txta { width:100%; font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--ink); background:var(--off); border:1.5px solid var(--border); border-radius:6px; padding:12px 13px; resize:vertical; min-height:96px; outline:none; transition:border-color .2s; line-height:1.6; -webkit-appearance:none; }
+.txta:focus { border-color:var(--gold); background:#fff; box-shadow:0 0 0 3px rgba(196,154,42,.1); }
+
+/* submit */
+.sw { display:flex; flex-direction:column; align-items:center; gap:13px; }
+.bsub { font-family:'Montserrat',sans-serif; font-size:11px; font-weight:800; letter-spacing:.22em; text-transform:uppercase; color:#fff; background:var(--ink); border:none; padding:18px 0; width:100%; cursor:pointer; border-radius:6px; display:flex; align-items:center; justify-content:center; gap:9px; transition:background .2s,transform .15s; }
+.bsub:active { transform:scale(.98); background:#222; }
+.snote { font-family:'Cormorant Garamond',serif; font-size:13px; font-style:italic; color:var(--g3); text-align:center; }
+
+/* ── MODAL ── */
+#modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.82); z-index:999; align-items:center; justify-content:center; }
+#modal.on { display:flex; }
+.mbox { background:#fff; border-radius:10px; padding:42px 32px; text-align:center; max-width:320px; width:calc(100% - 36px); }
+.spin { width:44px; height:44px; border:3px solid #eee; border-top-color:var(--gold); border-radius:50%; animation:sp .75s linear infinite; margin:0 auto 20px; }
+.mttl { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+.msub { font-size:13px; color:var(--g2); font-family:'Cormorant Garamond',serif; font-style:italic; line-height:1.5; }
+.chk { width:52px; height:52px; background:#16a34a; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 18px; font-size:22px; color:#fff; }
+.breset { margin-top:20px; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#fff; background:var(--ink); border:none; padding:13px 28px; border-radius:4px; cursor:pointer; width:100%; }
+
+/* ── REPORT CARD (hidden) ── */
+#rcr { position:fixed; left:-9999px; top:0; width:740px; background:#fff; font-family:Arial,sans-serif; }
+
+/* ── ANIM ── */
+@keyframes fd { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:none} }
+@keyframes fu { from{opacity:0;transform:translateY(14px)}  to{opacity:1;transform:none} }
+@keyframes si { from{opacity:0;transform:scale(.85)}        to{opacity:1;transform:scale(1)} }
+@keyframes sp { to{transform:rotate(360deg)} }
+
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-thumb{background:var(--g4);border-radius:2px}
 </style>
 </head>
 <body>
 
-<!-- ============== PAGE 1: INTRO ============== -->
-<div id="page-intro">
-  <div class="intro-logo-wrap">
-    <img src="https://raw.githubusercontent.com/ihuquq/assets/main/logo.png"
-         onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';"
-         alt="iHuquq">
-    <div id="logo-fallback" class="intro-logo-fallback" style="display:none;">
-      i<span>Huquq</span>
-    </div>
-  </div>
+<!-- ======== PAGE 1 ======== -->
+<div id="pg1">
+ <div class="p1c">
 
-  <img src="https://github.com/asliddinburanov-prog/LegalMentor-test/blob/main/rasm.png"
-       class="intro-portrait"
-       onerror="this.style.display='none'; document.getElementById('portrait-fallback').style.display='flex';"
-       alt="Muallim">
-  <div id="portrait-fallback" class="portrait-fallback" style="display:none;">
-    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-      <circle cx="30" cy="22" r="13" stroke="white" stroke-width="2"/>
-      <path d="M6 52c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <!-- logo -->
+  <img class="logo-img" id="li1"
+    src="https://raw.githubusercontent.com/asliddinburanov-prog/LegalMentor-test/80fe339772494e05c4bfb73e4f8c356b4e8d3a63/logo.png"
+    alt="iHuquq"
+    onload="this.style.display='block'"
+    onerror="this.style.display='none';document.getElementById('lt1').style.display='block';">
+  <div class="logo-txt" id="lt1">i<em>Huquq</em></div>
+
+  <!-- avatar -->
+  <img class="ava" id="av1"
+    src="https://raw.githubusercontent.com/asliddinburanov-prog/LegalMentor-test/80fe339772494e05c4bfb73e4f8c356b4e8d3a63/rasm.png"
+    alt="Muallim"
+    onload="this.style.display='block'"
+    onerror="this.style.display='none';document.getElementById('avph').style.display='flex';">
+  <div class="ava-ph" id="avph">
+    <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
+      <circle cx="25" cy="18" r="10" stroke="white" stroke-width="1.8"/>
+      <path d="M3 44c0-12.15 9.85-22 22-22s22 9.85 22 22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
   </div>
 
-  <p class="intro-tagline">
-    Ushbu tizim sizning bilimingiz, intizomingiz<br>va halolligingizni sinaydi.
-  </p>
+  <!-- tagline -->
+  <p class="tagline">Ushbu tizim sizning bilimingiz,<br>intizomingiz va halolligingizni sinaydi.</p>
 
-  <div class="warning-block">
-    <div class="warning-title">Ogohlantirish</div>
+  <!-- warning -->
+  <div class="warn">
+    <div class="warn-h">
+      <div class="warn-ico">!</div>
+      <div class="warn-ttl">Ogohlantirish</div>
+    </div>
     <ul>
       <li>Hisobot har seshanba, payshanba, shanba kunlari 23:30 dan kechiktirmasdan topshirilishi shart.</li>
       <li>Yolg'on ma'lumot — ustozga va o'z kelajagingizga xiyonatdir.</li>
@@ -769,543 +178,408 @@
     </ul>
   </div>
 
-  <button class="btn-proceed" onclick="showForm()">
-    Tushundim va davom etaman
-  </button>
+  <button class="btn-go" onclick="goForm()">Tushundim va davom etaman</button>
 
-  <div class="intro-footer">
-    Adolatli huquqshunos bo'lish halollikdan boshlanadi
-  </div>
+  <p class="p1foot">Adolatli huquqshunos bo'lish halollikdan boshlanadi</p>
+ </div>
 </div>
 
 
-<!-- ============== PAGE 2: FORM ============== -->
-<div id="page-form">
-  <div class="form-header">
-    <div class="form-header-logo">
-      <img src="https://github.com/asliddinburanov-prog/LegalMentor-test/blob/main/logo.png"
-           onerror="this.style.display='none'; document.getElementById('form-logo-fallback').style.display='block';"
-           alt="iHuquq">
-      <div id="form-logo-fallback" class="form-header-logo-fallback" style="display:none;">i<span>Huquq</span></div>
-    </div>
-    <div class="form-header-subtitle">Mustaqil tayyorgarlik hisoboti</div>
+<!-- ======== PAGE 2 ======== -->
+<div id="pg2">
+
+ <!-- sticky header -->
+ <div class="fh">
+  <div>
+   <img class="fh-li"
+    src="https://raw.githubusercontent.com/asliddinburanov-prog/LegalMentor-test/80fe339772494e05c4bfb73e4f8c356b4e8d3a63/logo.png"
+    alt="iHuquq"
+    onload="this.style.display='block'"
+    onerror="this.style.display='none';document.querySelector('.fh-lt').style.display='block';">
+   <div class="fh-lt">i<em>Huquq</em></div>
+  </div>
+  <div class="fh-sub">Hisobot tizimi</div>
+ </div>
+
+ <div class="fb">
+
+  <!-- name -->
+  <div class="slbl">Ism-familiya</div>
+  <div class="card nc">
+   <label class="flbl" for="sn">To'liq ism-familiya</label>
+   <input type="text" id="sn" class="ti" placeholder="Masalan: Aliyev Sardor..." autocomplete="name" oninput="cp()">
   </div>
 
-  <div class="form-body">
-
-    <!-- Name -->
-    <div class="name-field-wrap">
-      <label class="field-label" for="studentName">Ism-familiya</label>
-      <input type="text" id="studentName" class="text-input" placeholder="To'liq ism-familiyangizni kiriting..." oninput="updateProgress()">
-    </div>
-
-    <!-- Progress -->
-    <div class="progress-wrap">
-      <span class="progress-label">Samaradorlik</span>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progressFill"></div>
-      </div>
-      <span class="progress-pct" id="progressPct">0%</span>
-    </div>
-
-    <div class="section-title">Vazifalar</div>
-
-    <div class="tasks-grid">
-
-      <!-- 1. Video dars -->
-      <div class="task-card" id="card-1">
-        <div class="task-card-header">
-          <div class="task-num">1</div>
-          <div class="task-name">Videodarsni ko'rish</div>
-        </div>
-        <div class="radio-group">
-          <div class="radio-opt opt-full">
-            <input type="radio" name="task1" id="t1-full" value="full" onchange="onRadio('card-1',this)">
-            <label for="t1-full">✓ To'liq</label>
-          </div>
-          <div class="radio-opt opt-partial">
-            <input type="radio" name="task1" id="t1-part" value="partial" onchange="onRadio('card-1',this)">
-            <label for="t1-part">◑ Qisman</label>
-          </div>
-          <div class="radio-opt opt-none">
-            <input type="radio" name="task1" id="t1-none" value="none" onchange="onRadio('card-1',this)">
-            <label for="t1-none">✕ Yo'q</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. Matn -->
-      <div class="task-card" id="card-2">
-        <div class="task-card-header">
-          <div class="task-num">2</div>
-          <div class="task-name">Mavzu matnini o'qish</div>
-        </div>
-        <div class="radio-group">
-          <div class="radio-opt opt-full">
-            <input type="radio" name="task2" id="t2-full" value="full" onchange="onRadio('card-2',this)">
-            <label for="t2-full">✓ To'liq</label>
-          </div>
-          <div class="radio-opt opt-partial">
-            <input type="radio" name="task2" id="t2-part" value="partial" onchange="onRadio('card-2',this)">
-            <label for="t2-part">◑ Qisman</label>
-          </div>
-          <div class="radio-opt opt-none">
-            <input type="radio" name="task2" id="t2-none" value="none" onchange="onRadio('card-2',this)">
-            <label for="t2-none">✕ Yo'q</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. Maxsus test -->
-      <div class="task-card" id="card-3">
-        <div class="task-card-header">
-          <div class="task-num">3</div>
-          <div class="task-name">Maxsus test ishlash</div>
-        </div>
-        <div class="num-pair">
-          <div class="num-input-wrap">
-            <span class="lbl">Jami</span>
-            <div class="fixed-badge">30</div>
-          </div>
-          <div class="num-sep">|</div>
-          <div class="num-input-wrap">
-            <span class="lbl">Bajarildi</span>
-            <input type="number" id="task3done" class="num-input" min="0" max="30" placeholder="0" oninput="clampMax(this,30);updateProgress()">
-          </div>
-          <span class="fixed-note">/ 30 ta savol</span>
-        </div>
-      </div>
-
-      <!-- 4. Maxsus test tahlili -->
-      <div class="task-card" id="card-4">
-        <div class="task-card-header">
-          <div class="task-num">4</div>
-          <div class="task-name">Maxsus test tahlilini ko'rish</div>
-        </div>
-        <div class="radio-group">
-          <div class="radio-opt opt-full">
-            <input type="radio" name="task4" id="t4-full" value="full" onchange="onRadio('card-4',this)">
-            <label for="t4-full">✓ To'liq</label>
-          </div>
-          <div class="radio-opt opt-partial">
-            <input type="radio" name="task4" id="t4-part" value="partial" onchange="onRadio('card-4',this)">
-            <label for="t4-part">◑ Qisman</label>
-          </div>
-          <div class="radio-opt opt-none">
-            <input type="radio" name="task4" id="t4-none" value="none" onchange="onRadio('card-4',this)">
-            <label for="t4-none">✕ Yo'q</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. Quiz test -->
-      <div class="task-card" id="card-5">
-        <div class="task-card-header">
-          <div class="task-num">5</div>
-          <div class="task-name">Quiz test ishlash</div>
-        </div>
-        <div class="num-pair">
-          <div class="num-input-wrap">
-            <span class="lbl">Jami savol</span>
-            <input type="number" id="task5total" class="num-input" min="0" placeholder="0" oninput="updateProgress()">
-          </div>
-          <div class="num-sep">/</div>
-          <div class="num-input-wrap">
-            <span class="lbl">To'g'ri</span>
-            <input type="number" id="task5correct" class="num-input" min="0" placeholder="0" oninput="syncMax('task5correct','task5total');updateProgress()">
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. Platforma test -->
-      <div class="task-card" id="card-6">
-        <div class="task-card-header">
-          <div class="task-num">6</div>
-          <div class="task-name">Platformadagi test</div>
-        </div>
-        <div class="num-pair">
-          <div class="num-input-wrap">
-            <span class="lbl">Jami savol</span>
-            <input type="number" id="task6total" class="num-input" min="0" placeholder="0" oninput="updateProgress()">
-          </div>
-          <div class="num-sep">/</div>
-          <div class="num-input-wrap">
-            <span class="lbl">To'g'ri</span>
-            <input type="number" id="task6correct" class="num-input" min="0" placeholder="0" oninput="syncMax('task6correct','task6total');updateProgress()">
-          </div>
-        </div>
-      </div>
-
-      <!-- 7. Mustaqil tahlil -->
-      <div class="task-card" id="card-7">
-        <div class="task-card-header">
-          <div class="task-num">7</div>
-          <div class="task-name">Quiz va platforma testlarni mustaqil tahlil qilish</div>
-        </div>
-        <div class="radio-group">
-          <div class="radio-opt opt-full">
-            <input type="radio" name="task7" id="t7-full" value="full" onchange="onRadio('card-7',this)">
-            <label for="t7-full">✓ To'liq</label>
-          </div>
-          <div class="radio-opt opt-partial">
-            <input type="radio" name="task7" id="t7-part" value="partial" onchange="onRadio('card-7',this)">
-            <label for="t7-part">◑ Qisman</label>
-          </div>
-          <div class="radio-opt opt-none">
-            <input type="radio" name="task7" id="t7-none" value="none" onchange="onRadio('card-7',this)">
-            <label for="t7-none">✕ Yo'q</label>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Comment -->
-    <div class="section-title">Izoh (ixtiyoriy)</div>
-    <div class="comment-wrap">
-      <textarea id="commentText" class="textarea-input" placeholder="Qo'shimcha izoh, savol yoki tushuntirish yozing..."></textarea>
-    </div>
-
-    <!-- Submit -->
-    <div class="submit-section">
-      <button class="btn-submit" id="btnSubmit" onclick="generateAndSend()">
-        <span>📤</span> Hisobotni Yuborish
-      </button>
-      <p class="submit-note">Hisobot rasm ko'rinishida Telegram guruhiga avtomatik yuboriladi</p>
-    </div>
-
+  <!-- progress -->
+  <div class="card pcard">
+   <span class="plbl">Samaradorlik</span>
+   <div class="pt"><div class="pf" id="pf"></div></div>
+   <span class="pp" id="pp">0%</span>
   </div>
+
+  <!-- tasks -->
+  <div class="slbl" style="margin-top:4px;">Vazifalar</div>
+  <div class="card" style="margin-bottom:22px;">
+
+   <!-- 1 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">1</div><div class="tname">Videodarsni ko'rish</div></div>
+    <div class="rrow">
+     <div class="ro fl"><input type="radio" name="t1" id="t1f" value="full" onchange="cp()"><label for="t1f">✓ To'liq</label></div>
+     <div class="ro pa"><input type="radio" name="t1" id="t1p" value="partial" onchange="cp()"><label for="t1p">◑ Qisman</label></div>
+     <div class="ro no"><input type="radio" name="t1" id="t1n" value="none" onchange="cp()"><label for="t1n">✕ Yo'q</label></div>
+    </div>
+   </div>
+
+   <!-- 2 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">2</div><div class="tname">Mavzu matnini o'qish</div></div>
+    <div class="rrow">
+     <div class="ro fl"><input type="radio" name="t2" id="t2f" value="full" onchange="cp()"><label for="t2f">✓ To'liq</label></div>
+     <div class="ro pa"><input type="radio" name="t2" id="t2p" value="partial" onchange="cp()"><label for="t2p">◑ Qisman</label></div>
+     <div class="ro no"><input type="radio" name="t2" id="t2n" value="none" onchange="cp()"><label for="t2n">✕ Yo'q</label></div>
+    </div>
+   </div>
+
+   <!-- 3 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">3</div><div class="tname">Maxsus test ishlash</div></div>
+    <div class="nrow">
+     <span class="nlbl">Jami</span>
+     <div class="fb30">30</div>
+     <span class="sep">/</span>
+     <span class="nlbl">Bajarildi</span>
+     <input type="number" id="t3d" class="ni" min="0" max="30" placeholder="0" oninput="if(+this.value>30)this.value=30;if(+this.value<0)this.value=0;cp()">
+     <span class="nlbl">ta</span>
+    </div>
+   </div>
+
+   <!-- 4 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">4</div><div class="tname">Maxsus test tahlilini ko'rish</div></div>
+    <div class="rrow">
+     <div class="ro fl"><input type="radio" name="t4" id="t4f" value="full" onchange="cp()"><label for="t4f">✓ To'liq</label></div>
+     <div class="ro pa"><input type="radio" name="t4" id="t4p" value="partial" onchange="cp()"><label for="t4p">◑ Qisman</label></div>
+     <div class="ro no"><input type="radio" name="t4" id="t4n" value="none" onchange="cp()"><label for="t4n">✕ Yo'q</label></div>
+    </div>
+   </div>
+
+   <!-- 5 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">5</div><div class="tname">Quiz test ishlash</div></div>
+    <div class="nrow">
+     <span class="nlbl">Jami savol</span>
+     <input type="number" id="t5t" class="ni" min="0" placeholder="0" oninput="cp()">
+     <span class="sep">/</span>
+     <span class="nlbl">To'g'ri</span>
+     <input type="number" id="t5c" class="ni" min="0" placeholder="0" oninput="cap('t5c','t5t');cp()">
+    </div>
+   </div>
+
+   <!-- 6 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">6</div><div class="tname">Platformadagi test</div></div>
+    <div class="nrow">
+     <span class="nlbl">Jami savol</span>
+     <input type="number" id="t6t" class="ni" min="0" placeholder="0" oninput="cp()">
+     <span class="sep">/</span>
+     <span class="nlbl">To'g'ri</span>
+     <input type="number" id="t6c" class="ni" min="0" placeholder="0" oninput="cap('t6c','t6t');cp()">
+    </div>
+   </div>
+
+   <!-- 7 -->
+   <div class="tc">
+    <div class="tt"><div class="tn">7</div><div class="tname">Quiz va platforma testlarni mustaqil tahlil qilish</div></div>
+    <div class="rrow">
+     <div class="ro fl"><input type="radio" name="t7" id="t7f" value="full" onchange="cp()"><label for="t7f">✓ To'liq</label></div>
+     <div class="ro pa"><input type="radio" name="t7" id="t7p" value="partial" onchange="cp()"><label for="t7p">◑ Qisman</label></div>
+     <div class="ro no"><input type="radio" name="t7" id="t7n" value="none" onchange="cp()"><label for="t7n">✕ Yo'q</label></div>
+    </div>
+   </div>
+
+  </div><!-- /tasks card -->
+
+  <!-- comment -->
+  <div class="slbl">Izoh (ixtiyoriy)</div>
+  <div class="card cmtc" style="margin-bottom:26px;">
+   <label class="flbl" for="cmt">Qo'shimcha izoh yoki tushuntirish</label>
+   <textarea id="cmt" class="txta" placeholder="Bu yerga yozing..."></textarea>
+  </div>
+
+  <!-- submit -->
+  <div class="sw">
+   <button class="bsub" onclick="doSubmit()"><span>📤</span> Hisobotni yuborish</button>
+   <p class="snote">Hisobot .png rasmida Telegram guruhiga yuboriladi</p>
+  </div>
+
+ </div>
+</div><!-- /pg2 -->
+
+
+<!-- ======== MODAL ======== -->
+<div id="modal">
+ <div class="mbox">
+  <div id="ml">
+   <div class="spin"></div>
+   <div class="mttl">Tayyorlanmoqda...</div>
+   <div class="msub">Rasm yaratilmoqda va Telegramga yuborilmoqda</div>
+  </div>
+  <div id="md" style="display:none">
+   <div class="chk">✓</div>
+   <div class="mttl">Yuborildi!</div>
+   <div class="msub">Hisobot Telegram guruhiga muvaffaqiyatli yetkazildi.</div>
+   <button class="breset" onclick="resetAll()">Yangi hisobot yozish</button>
+  </div>
+  <div id="me" style="display:none">
+   <div style="font-size:38px;margin-bottom:14px">⚠️</div>
+   <div class="mttl">Xatolik</div>
+   <div class="msub" id="metxt"></div>
+   <button class="breset" style="margin-top:16px" onclick="closeModal()">Qayta urinish</button>
+  </div>
+ </div>
 </div>
 
 
-<!-- ============== MODAL ============== -->
-<div id="modal-sending">
-  <div class="modal-inner" id="modal-loading">
-    <div class="modal-spinner"></div>
-    <div class="modal-title">Hisobot tayyorlanmoqda...</div>
-    <div class="modal-sub">Rasm yaratilmoqda va yuborilmoqda</div>
+<!-- ======== HIDDEN REPORT CARD ======== -->
+<div id="rcr">
+ <div id="rc">
+  <!-- header -->
+  <div style="background:#0d0d0d;padding:22px 34px 18px;display:flex;align-items:center;justify-content:space-between;">
+   <div>
+    <img id="rcli"
+     src="https://raw.githubusercontent.com/asliddinburanov-prog/LegalMentor-test/80fe339772494e05c4bfb73e4f8c356b4e8d3a63/logo.png"
+     style="height:34px;object-fit:contain;display:block;"
+     onerror="this.style.display='none';document.getElementById('rclt').style.display='block';">
+    <div id="rclt" style="display:none;font-size:20px;font-weight:900;color:#fff;letter-spacing:.1em;">iHuquq</div>
+    <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.22em;text-transform:uppercase;margin-top:4px;">O'quv markazi</div>
+   </div>
+   <div style="text-align:right;">
+    <div style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.1em;" id="rcdd"></div>
+    <div style="font-size:9px;color:rgba(255,255,255,.22);margin-top:3px;">Mustaqil tayyorgarlik hisoboti</div>
+   </div>
   </div>
-  <div class="modal-inner modal-success" id="modal-done">
-    <div class="check-icon">✓</div>
-    <div class="modal-title">Muvaffaqiyatli yuborildi!</div>
-    <div class="modal-sub" style="margin-top:8px;">Hisobot Telegram guruhiga yetkazildi</div>
-    <button onclick="resetForm()" style="margin-top:24px; padding:12px 32px; background:var(--ink); color:#fff; border:none; border-radius:3px; font-family:Montserrat,sans-serif; font-size:12px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer;">Yangi hisobot</button>
+  <!-- gold bar -->
+  <div style="height:3px;background:linear-gradient(90deg,#b8952a,#e0b93c,#b8952a);"></div>
+  <!-- student -->
+  <div style="padding:16px 34px 13px;border-bottom:1px solid #eee;">
+   <div style="font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#888;margin-bottom:4px;">O'quvchi</div>
+   <div style="font-size:21px;font-weight:700;color:#0d0d0d;font-family:Georgia,serif;" id="rcsn"></div>
   </div>
-</div>
-
-
-<!-- ============== HIDDEN REPORT CANVAS ============== -->
-<div id="report-canvas-wrap">
-  <div id="report-card" style="
-    width:800px;
-    background:#fff;
-    font-family:'Montserrat',sans-serif;
-    padding:0;
-    position:relative;
-  ">
-
-    <!-- Header -->
-    <div style="background:#0a0a0a; padding:28px 40px 24px; display:flex; align-items:center; justify-content:space-between;">
-      <div>
-        <div style="font-family:Georgia,serif; font-size:22px; font-weight:900; color:#fff; letter-spacing:0.08em;">iHuquq</div>
-        <div style="font-size:10px; color:rgba(255,255,255,0.45); letter-spacing:0.2em; text-transform:uppercase; margin-top:3px;">O'quv markazi</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.15em; text-transform:uppercase;">Mustaqil tayyorgarlik</div>
-        <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:3px;" id="rc-date"></div>
-      </div>
+  <!-- tasks -->
+  <div id="rctasks" style="padding:14px 34px 6px;"></div>
+  <!-- bar -->
+  <div style="padding:0 34px 16px;">
+   <div style="background:#f5f5f5;border-radius:8px;padding:14px 18px;border:1px solid #eaeaea;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+     <div style="font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#666;">Samaradorlik ko'rsatkichi</div>
+     <div style="font-size:23px;font-weight:800;color:#0d0d0d;" id="rcbp"></div>
     </div>
-
-    <!-- Gold bar -->
-    <div style="height:3px; background:linear-gradient(90deg,#b8952a,#d4ae4a,#b8952a);"></div>
-
-    <!-- Student name -->
-    <div style="padding:22px 40px 16px; border-bottom:1px solid #eee;">
-      <div style="font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#888; margin-bottom:6px;">O'quvchi</div>
-      <div style="font-size:22px; font-family:Georgia,serif; font-weight:700; color:#0a0a0a;" id="rc-name"></div>
+    <div style="height:12px;background:#e0e0e0;border-radius:6px;overflow:hidden;">
+     <div id="rcbar" style="height:100%;border-radius:6px;"></div>
     </div>
-
-    <!-- Tasks -->
-    <div style="padding:20px 40px;" id="rc-tasks"></div>
-
-    <!-- Efficiency bar -->
-    <div style="padding:0 40px 20px;">
-      <div style="background:#f5f5f5; border-radius:8px; padding:18px 22px; border:1px solid #e8e8e8;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-          <div style="font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#666;">Samaradorlik ko'rsatkichi</div>
-          <div style="font-size:22px; font-weight:800; color:#0a0a0a;" id="rc-pct-big"></div>
-        </div>
-        <div style="height:10px; background:#e0e0e0; border-radius:5px; overflow:hidden;">
-          <div id="rc-bar" style="height:100%; border-radius:5px; transition:width 0s;"></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-top:7px;">
-          <div style="font-size:9px; color:#c0392b; font-weight:600;">0%</div>
-          <div style="font-size:9px; color:#e67e22; font-weight:600;">50%</div>
-          <div style="font-size:9px; color:#27ae60; font-weight:600;">100%</div>
-        </div>
-      </div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+     <span style="font-size:9px;color:#b91c1c;font-weight:700;">0%</span>
+     <span style="font-size:9px;color:#d97706;font-weight:700;">50%</span>
+     <span style="font-size:9px;color:#16a34a;font-weight:700;">100%</span>
     </div>
-
-    <!-- Comment -->
-    <div id="rc-comment-wrap" style="padding:0 40px 20px; display:none;">
-      <div style="background:#fafafa; border-left:3px solid #b8952a; border-radius:2px; padding:14px 18px;">
-        <div style="font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:#999; margin-bottom:6px;">Izoh</div>
-        <div style="font-family:Georgia,serif; font-size:14px; font-style:italic; color:#444; line-height:1.55;" id="rc-comment"></div>
-      </div>
-    </div>
-
-    <!-- Footer with timestamp -->
-    <div style="background:#f5f5f5; border-top:1px solid #e0e0e0; padding:14px 40px; display:flex; align-items:center; justify-content:space-between;">
-      <div style="font-size:10px; color:#aaa; font-family:Georgia,serif; font-style:italic;">Adolatli huquqshunos bo'lish halollikdan boshlanadi</div>
-      <div style="font-size:10px; font-weight:700; color:#555; letter-spacing:0.08em; font-family:'Courier New',monospace;" id="rc-timestamp"></div>
-    </div>
-
+   </div>
   </div>
+  <!-- comment -->
+  <div id="rccw" style="padding:0 34px 16px;display:none;">
+   <div style="border-left:3px solid #c49a2a;padding:11px 15px;background:#fafaf8;border-radius:2px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#999;margin-bottom:5px;">Izoh</div>
+    <div style="font-size:14px;font-style:italic;color:#444;line-height:1.55;font-family:Georgia,serif;" id="rcc"></div>
+   </div>
+  </div>
+  <!-- footer -->
+  <div style="background:#f5f5f5;border-top:1px solid #e0e0e0;padding:12px 34px;display:flex;align-items:center;justify-content:space-between;">
+   <div style="font-size:12px;font-style:italic;color:#bbb;font-family:Georgia,serif;">Adolatli huquqshunos bo'lish halollikdan boshlanadi</div>
+   <div style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;color:#666;letter-spacing:.04em;" id="rcts"></div>
+  </div>
+ </div>
 </div>
 
 
 <script>
-// ==================== UTILS ====================
-
-function showForm() {
-  document.getElementById('page-intro').style.display = 'none';
-  document.getElementById('page-form').style.display = 'block';
-  window.scrollTo(0, 0);
+/* ── nav ── */
+function goForm() {
+  document.getElementById('pg1').style.display = 'none';
+  document.getElementById('pg2').style.display = 'block';
+  window.scrollTo(0,0);
 }
 
-function onRadio(cardId, input) {
-  updateProgress();
+/* ── helpers ── */
+function cap(cid, tid) {
+  const c = document.getElementById(cid), t = document.getElementById(tid);
+  const mx = parseInt(t.value)||0;
+  if((parseInt(c.value)||0) > mx) c.value = mx;
+  if((parseInt(c.value)||0) < 0) c.value = 0;
 }
-
-function clampMax(inp, max) {
-  if (parseInt(inp.value) > max) inp.value = max;
-  if (parseInt(inp.value) < 0) inp.value = 0;
-}
-
-function syncMax(correctId, totalId) {
-  const c = document.getElementById(correctId);
-  const t = document.getElementById(totalId);
-  const total = parseInt(t.value) || 0;
-  if (parseInt(c.value) > total) c.value = total;
-}
-
-// ==================== PROGRESS ====================
-
-function calcScore() {
-  let score = 0;
-  let max = 0;
-
-  // Name
-  const name = document.getElementById('studentName').value.trim();
-  max += 1;
-  if (name.length > 2) score += 1;
-
-  // Radio tasks (1,2,4,7)
-  const radioTasks = ['task1','task2','task4','task7'];
-  radioTasks.forEach(name => {
-    max += 1;
-    const checked = document.querySelector(`input[name="${name}"]:checked`);
-    if (checked) {
-      if (checked.value === 'full') score += 1;
-      else if (checked.value === 'partial') score += 0.5;
-    }
-  });
-
-  // Task 3 — maxsus test
-  max += 1;
-  const t3 = parseInt(document.getElementById('task3done').value) || 0;
-  score += Math.min(t3 / 30, 1);
-
-  // Task 5 — quiz
-  max += 1;
-  const t5t = parseInt(document.getElementById('task5total').value) || 0;
-  const t5c = parseInt(document.getElementById('task5correct').value) || 0;
-  if (t5t > 0) score += Math.min(t5c / t5t, 1);
-
-  // Task 6 — platforma
-  max += 1;
-  const t6t = parseInt(document.getElementById('task6total').value) || 0;
-  const t6c = parseInt(document.getElementById('task6correct').value) || 0;
-  if (t6t > 0) score += Math.min(t6c / t6t, 1);
-
-  return { score, max, pct: Math.round((score / max) * 100) };
-}
-
-function updateProgress() {
-  const { pct } = calcScore();
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressPct').textContent = pct + '%';
-}
-
-// ==================== REPORT CARD FILL ====================
-
-function getBarColor(pct) {
-  if (pct < 30) return 'linear-gradient(90deg,#c0392b,#e74c3c)';
-  if (pct < 60) return 'linear-gradient(90deg,#e67e22,#f39c12)';
-  if (pct < 80) return 'linear-gradient(90deg,#f39c12,#2ecc71)';
-  return 'linear-gradient(90deg,#27ae60,#2ecc71)';
-}
-
-function radioLabel(name) {
+function rv(name) {
   const el = document.querySelector(`input[name="${name}"]:checked`);
-  if (!el) return { text: 'Belgilanmagan', color: '#bbb' };
-  if (el.value === 'full') return { text: 'To\'liq ✓', color: '#1a5c38' };
-  if (el.value === 'partial') return { text: 'Qisman ◑', color: '#7d5a00' };
-  return { text: 'Yo\'q ✕', color: '#8b1a1a' };
+  return el ? el.value : null;
 }
 
-function buildReportCard() {
-  const name = document.getElementById('studentName').value.trim() || 'Ism kiritilmagan';
-  const comment = document.getElementById('commentText').value.trim();
-  const { pct } = calcScore();
+/* ── progress ── */
+function cp() {
+  let s=0, m=0;
+  m++; if((document.getElementById('sn').value||'').trim().length>2) s++;
+  ['t1','t2','t4','t7'].forEach(n=>{ m++; const v=rv(n); if(v==='full')s+=1; else if(v==='partial')s+=.5; });
+  m++; s += Math.min((parseInt(document.getElementById('t3d').value)||0)/30, 1);
+  m++; const t5t=parseInt(document.getElementById('t5t').value)||0, t5c=parseInt(document.getElementById('t5c').value)||0;
+       if(t5t>0) s += Math.min(t5c/t5t,1);
+  m++; const t6t=parseInt(document.getElementById('t6t').value)||0, t6c=parseInt(document.getElementById('t6c').value)||0;
+       if(t6t>0) s += Math.min(t6c/t6t,1);
+  const pct = Math.round(s/m*100);
+  document.getElementById('pf').style.width = pct+'%';
+  document.getElementById('pp').textContent = pct+'%';
+  return pct;
+}
 
-  const now = new Date();
-  const days = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
-  const months = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-  const dateStr = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-  const pad = n => String(n).padStart(2,'0');
-  const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+/* ── bar color ── */
+function bc(p) {
+  if(p<35) return 'linear-gradient(90deg,#991b1b,#dc2626)';
+  if(p<60) return 'linear-gradient(90deg,#b45309,#f59e0b)';
+  if(p<80) return 'linear-gradient(90deg,#d97706,#84cc16)';
+  return 'linear-gradient(90deg,#16a34a,#4ade80)';
+}
 
-  document.getElementById('rc-date').textContent = dateStr;
-  document.getElementById('rc-name').textContent = name;
-  document.getElementById('rc-pct-big').textContent = pct + '%';
-  document.getElementById('rc-bar').style.background = getBarColor(pct);
-  document.getElementById('rc-bar').style.width = pct + '%';
-  document.getElementById('rc-timestamp').textContent = `Yaratildi: ${dateStr} ${timeStr}`;
+/* ── radio display ── */
+function rd(name) {
+  const v=rv(name);
+  if(!v) return{t:'—',c:'#bbb'};
+  if(v==='full')    return{t:"To'liq ✓", c:'#1e6b40'};
+  if(v==='partial') return{t:'Qisman ◑', c:'#7a5200'};
+  return{t:"Yo'q ✕", c:'#8b1b1b'};
+}
 
-  // Comment
-  const commentWrap = document.getElementById('rc-comment-wrap');
-  if (comment) {
-    commentWrap.style.display = 'block';
-    document.getElementById('rc-comment').textContent = comment;
-  } else {
-    commentWrap.style.display = 'none';
-  }
+/* ── build card ── */
+function buildCard() {
+  const name = (document.getElementById('sn').value||'').trim()||'Ism kiritilmagan';
+  const cmt  = (document.getElementById('cmt').value||'').trim();
+  const pct  = cp();
+  const now  = new Date();
+  const DAYS=['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+  const MON=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+  const pad=n=>String(n).padStart(2,'0');
+  const ds=`${DAYS[now.getDay()]}, ${now.getDate()} ${MON[now.getMonth()]} ${now.getFullYear()}`;
+  const ts=`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
-  // Tasks HTML
-  const t3 = parseInt(document.getElementById('task3done').value) || 0;
-  const t5t = parseInt(document.getElementById('task5total').value) || 0;
-  const t5c = parseInt(document.getElementById('task5correct').value) || 0;
-  const t6t = parseInt(document.getElementById('task6total').value) || 0;
-  const t6c = parseInt(document.getElementById('task6correct').value) || 0;
+  document.getElementById('rcdd').textContent = ds;
+  document.getElementById('rcsn').textContent = name;
+  document.getElementById('rcbp').textContent = pct+'%';
+  const bar = document.getElementById('rcbar');
+  bar.style.background = bc(pct);
+  bar.style.width = pct+'%';
+  document.getElementById('rcts').textContent = `Yaratildi: ${ds}  ${ts}`;
 
-  const r1 = radioLabel('task1');
-  const r2 = radioLabel('task2');
-  const r4 = radioLabel('task4');
-  const r7 = radioLabel('task7');
+  const cw = document.getElementById('rccw');
+  if(cmt){ cw.style.display='block'; document.getElementById('rcc').textContent=cmt; }
+  else cw.style.display='none';
 
-  const tasks = [
-    { num:1, name:"Videodarsni ko'rish", val: r1.text, color: r1.color },
-    { num:2, name:"Mavzu matnini o'qish", val: r2.text, color: r2.color },
-    { num:3, name:"Maxsus test ishlash", val: `${t3} / 30 ta`, color: t3===30?'#1a5c38': t3>0?'#7d5a00':'#8b1a1a' },
-    { num:4, name:"Maxsus test tahlilini ko'rish", val: r4.text, color: r4.color },
-    { num:5, name:"Quiz test ishlash", val: t5t>0?`${t5c} / ${t5t} to'g'ri`:'Kiritilmagan', color: t5t>0&&t5c===t5t?'#1a5c38': t5c>0?'#7d5a00':'#8b1a1a' },
-    { num:6, name:"Platformadagi test", val: t6t>0?`${t6c} / ${t6t} to'g'ri`:'Kiritilmagan', color: t6t>0&&t6c===t6t?'#1a5c38': t6c>0?'#7d5a00':'#8b1a1a' },
-    { num:7, name:"Mustaqil tahlil (Quiz + Platforma)", val: r7.text, color: r7.color },
+  const d3 =parseInt(document.getElementById('t3d').value)||0;
+  const t5t=parseInt(document.getElementById('t5t').value)||0;
+  const t5c=parseInt(document.getElementById('t5c').value)||0;
+  const t6t=parseInt(document.getElementById('t6t').value)||0;
+  const t6c=parseInt(document.getElementById('t6c').value)||0;
+  const r1=rd('t1'),r2=rd('t2'),r4=rd('t4'),r7=rd('t7');
+
+  const tasks=[
+    {n:1,l:"Videodarsni ko'rish",       v:r1.t, c:r1.c},
+    {n:2,l:"Mavzu matnini o'qish",       v:r2.t, c:r2.c},
+    {n:3,l:"Maxsus test ishlash",
+      v:`${d3} / 30 ta`,
+      c:d3===30?'#1e6b40':d3>0?'#7a5200':'#8b1b1b'},
+    {n:4,l:"Maxsus test tahlili",        v:r4.t, c:r4.c},
+    {n:5,l:"Quiz test",
+      v:t5t>0?`${t5c} / ${t5t} to'g'ri`:'Kiritilmagan',
+      c:t5t>0&&t5c===t5t?'#1e6b40':t5c>0?'#7a5200':'#8b1b1b'},
+    {n:6,l:"Platforma testi",
+      v:t6t>0?`${t6c} / ${t6t} to'g'ri`:'Kiritilmagan',
+      c:t6t>0&&t6c===t6t?'#1e6b40':t6c>0?'#7a5200':'#8b1b1b'},
+    {n:7,l:"Mustaqil tahlil",            v:r7.t, c:r7.c},
   ];
 
-  let tasksHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:4px;">';
-  tasks.forEach(t => {
-    tasksHtml += `
-      <div style="border:1px solid #eee; border-radius:5px; padding:11px 14px; display:flex; align-items:flex-start; gap:10px;">
-        <div style="min-width:22px; height:22px; background:#0a0a0a; color:#fff; border-radius:50%; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">${t.num}</div>
-        <div style="flex:1;">
-          <div style="font-size:11px; color:#666; margin-bottom:3px; line-height:1.3;">${t.name}</div>
-          <div style="font-size:13px; font-weight:700; color:${t.color};">${t.val}</div>
-        </div>
-      </div>`;
+  let h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:6px;">';
+  tasks.forEach(t=>{
+    h+=`<div style="border:1px solid #eee;border-radius:6px;padding:9px 12px;display:flex;align-items:flex-start;gap:8px;">
+     <div style="min-width:22px;height:22px;background:#0d0d0d;color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">${t.n}</div>
+     <div>
+      <div style="font-size:10px;color:#666;margin-bottom:3px;line-height:1.3;">${t.l}</div>
+      <div style="font-size:13px;font-weight:700;color:${t.c};">${t.v}</div>
+     </div>
+    </div>`;
   });
-  tasksHtml += '</div>';
-  document.getElementById('rc-tasks').innerHTML = tasksHtml;
+  h+='</div>';
+  document.getElementById('rctasks').innerHTML=h;
 }
 
-// ==================== GENERATE & SEND ====================
+/* ── submit ── */
+async function doSubmit() {
+  const name=(document.getElementById('sn').value||'').trim();
+  if(!name){ alert("Iltimos, ism-familiyangizni kiriting!"); return; }
 
-async function generateAndSend() {
-  const name = document.getElementById('studentName').value.trim();
-  if (!name) {
-    alert('Iltimos, ism-familiyangizni kiriting!');
-    return;
-  }
-
-  document.getElementById('modal-sending').classList.add('show');
-  document.getElementById('modal-loading').style.display = 'block';
-  document.getElementById('modal-done').classList.remove('show');
-
-  buildReportCard();
-
-  await new Promise(r => setTimeout(r, 300));
+  sm('loading');
+  buildCard();
+  await new Promise(r=>setTimeout(r,250));
 
   try {
-    const wrap = document.getElementById('report-canvas-wrap');
-    wrap.style.left = '0';
-    wrap.style.top = '0';
-    wrap.style.position = 'absolute';
-    wrap.style.zIndex = '-1';
+    const rcr=document.getElementById('rcr');
+    rcr.style.cssText='position:absolute;left:0;top:0;width:740px;background:#fff;z-index:-100;';
 
-    const canvas = await html2canvas(document.getElementById('report-card'), {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false
+    const canvas=await html2canvas(document.getElementById('rc'),{
+      scale:2.5, useCORS:true, allowTaint:true,
+      backgroundColor:'#ffffff', logging:false, imageTimeout:10000
     });
 
-    wrap.style.left = '-9999px';
-    wrap.style.top = '-9999px';
+    rcr.style.cssText='position:fixed;left:-9999px;top:0;width:740px;background:#fff;';
 
-    // Convert to blob
-    const blob = await new Promise(res => canvas.toBlob(res, 'image/png', 1.0));
-
-    // Send to Telegram
-    await sendToTelegram(blob, name);
-
-    document.getElementById('modal-loading').style.display = 'none';
-    document.getElementById('modal-done').classList.add('show');
+    const blob=await new Promise(res=>canvas.toBlob(res,'image/png',1.0));
+    await tgSend(blob,name);
+    sm('done');
   } catch(e) {
     console.error(e);
-    document.getElementById('modal-sending').classList.remove('show');
-    alert('Xatolik yuz berdi. Qayta urinib ko\'ring.\n\n' + e.message);
+    sm('err', e.message||"Noma'lum xatolik");
   }
 }
 
-async function sendToTelegram(blob, studentName) {
-  // Bot token va chat/thread ID
-  const BOT_TOKEN = '8772643167:AAFQtJZrtayonVdX7JJ-HV0dBlLm0Q1nXtE'; // <-- Bot tokeningizni kiriting
-  const CHAT_ID = '-1002864507338'; // channel/group ID
-  const THREAD_ID = '357'; // message thread ID
-
-  const now = new Date();
-  const caption = `📋 *Hisobot*\n👤 ${studentName}\n🕐 ${now.toLocaleString('uz-UZ')}`;
-
-  const formData = new FormData();
-  formData.append('chat_id', CHAT_ID);
-  formData.append('message_thread_id', THREAD_ID);
-  formData.append('photo', blob, 'hisobot.png');
-  formData.append('caption', caption);
-  formData.append('parse_mode', 'Markdown');
-
-  const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-    method: 'POST',
-    body: formData
-  });
-
-  const data = await res.json();
-  if (!data.ok) {
-    throw new Error('Telegram xatosi: ' + JSON.stringify(data));
-  }
+/* ── telegram ── */
+async function tgSend(blob,name) {
+  const TOKEN='8772643167:AAFQtJZrtayonVdX7JJ-HV0dBlLm0Q1nXtE';
+  const CHAT='-1002864507338';
+  const THREAD='357';
+  const now=new Date();
+  const cap=`📋 *Hisobot*\n👤 ${name}\n🕐 ${now.toLocaleString('uz-UZ')}`;
+  const fd=new FormData();
+  fd.append('chat_id',CHAT);
+  fd.append('message_thread_id',THREAD);
+  fd.append('photo',blob,'hisobot.png');
+  fd.append('caption',cap);
+  fd.append('parse_mode','Markdown');
+  const res=await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`,{method:'POST',body:fd});
+  const data=await res.json();
+  if(!data.ok) throw new Error('Telegram: '+JSON.stringify(data));
 }
 
-function resetForm() {
-  document.getElementById('modal-sending').classList.remove('show');
-  document.getElementById('studentName').value = '';
-  document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
-  document.querySelectorAll('.num-input').forEach(i => i.value = '');
-  document.getElementById('commentText').value = '';
-  document.querySelectorAll('.task-card').forEach(c => c.classList.remove('completed'));
-  updateProgress();
-  window.scrollTo(0, 0);
+/* ── modal ── */
+function sm(state,msg) {
+  document.getElementById('modal').classList.add('on');
+  document.getElementById('ml').style.display=state==='loading'?'block':'none';
+  document.getElementById('md').style.display=state==='done'   ?'block':'none';
+  document.getElementById('me').style.display=state==='err'    ?'block':'none';
+  if(state==='err') document.getElementById('metxt').textContent=msg||'';
+}
+function closeModal(){ document.getElementById('modal').classList.remove('on'); }
+function resetAll(){
+  closeModal();
+  document.getElementById('sn').value='';
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+  ['t3d','t5t','t5c','t6t','t6c'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cmt').value='';
+  cp();
+  window.scrollTo(0,0);
 }
 </script>
-
 </body>
 </html>
