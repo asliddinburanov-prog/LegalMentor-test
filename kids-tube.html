@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BolaTube 🎬</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='70' rx='15' y='15' fill='%23FF0000'/><polygon points='38,30 38,70 72,50' fill='white'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #FF0000;
+    --dark-red: #cc0000;
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --card2: #242424;
+    --text: #ffffff;
+    --muted: #aaaaaa;
+    --accent: #FF0000;
+    --green: #00c853;
+    --radius: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ============ SCREENS ============ */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ============ KIDS SCREEN ============ */
+  #kids-screen {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a0000 100%);
+  }
+
+  .kids-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(255,0,0,0.08);
+    border-bottom: 2px solid rgba(255,0,0,0.2);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 32px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(255,0,0,0.5);
+  }
+
+  .logo-icon svg { width: 20px; height: 20px; }
+
+  .logo-text {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--red); }
+
+  .lock-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .lock-btn:hover { background: rgba(255,0,0,0.3); border-color: var(--red); }
+
+  /* Video Grid */
+  .video-grid {
+    flex: 1;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    align-content: start;
+  }
+
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .big-icon { font-size: 72px; margin-bottom: 16px; }
+  .empty-state h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: white; }
+  .empty-state p { font-size: 14px; line-height: 1.5; }
+
+  .video-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+  }
+
+  .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(255,0,0,0.25);
+    border-color: rgba(255,0,0,0.4);
+  }
+
+  .video-card:active { transform: scale(0.97); }
+
+  .thumb-wrapper {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .thumb-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  .video-card:hover .thumb-wrapper img { transform: scale(1.05); }
+
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .video-card:hover .play-overlay { opacity: 1; }
+  .play-circle {
+    width: 56px;
+    height: 56px;
+    background: rgba(255,0,0,0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255,0,0,0.5);
+  }
+
+  .card-info {
+    padding: 12px 14px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ============ VIDEO PLAYER SCREEN ============ */
+  #player-screen {
+    background: #000;
+  }
+
+  .player-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 10;
+  }
+
+  .back-btn {
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: rgba(255,0,0,0.4); }
+
+  #player-title {
+    font-size: 15px;
+    font-weight: 700;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #youtube-iframe {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: none;
+    display: block;
+    background: #000;
+  }
+
+  .related-section {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--bg);
+  }
+
+  .related-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  /* ============ ADMIN SCREEN ============ */
+  #admin-screen {
+    background: var(--bg);
+  }
+
+  .admin-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--card);
+    border-bottom: 2px solid var(--card2);
+  }
+
+  .admin-header h1 {
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  .admin-badge {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .admin-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .section-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--card2);
+  }
+
+  .section-card h2 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .field-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input[type="text"], input[type="password"], input[type="url"] {
+    background: var(--card2);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Nunito', sans-serif;
+    width: 100%;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  input:focus { border-color: var(--red); }
+  input::placeholder { color: #555; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-red { background: var(--red); color: white; }
+  .btn-red:hover { background: var(--dark-red); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: rgba(255,255,255,0.07);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.12); }
+
+  .btn-danger { background: rgba(255,50,50,0.15); color: #ff6b6b; border: 1px solid rgba(255,50,50,0.3); }
+  .btn-danger:hover { background: rgba(255,50,50,0.25); }
+
+  .video-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .video-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .video-item-thumb {
+    width: 80px;
+    height: 45px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #333;
+    flex-shrink: 0;
+  }
+
+  .video-item-info { flex: 1; min-width: 0; }
+  .video-item-title {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .video-item-id { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .delete-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(255,50,50,0.1);
+    border: 1px solid rgba(255,50,50,0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ff6b6b;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .delete-btn:hover { background: rgba(255,50,50,0.25); }
+
+  /* ============ PIN MODAL ============ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal-box {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 340px;
+    border: 1px solid var(--card2);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  }
+
+  .modal-box h2 {
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .modal-box p {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .pin-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--card2);
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: all 0.15s;
+  }
+  .pin-dot.filled { background: var(--red); border-color: var(--red); box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+  .pin-dot.error { background: #ff4444; border-color: #ff4444; animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .num-btn {
+    padding: 16px;
+    background: var(--card2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .num-btn:hover { background: rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.4); }
+  .num-btn:active { transform: scale(0.93); }
+
+  .num-btn.del { font-size: 14px; color: var(--muted); }
+
+  .modal-cancel {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .modal-cancel:hover { border-color: rgba(255,255,255,0.25); color: white; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1e1e1e;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    z-index: 9999;
+    transition: transform 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: rgba(0,200,83,0.4); }
+  .toast.error { border-color: rgba(255,50,50,0.4); }
+
+  /* Loading thumb */
+  .thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 28px;
+  }
+
+  @media (max-width: 480px) {
+    .video-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+    .card-title { font-size: 12px; }
+    .card-info { padding: 8px 10px; }
+  }
+
+  @media (max-width: 340px) {
+    .video-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,0,0,0.3); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ========== KIDS SCREEN ========== -->
+<div id="kids-screen" class="screen active">
+  <div class="kids-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="white">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+      <div class="logo-text">Bola<span>Tube</span></div>
+    </div>
+    <button class="lock-btn" onclick="showPinModal('admin')">⚙️ Sozlamalar</button>
+  </div>
+
+  <div class="video-grid" id="video-grid">
+    <div class="empty-state">
+      <div class="big-icon">🎬</div>
+      <h2>Hali video yo'q</h2>
+      <p>Sozlamalar orqali videolar qo'shing, keyin bolangiz faqat o'sha videolarni ko'radi.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PLAYER SCREEN ========== -->
+<div id="player-screen" class="screen">
+  <div class="player-header">
+    <button class="back-btn" onclick="goBack()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div id="player-title">Video</div>
+  </div>
+  <iframe id="youtube-iframe"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen>
+  </iframe>
+  <div class="related-section">
+    <div class="related-title">🎯 Boshqa videolar</div>
+    <div class="related-grid" id="related-grid"></div>
+  </div>
+</div>
+
+<!-- ========== ADMIN SCREEN ========== -->
+<div id="admin-screen" class="screen">
+  <div class="admin-header">
+    <button class="back-btn" onclick="showPinModal('exit-admin')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <h1>Boshqaruv paneli</h1>
+    <span class="admin-badge">Admin</span>
+  </div>
+
+  <div class="admin-content">
+    <!-- PIN sozlash -->
+    <div class="section-card">
+      <h2>🔐 PIN kodini o'zgartirish</h2>
+      <div class="field-group">
+        <label>Yangi PIN (4 raqam)</label>
+        <input type="password" id="new-pin-input" maxlength="4" placeholder="Masalan: 1234" inputmode="numeric" pattern="[0-9]*">
+      </div>
+      <div class="field-group">
+        <label>Tasdiqlang</label>
+        <input type="password" id="confirm-pin-input" maxlength="4" placeholder="PIN ni qaytaring" inputmode="numeric" pattern="[0-9]*">
+      </div>
+      <button class="btn btn-red" onclick="changePin()">💾 Saqlash</button>
+    </div>
+
+    <!-- Video qo'shish -->
+    <div class="section-card">
+      <h2>➕ Video qo'shish</h2>
+      <div class="field-group">
+        <label>YouTube linki yoki Video ID</label>
+        <input type="url" id="yt-link-input" placeholder="https://youtube.com/watch?v=... yoki video ID">
+      </div>
+      <div class="field-group">
+        <label>Video nomi (ixtiyoriy)</label>
+        <input type="text" id="yt-title-input" placeholder="Bolalar uchun qo'shiq...">
+      </div>
+      <button class="btn btn-red" onclick="addVideo()">▶️ Qo'shish</button>
+    </div>
+
+    <!-- Video ro'yxati -->
+    <div class="section-card">
+      <h2>🎬 Videolar ro'yxati (<span id="video-count">0</span>)</h2>
+      <div class="video-list" id="admin-video-list">
+        <p style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px 0;">
+          Hali video qo'shilmagan
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PIN MODAL ========== -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal-box">
+    <h2 id="modal-title">🔐 PIN kiriting</h2>
+    <p id="modal-desc">Sozlamalarga kirish uchun PIN kodingizni kiriting</p>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+    <div class="numpad">
+      <button class="num-btn" onclick="pinPress('1')">1</button>
+      <button class="num-btn" onclick="pinPress('2')">2</button>
+      <button class="num-btn" onclick="pinPress('3')">3</button>
+      <button class="num-btn" onclick="pinPress('4')">4</button>
+      <button class="num-btn" onclick="pinPress('5')">5</button>
+      <button class="num-btn" onclick="pinPress('6')">6</button>
+      <button class="num-btn" onclick="pinPress('7')">7</button>
+      <button class="num-btn" onclick="pinPress('8')">8</button>
+      <button class="num-btn" onclick="pinPress('9')">9</button>
+      <button class="num-btn" onclick="pinPress('0')">0</button>
+      <button class="num-btn del" onclick="pinDel()">⌫</button>
+    </div>
+    <button class="modal-cancel" id="modal-cancel-btn">Bekor qilish</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ STATE ============
+let videos = JSON.parse(localStorage.getItem('bolatube_videos') || '[]');
+let adminPin = localStorage.getItem('bolatube_pin') || '1234';
+let pinBuffer = '';
+let pinMode = ''; // 'admin' | 'exit-admin'
+
+// ============ INIT ============
+renderKidsGrid();
+
+// ============ SCREEN NAV ============
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ============ PIN MODAL ============
+function showPinModal(mode) {
+  pinMode = mode;
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('modal-title').textContent = mode === 'admin' ? '🔐 Admin PIN' : '🔓 Chiqish';
+  document.getElementById('modal-desc').textContent = 'Sozlamalarga kirish uchun PIN kiriting';
+  document.getElementById('modal-cancel-btn').onclick = closePinModal;
+  document.getElementById('pin-modal').classList.add('active');
+}
+
+function closePinModal() {
+  document.getElementById('pin-modal').classList.remove('active');
+  pinBuffer = '';
+  updatePinDots();
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
+  }
+}
+
+function pinPress(digit) {
+  if (pinBuffer.length < 4) {
+    pinBuffer += digit;
+    updatePinDots();
+    if (pinBuffer.length === 4) {
+      setTimeout(checkPin, 150);
+    }
+  }
+}
+
+function pinDel() {
+  if (pinBuffer.length > 0) {
+    pinBuffer = pinBuffer.slice(0, -1);
+    updatePinDots();
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === adminPin) {
+    closePinModal();
+    if (pinMode === 'admin') {
+      renderAdminList();
+      showScreen('admin-screen');
+    } else {
+      showScreen('kids-screen');
+    }
+    showToast('✅ Kirildi!', 'success');
+  } else {
+    // Shake
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'pin-dot error';
+    }
+    showToast('❌ PIN noto\'g\'ri', 'error');
+    setTimeout(() => {
+      pinBuffer = '';
+      updatePinDots();
+    }, 600);
+  }
+}
+
+// ============ YOUTUBE HELPERS ============
+function extractVideoId(input) {
+  input = input.trim();
+  // Full URL patterns
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (const p of patterns) {
+    const m = input.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function getThumb(videoId) {
+  return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+}
+
+// ============ ADD VIDEO ============
+async function addVideo() {
+  const linkVal = document.getElementById('yt-link-input').value.trim();
+  const titleVal = document.getElementById('yt-title-input').value.trim();
+
+  if (!linkVal) { showToast('⚠️ Link kiriting', 'error'); return; }
+
+  const vid = extractVideoId(linkVal);
+  if (!vid) { showToast('❌ Yaroqsiz YouTube linki', 'error'); return; }
+
+  if (videos.find(v => v.id === vid)) {
+    showToast('⚠️ Bu video allaqachon bor', 'error'); return;
+  }
+
+  const title = titleVal || `Video ${videos.length + 1}`;
+  videos.push({ id: vid, title });
+  saveVideos();
+  renderAdminList();
+  renderKidsGrid();
+
+  document.getElementById('yt-link-input').value = '';
+  document.getElementById('yt-title-input').value = '';
+  showToast('✅ Video qo\'shildi!', 'success');
+}
+
+// ============ DELETE VIDEO ============
+function deleteVideo(id) {
+  videos = videos.filter(v => v.id !== id);
+  saveVideos();
+  renderAdminList();
+  renderKidsGrid();
+  showToast('🗑️ Video o\'chirildi', '');
+}
+
+// ============ CHANGE PIN ============
+function changePin() {
+  const np = document.getElementById('new-pin-input').value;
+  const cp = document.getElementById('confirm-pin-input').value;
+  if (np.length !== 4 || !/^\d{4}$/.test(np)) {
+    showToast('⚠️ PIN 4 raqamdan iborat bo\'lishi kerak', 'error'); return;
+  }
+  if (np !== cp) { showToast('❌ PIN lar mos kelmadi', 'error'); return; }
+  adminPin = np;
+  localStorage.setItem('bolatube_pin', np);
+  document.getElementById('new-pin-input').value = '';
+  document.getElementById('confirm-pin-input').value = '';
+  showToast('✅ PIN o\'zgartirildi!', 'success');
+}
+
+// ============ RENDER KIDS GRID ============
+function renderKidsGrid() {
+  const grid = document.getElementById('video-grid');
+  if (videos.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="big-icon">🎬</div>
+        <h2>Hali video yo'q</h2>
+        <p>Sozlamalar orqali videolar qo'shing.<br>Bolangiz faqat o'sha videolarni ko'radi.</p>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = videos.map(v => `
+    <div class="video-card" onclick="playVideo('${v.id}', '${escHtml(v.title)}')">
+      <div class="thumb-wrapper">
+        <img src="${getThumb(v.id)}" alt="${escHtml(v.title)}"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="thumb-placeholder" style="display:none">▶</div>
+        <div class="play-overlay">
+          <div class="play-circle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">${escHtml(v.title)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============ RENDER ADMIN LIST ============
+function renderAdminList() {
+  const list = document.getElementById('admin-video-list');
+  document.getElementById('video-count').textContent = videos.length;
+
+  if (videos.length === 0) {
+    list.innerHTML = `<p style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px 0;">Hali video qo'shilmagan</p>`;
+    return;
+  }
+
+  list.innerHTML = videos.map(v => `
+    <div class="video-item">
+      <img class="video-item-thumb" src="${getThumb(v.id)}" alt=""
+        onerror="this.style.background='#333';this.src=''">
+      <div class="video-item-info">
+        <div class="video-item-title">${escHtml(v.title)}</div>
+        <div class="video-item-id">ID: ${v.id}</div>
+      </div>
+      <button class="delete-btn" onclick="deleteVideo('${v.id}')" title="O'chirish">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+        </svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+// ============ PLAY VIDEO ============
+function playVideo(videoId, title) {
+  document.getElementById('player-title').textContent = title;
+  document.getElementById('youtube-iframe').src =
+    `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&fs=1`;
+
+  // Related
+  const relGrid = document.getElementById('related-grid');
+  const others = videos.filter(v => v.id !== videoId);
+  if (others.length === 0) {
+    relGrid.innerHTML = `<p style="color:var(--muted);font-size:13px;">Boshqa video yo'q</p>`;
+  } else {
+    relGrid.innerHTML = others.map(v => `
+      <div class="video-card" onclick="playVideo('${v.id}','${escHtml(v.title)}')">
+        <div class="thumb-wrapper">
+          <img src="${getThumb(v.id)}" alt="${escHtml(v.title)}">
+          <div class="play-overlay">
+            <div class="play-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">${escHtml(v.title)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  showScreen('player-screen');
+}
+
+function goBack() {
+  document.getElementById('youtube-iframe').src = '';
+  showScreen('kids-screen');
+}
+
+// ============ SAVE ============
+function saveVideos() {
+  localStorage.setItem('bolatube_videos', JSON.stringify(videos));
+}
+
+// ============ TOAST ============
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ============ HELPERS ============
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Prevent back gesture on kids screen
+window.addEventListener('popstate', e => {
+  history.pushState(null, '', location.href);
+});
+history.pushState(null, '', location.href);
+</script>
+</body>
+</html>
