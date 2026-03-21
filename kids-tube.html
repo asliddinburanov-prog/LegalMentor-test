@@ -3,966 +3,531 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>BolaTube 🎬</title>
+<title>YouTube</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23FF0000' d='M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.322 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><rect width='576' height='512' fill='%23FF0000'/><path fill='white' d='M232.145 337.693V175.185l142.739 81.205-142.739 81.303z'/></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --red: #FF0000;
-    --dark-red: #cc0000;
-    --bg: #0f0f0f;
-    --card: #1a1a1a;
-    --card2: #242424;
-    --text: #ffffff;
-    --muted: #aaaaaa;
-    --accent: #FF0000;
-    --green: #00c853;
-    --radius: 16px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ============ SCREENS ============ */
-  .screen { display: none; min-height: 100vh; }
-  .screen.active { display: flex; flex-direction: column; }
-
-  /* ============ KIDS SCREEN ============ */
-  #kids-screen {
-    background: linear-gradient(135deg, #0f0f0f 0%, #1a0000 100%);
-  }
-
-  .kids-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background: rgba(255,0,0,0.08);
-    border-bottom: 2px solid rgba(255,0,0,0.2);
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo-icon {
-    width: 44px;
-    height: 32px;
-    background: var(--red);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(255,0,0,0.5);
-  }
-
-  .logo-icon svg { width: 20px; height: 20px; }
-
-  .logo-text {
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-  }
-
-  .logo-text span { color: var(--red); }
-
-  .lock-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    font-weight: 700;
-    transition: all 0.2s;
-  }
-  .lock-btn:hover { background: rgba(255,0,0,0.3); border-color: var(--red); }
-
-  /* Video Grid */
-  .video-grid {
-    flex: 1;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    align-content: start;
-  }
-
-  .empty-state {
-    grid-column: 1/-1;
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
-  .empty-state .big-icon { font-size: 72px; margin-bottom: 16px; }
-  .empty-state h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: white; }
-  .empty-state p { font-size: 14px; line-height: 1.5; }
-
-  .video-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 2px solid transparent;
-  }
-
-  .video-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(255,0,0,0.25);
-    border-color: rgba(255,0,0,0.4);
-  }
-
-  .video-card:active { transform: scale(0.97); }
-
-  .thumb-wrapper {
-    position: relative;
-    aspect-ratio: 16/9;
-    background: #000;
-    overflow: hidden;
-  }
-
-  .thumb-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-  }
-  .video-card:hover .thumb-wrapper img { transform: scale(1.05); }
-
-  .play-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.3);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .video-card:hover .play-overlay { opacity: 1; }
-  .play-circle {
-    width: 56px;
-    height: 56px;
-    background: rgba(255,0,0,0.9);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 20px rgba(255,0,0,0.5);
-  }
-
-  .card-info {
-    padding: 12px 14px;
-  }
-  .card-title {
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* ============ VIDEO PLAYER SCREEN ============ */
-  #player-screen {
-    background: #000;
-  }
-
-  .player-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: rgba(0,0,0,0.8);
-    position: relative;
-    z-index: 10;
-  }
-
-  .back-btn {
-    width: 38px;
-    height: 38px;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
-  .back-btn:hover { background: rgba(255,0,0,0.4); }
-
-  #player-title {
-    font-size: 15px;
-    font-weight: 700;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  #youtube-iframe {
-    width: 100%;
-    aspect-ratio: 16/9;
-    border: none;
-    display: block;
-    background: #000;
-  }
-
-  .related-section {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    background: var(--bg);
-  }
-
-  .related-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-  }
-
-  /* ============ ADMIN SCREEN ============ */
-  #admin-screen {
-    background: var(--bg);
-  }
-
-  .admin-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 20px;
-    background: var(--card);
-    border-bottom: 2px solid var(--card2);
-  }
-
-  .admin-header h1 {
-    font-size: 18px;
-    font-weight: 900;
-  }
-
-  .admin-badge {
-    background: var(--red);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .admin-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-  }
-
-  .section-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid var(--card2);
-  }
-
-  .section-card h2 {
-    font-size: 15px;
-    font-weight: 800;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .input-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .field-group label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  input[type="text"], input[type="password"], input[type="url"] {
-    background: var(--card2);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    color: white;
-    padding: 11px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: 'Nunito', sans-serif;
-    width: 100%;
-    transition: border-color 0.2s;
-    outline: none;
-  }
-
-  input:focus { border-color: var(--red); }
-  input::placeholder { color: #555; }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 11px 20px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .btn-red { background: var(--red); color: white; }
-  .btn-red:hover { background: var(--dark-red); transform: translateY(-1px); }
-
-  .btn-ghost {
-    background: rgba(255,255,255,0.07);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.12);
-  }
-  .btn-ghost:hover { background: rgba(255,255,255,0.12); }
-
-  .btn-danger { background: rgba(255,50,50,0.15); color: #ff6b6b; border: 1px solid rgba(255,50,50,0.3); }
-  .btn-danger:hover { background: rgba(255,50,50,0.25); }
-
-  .video-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .video-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--card2);
-    border-radius: 10px;
-    padding: 10px 12px;
-    border: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .video-item-thumb {
-    width: 80px;
-    height: 45px;
-    border-radius: 6px;
-    object-fit: cover;
-    background: #333;
-    flex-shrink: 0;
-  }
-
-  .video-item-info { flex: 1; min-width: 0; }
-  .video-item-title {
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .video-item-id { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .delete-btn {
-    width: 32px;
-    height: 32px;
-    background: rgba(255,50,50,0.1);
-    border: 1px solid rgba(255,50,50,0.3);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #ff6b6b;
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-  .delete-btn:hover { background: rgba(255,50,50,0.25); }
-
-  /* ============ PIN MODAL ============ */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 999;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(8px);
-  }
-  .modal-overlay.active { display: flex; }
-
-  .modal-box {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 28px 24px;
-    width: 100%;
-    max-width: 340px;
-    border: 1px solid var(--card2);
-    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
-  }
-
-  .modal-box h2 {
-    font-size: 20px;
-    font-weight: 900;
-    text-align: center;
-    margin-bottom: 8px;
-  }
-
-  .modal-box p {
-    font-size: 13px;
-    color: var(--muted);
-    text-align: center;
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
-
-  .pin-dots {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .pin-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--card2);
-    border: 2px solid rgba(255,255,255,0.2);
-    transition: all 0.15s;
-  }
-  .pin-dot.filled { background: var(--red); border-color: var(--red); box-shadow: 0 0 10px rgba(255,0,0,0.5); }
-  .pin-dot.error { background: #ff4444; border-color: #ff4444; animation: shake 0.3s; }
-
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-
-  .numpad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .num-btn {
-    padding: 16px;
-    background: var(--card2);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    color: white;
-    font-size: 20px;
-    font-weight: 700;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: center;
-  }
-  .num-btn:hover { background: rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.4); }
-  .num-btn:active { transform: scale(0.93); }
-
-  .num-btn.del { font-size: 14px; color: var(--muted); }
-
-  .modal-cancel {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    color: var(--muted);
-    font-size: 14px;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    font-weight: 700;
-    transition: all 0.2s;
-  }
-  .modal-cancel:hover { border-color: rgba(255,255,255,0.25); color: white; }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #1e1e1e;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    z-index: 9999;
-    transition: transform 0.3s;
-    border: 1px solid rgba(255,255,255,0.1);
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: rgba(0,200,83,0.4); }
-  .toast.error { border-color: rgba(255,50,50,0.4); }
-
-  /* Loading thumb */
-  .thumb-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #555;
-    font-size: 28px;
-  }
-
-  @media (max-width: 480px) {
-    .video-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
-    .card-title { font-size: 12px; }
-    .card-info { padding: 8px 10px; }
-  }
-
-  @media (max-width: 340px) {
-    .video-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,0,0,0.3); border-radius: 4px; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --bg:#0f0f0f; --sur:#212121; --sur2:#272727; --brd:#3d3d3d;
+  --tx:#f1f1f1; --tx2:#aaaaaa; --red:#ff0000; --red2:#cc0000;
+}
+body { font-family:'Roboto',sans-serif; background:var(--bg); color:var(--tx); min-height:100vh; overflow-x:hidden; }
+.screen { display:none; flex-direction:column; min-height:100vh; }
+.screen.active { display:flex; }
+
+/* TOP BAR */
+.yt-topbar {
+  position:sticky; top:0; z-index:100; background:var(--bg);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; border-bottom:1px solid #1e1e1e;
+}
+.yt-logo { display:flex; align-items:center; gap:5px; }
+.yt-logo-icon { width:32px; height:22px; background:var(--red); border-radius:5px; display:flex; align-items:center; justify-content:center; }
+.yt-logo-icon svg { width:13px; height:13px; }
+.yt-logo-text { font-size:18px; font-weight:700; color:var(--tx); letter-spacing:-0.3px; }
+.icon-btn { width:38px; height:38px; border-radius:50%; background:transparent; border:none; color:var(--tx); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.icon-btn:hover { background:rgba(255,255,255,0.08); }
+
+/* CHIPS */
+.chip-row { display:flex; gap:8px; padding:10px 12px; overflow-x:auto; scrollbar-width:none; background:var(--bg); position:sticky; top:57px; z-index:99; }
+.chip-row::-webkit-scrollbar { display:none; }
+.chip { flex-shrink:0; padding:6px 14px; background:var(--sur); border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; color:var(--tx); border:none; }
+.chip.active { background:var(--tx); color:#000; }
+
+/* FEED */
+.video-feed { flex:1; padding-bottom:80px; }
+.empty-home { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 24px; color:var(--tx2); text-align:center; gap:12px; }
+.empty-home h3 { font-size:16px; font-weight:500; color:var(--tx); }
+.empty-home p { font-size:13px; line-height:1.5; }
+
+/* CARD */
+.yt-card { cursor:pointer; margin-bottom:2px; }
+.yt-card-thumb { position:relative; width:100%; aspect-ratio:16/9; background:#1a1a1a; overflow:hidden; }
+.yt-card-thumb video, .yt-card-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.thumb-dur { position:absolute; bottom:6px; right:8px; background:rgba(0,0,0,0.85); color:#fff; font-size:11px; font-weight:500; padding:2px 5px; border-radius:3px; }
+.yt-card-info { display:flex; gap:10px; padding:10px 12px 12px; }
+.yt-avatar { width:36px; height:36px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; color:white; margin-top:2px; }
+.yt-meta { flex:1; min-width:0; }
+.yt-meta-title { font-size:14px; font-weight:500; line-height:1.35; color:var(--tx); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px; }
+.yt-meta-sub { font-size:12px; color:var(--tx2); display:flex; align-items:center; gap:4px; }
+.card-more { width:36px; height:36px; border-radius:50%; background:transparent; border:none; color:var(--tx2); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; align-self:flex-start; margin-top:2px; }
+
+/* BOTTOM NAV */
+.yt-nav { position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--sur); display:flex; z-index:200; }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 4px 10px; cursor:pointer; border:none; background:transparent; color:var(--tx2); font-size:10px; font-family:'Roboto',sans-serif; gap:4px; }
+.nav-item.active { color:var(--tx); }
+
+/* PLAYER */
+#player-screen { background:#000; position:fixed; inset:0; z-index:500; display:none; flex-direction:column; overflow-y:auto; }
+#player-screen.active { display:flex; }
+.vid-wrap { position:relative; width:100%; background:#000; flex-shrink:0; }
+#main-vid { width:100%; display:block; background:#000; max-height:56vw; }
+.vid-controls { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.85)); padding:20px 12px 10px; opacity:0; transition:opacity 0.25s; pointer-events:none; }
+.vid-wrap.show .vid-controls { opacity:1; pointer-events:all; }
+.prog-wrap { height:3px; background:rgba(255,255,255,0.25); border-radius:2px; cursor:pointer; margin-bottom:8px; position:relative; }
+.prog-fill { height:100%; background:var(--red); border-radius:2px; width:0%; }
+.ctrl-row { display:flex; align-items:center; gap:8px; }
+.ctrl-btn { background:transparent; border:none; color:white; cursor:pointer; padding:4px; display:flex; align-items:center; border-radius:4px; }
+.time-disp { font-size:12px; color:#ddd; flex:1; font-variant-numeric:tabular-nums; }
+.p-back { position:absolute; top:10px; left:10px; width:36px; height:36px; background:rgba(0,0,0,0.5); border-radius:50%; border:none; color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; opacity:0; transition:opacity 0.25s; pointer-events:none; }
+.vid-wrap.show .p-back { opacity:1; pointer-events:all; }
+
+.p-info { background:var(--bg); padding:12px 14px 8px; border-bottom:1px solid var(--sur); flex-shrink:0; }
+.p-title { font-size:16px; font-weight:500; line-height:1.35; margin-bottom:4px; }
+.p-meta { font-size:13px; color:var(--tx2); }
+.p-actions { display:flex; gap:6px; padding:10px 14px; background:var(--bg); overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--sur); flex-shrink:0; }
+.p-actions::-webkit-scrollbar { display:none; }
+.a-pill { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; padding:8px 14px; background:var(--sur); border-radius:10px; border:none; color:var(--tx); font-size:12px; font-family:'Roboto',sans-serif; cursor:default; }
+
+.up-next { flex:1; background:var(--bg); padding-bottom:20px; min-height:0; }
+.un-hdr { padding:12px 14px 8px; font-size:14px; font-weight:500; display:flex; align-items:center; gap:8px; }
+.mini-card { display:flex; gap:8px; padding:6px 14px; cursor:pointer; }
+.mini-card:hover { background:rgba(255,255,255,0.05); }
+.mini-thumb { width:120px; height:68px; border-radius:8px; object-fit:cover; background:#1a1a1a; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#444; }
+.mini-info { flex:1; min-width:0; }
+.mini-title { font-size:13px; font-weight:500; line-height:1.3; color:var(--tx); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px; }
+.mini-sub { font-size:11px; color:var(--tx2); }
+
+/* ADMIN */
+#admin-screen { background:var(--bg); }
+.adm-bar { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--sur); border-bottom:1px solid var(--brd); }
+.adm-bar h1 { font-size:17px; font-weight:700; }
+.adm-badge { background:var(--red); font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.adm-body { flex:1; overflow-y:auto; padding:16px; padding-bottom:40px; }
+.acard { background:var(--sur); border-radius:12px; padding:18px; margin-bottom:16px; border:1px solid var(--brd); }
+.acard h2 { font-size:13px; font-weight:700; margin-bottom:14px; color:var(--tx2); text-transform:uppercase; letter-spacing:0.5px; }
+.fl { font-size:12px; color:var(--tx2); margin-bottom:5px; font-weight:500; }
+.fi { width:100%; background:var(--bg); border:1.5px solid var(--brd); color:var(--tx); padding:10px 12px; border-radius:8px; font-size:14px; font-family:'Roboto',sans-serif; outline:none; margin-bottom:12px; }
+.fi:focus { border-color:var(--red); }
+.fi::placeholder { color:#555; }
+.abtn { display:inline-flex; align-items:center; gap:6px; padding:10px 18px; border-radius:8px; font-size:13px; font-weight:700; font-family:'Roboto',sans-serif; cursor:pointer; border:none; }
+.abtn-red { background:var(--red); color:white; }
+.abtn-full { width:100%; justify-content:center; margin-top:4px; }
+
+.upload-zone { border:2px dashed var(--brd); border-radius:10px; padding:24px; text-align:center; cursor:pointer; margin-bottom:12px; transition:all 0.2s; }
+.upload-zone:hover { border-color:var(--red); background:rgba(255,0,0,0.05); }
+.upload-zone .uico { font-size:32px; margin-bottom:8px; }
+.upload-zone p { font-size:13px; color:var(--tx2); line-height:1.5; }
+.upload-zone strong { color:var(--tx); }
+#file-in, #thumb-in { display:none; }
+#vid-prev { display:none; width:100%; aspect-ratio:16/9; border-radius:8px; object-fit:cover; background:#1a1a1a; margin-bottom:10px; }
+#img-prev { display:none; width:100%; border-radius:8px; margin-bottom:10px; aspect-ratio:16/9; object-fit:cover; }
+.up-bar { display:none; height:3px; background:var(--brd); border-radius:2px; margin-bottom:10px; overflow:hidden; }
+.up-fill { height:100%; background:var(--red); width:0%; transition:width 0.1s; }
+
+.adm-vi { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.adm-vi:last-child { border-bottom:none; }
+.adm-vthumb { width:80px; height:46px; border-radius:6px; object-fit:cover; background:#1a1a1a; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#444; }
+.adm-vinfo { flex:1; min-width:0; }
+.adm-vtitle { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.adm-vsub { font-size:11px; color:var(--tx2); margin-top:2px; }
+.del-btn { width:30px; height:30px; border-radius:50%; background:rgba(255,50,50,0.1); border:1px solid rgba(255,50,50,0.25); color:#ff6b6b; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+.del-btn:hover { background:rgba(255,50,50,0.25); }
+
+/* PIN */
+.pin-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(6px); }
+.pin-ov.active { display:flex; }
+.pin-box { background:var(--sur); border-radius:18px; padding:28px 22px 22px; width:100%; max-width:320px; border:1px solid var(--brd); }
+.pin-box h2 { font-size:18px; font-weight:700; text-align:center; margin-bottom:6px; }
+.pin-box p { font-size:13px; color:var(--tx2); text-align:center; margin-bottom:20px; }
+.pin-dots { display:flex; justify-content:center; gap:14px; margin-bottom:22px; }
+.pdot { width:14px; height:14px; border-radius:50%; background:var(--sur2); border:2px solid var(--brd); transition:all 0.15s; }
+.pdot.on { background:var(--red); border-color:var(--red); box-shadow:0 0 8px rgba(255,0,0,0.4); }
+.pdot.er { background:#ff4444; border-color:#ff4444; animation:shk 0.3s; }
+@keyframes shk { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.numpad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.nkey { padding:14px; background:var(--sur2); border:1px solid var(--brd); border-radius:10px; color:var(--tx); font-size:20px; font-weight:500; font-family:'Roboto',sans-serif; cursor:pointer; text-align:center; transition:background 0.1s; }
+.nkey:active { background:rgba(255,0,0,0.25); transform:scale(0.94); }
+.nkey.del { font-size:13px; color:var(--tx2); }
+.pin-cancel { width:100%; padding:11px; background:transparent; border:1px solid var(--brd); border-radius:8px; color:var(--tx2); font-size:14px; font-family:'Roboto',sans-serif; cursor:pointer; }
+
+/* TOAST */
+.toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px); background:#383838; color:white; padding:10px 18px; border-radius:8px; font-size:13px; font-weight:500; z-index:9999; opacity:0; transition:all 0.3s; white-space:nowrap; pointer-events:none; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+::-webkit-scrollbar { width:0; }
 </style>
 </head>
 <body>
 
-<!-- ========== KIDS SCREEN ========== -->
-<div id="kids-screen" class="screen active">
-  <div class="kids-header">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="white">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-      </div>
-      <div class="logo-text">Bola<span>Tube</span></div>
+<!-- HOME -->
+<div id="home-screen" class="screen active">
+  <div class="yt-topbar">
+    <div class="yt-logo">
+      <div class="yt-logo-icon"><svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="yt-logo-text">YouTube</span>
     </div>
-    <button class="lock-btn" onclick="showPinModal('admin')">⚙️ Sozlamalar</button>
-  </div>
-
-  <div class="video-grid" id="video-grid">
-    <div class="empty-state">
-      <div class="big-icon">🎬</div>
-      <h2>Hali video yo'q</h2>
-      <p>Sozlamalar orqali videolar qo'shing, keyin bolangiz faqat o'sha videolarni ko'radi.</p>
+    <div style="display:flex;gap:4px">
+      <button class="icon-btn" onclick="showPin('admin')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+      <button class="icon-btn" onclick="showPin('admin')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </button>
     </div>
   </div>
-</div>
-
-<!-- ========== PLAYER SCREEN ========== -->
-<div id="player-screen" class="screen">
-  <div class="player-header">
-    <button class="back-btn" onclick="goBack()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
+  <div class="chip-row">
+    <button class="chip active">Hammasi</button>
+    <button class="chip">Bolalar</button>
+    <button class="chip">Musiqa</button>
+    <button class="chip">Multfilm</button>
+    <button class="chip">O'yin</button>
+    <button class="chip">Ta'lim</button>
+  </div>
+  <div class="video-feed" id="feed"></div>
+  <nav class="yt-nav">
+    <button class="nav-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Bosh sahifa
     </button>
-    <div id="player-title">Video</div>
+    <button class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Izlash
+    </button>
+    <button class="nav-item" onclick="showPin('admin')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Men
+    </button>
+  </nav>
+</div>
+
+<!-- PLAYER -->
+<div id="player-screen" class="screen">
+  <div class="vid-wrap" id="vwrap">
+    <video id="main-vid" playsinline webkit-playsinline controlsList="nodownload nofullscreen noremoteplayback"></video>
+    <button class="p-back" onclick="closePlayer()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="vid-controls">
+      <div class="prog-wrap" id="pwrap">
+        <div class="prog-fill" id="pfill"></div>
+      </div>
+      <div class="ctrl-row">
+        <button class="ctrl-btn" onclick="togglePlay()">
+          <svg id="pp-icon" width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="ctrl-btn" onclick="skip(-10)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+        </button>
+        <button class="ctrl-btn" onclick="skip(10)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12.01 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>
+        </button>
+        <span class="time-disp" id="tdisp">0:00 / 0:00</span>
+        <button class="ctrl-btn" onclick="goFS()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        </button>
+      </div>
+    </div>
   </div>
-  <iframe id="youtube-iframe"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen>
-  </iframe>
-  <div class="related-section">
-    <div class="related-title">🎯 Boshqa videolar</div>
-    <div class="related-grid" id="related-grid"></div>
+
+  <div class="p-info">
+    <div class="p-title" id="ptitle">Video</div>
+    <div class="p-meta" id="pmeta">BolaTube • 0 ta ko'rish</div>
+  </div>
+
+  <div class="p-actions">
+    <div class="a-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>Yoqdi</div>
+    <div class="a-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Ulashish</div>
+    <div class="a-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Saqlash</div>
+    <div class="a-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>Ko'proq</div>
+  </div>
+
+  <div class="up-next">
+    <div class="un-hdr">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+      Keyingi videolar
+    </div>
+    <div id="up-next-list"></div>
   </div>
 </div>
 
-<!-- ========== ADMIN SCREEN ========== -->
+<!-- ADMIN -->
 <div id="admin-screen" class="screen">
-  <div class="admin-header">
-    <button class="back-btn" onclick="showPinModal('exit-admin')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
+  <div class="adm-bar">
+    <button class="icon-btn" onclick="showPin('exit')" style="margin-left:-6px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </button>
     <h1>Boshqaruv paneli</h1>
-    <span class="admin-badge">Admin</span>
+    <span class="adm-badge">ADMIN</span>
   </div>
+  <div class="adm-body">
 
-  <div class="admin-content">
-    <!-- PIN sozlash -->
-    <div class="section-card">
-      <h2>🔐 PIN kodini o'zgartirish</h2>
-      <div class="field-group">
-        <label>Yangi PIN (4 raqam)</label>
-        <input type="password" id="new-pin-input" maxlength="4" placeholder="Masalan: 1234" inputmode="numeric" pattern="[0-9]*">
+    <div class="acard">
+      <h2>📹 Video qo'shish</h2>
+      <div class="upload-zone" onclick="document.getElementById('file-in').click()">
+        <div class="uico">🎬</div>
+        <p><strong>Video faylni tanlang</strong><br>Galereya yoki fayl menejeri</p>
       </div>
-      <div class="field-group">
-        <label>Tasdiqlang</label>
-        <input type="password" id="confirm-pin-input" maxlength="4" placeholder="PIN ni qaytaring" inputmode="numeric" pattern="[0-9]*">
+      <input type="file" id="file-in" accept="video/*" onchange="onVid(this)">
+      <video id="vid-prev" muted controls></video>
+      <div class="up-bar" id="upbar"><div class="up-fill" id="upfill"></div></div>
+      <div class="fl">Video nomi</div>
+      <input class="fi" type="text" id="vtitle" placeholder="Masalan: Peppa Pig - Hovuz">
+      <div class="fl">Muqova rasm (ixtiyoriy)</div>
+      <div class="upload-zone" id="thumb-zone" onclick="document.getElementById('thumb-in').click()" style="padding:14px">
+        <p style="font-size:12px">📷 Muqova rasm tanlang (ixtiyoriy)</p>
       </div>
-      <button class="btn btn-red" onclick="changePin()">💾 Saqlash</button>
+      <input type="file" id="thumb-in" accept="image/*" onchange="onThumb(this)">
+      <img id="img-prev">
+      <button class="abtn abtn-red abtn-full" onclick="saveVid()">✅ Saqlash</button>
     </div>
 
-    <!-- Video qo'shish -->
-    <div class="section-card">
-      <h2>➕ Video qo'shish</h2>
-      <div class="field-group">
-        <label>YouTube linki yoki Video ID</label>
-        <input type="url" id="yt-link-input" placeholder="https://youtube.com/watch?v=... yoki video ID">
-      </div>
-      <div class="field-group">
-        <label>Video nomi (ixtiyoriy)</label>
-        <input type="text" id="yt-title-input" placeholder="Bolalar uchun qo'shiq...">
-      </div>
-      <button class="btn btn-red" onclick="addVideo()">▶️ Qo'shish</button>
+    <div class="acard">
+      <h2>🔐 PIN o'zgartirish</h2>
+      <div class="fl">Yangi PIN (4 raqam)</div>
+      <input class="fi" type="password" id="npin" maxlength="4" placeholder="••••" inputmode="numeric">
+      <div class="fl">Tasdiqlash</div>
+      <input class="fi" type="password" id="cpin" maxlength="4" placeholder="••••" inputmode="numeric">
+      <button class="abtn abtn-red" onclick="changePin()">💾 Saqlash</button>
     </div>
 
-    <!-- Video ro'yxati -->
-    <div class="section-card">
-      <h2>🎬 Videolar ro'yxati (<span id="video-count">0</span>)</h2>
-      <div class="video-list" id="admin-video-list">
-        <p style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px 0;">
-          Hali video qo'shilmagan
-        </p>
-      </div>
+    <div class="acard">
+      <h2>🎬 Yuklangan videolar (<span id="vcnt">0</span>)</h2>
+      <div id="adm-list"><p style="color:var(--tx2);font-size:13px;text-align:center;padding:16px 0">Hali video yo'q</p></div>
     </div>
   </div>
 </div>
 
-<!-- ========== PIN MODAL ========== -->
-<div class="modal-overlay" id="pin-modal">
-  <div class="modal-box">
-    <h2 id="modal-title">🔐 PIN kiriting</h2>
-    <p id="modal-desc">Sozlamalarga kirish uchun PIN kodingizni kiriting</p>
-    <div class="pin-dots" id="pin-dots">
-      <div class="pin-dot" id="dot-0"></div>
-      <div class="pin-dot" id="dot-1"></div>
-      <div class="pin-dot" id="dot-2"></div>
-      <div class="pin-dot" id="dot-3"></div>
+<!-- PIN -->
+<div class="pin-ov" id="pin-ov">
+  <div class="pin-box">
+    <h2>🔐 PIN kiriting</h2>
+    <p>Sozlamalarga kirish uchun</p>
+    <div class="pin-dots">
+      <div class="pdot" id="d0"></div><div class="pdot" id="d1"></div>
+      <div class="pdot" id="d2"></div><div class="pdot" id="d3"></div>
     </div>
     <div class="numpad">
-      <button class="num-btn" onclick="pinPress('1')">1</button>
-      <button class="num-btn" onclick="pinPress('2')">2</button>
-      <button class="num-btn" onclick="pinPress('3')">3</button>
-      <button class="num-btn" onclick="pinPress('4')">4</button>
-      <button class="num-btn" onclick="pinPress('5')">5</button>
-      <button class="num-btn" onclick="pinPress('6')">6</button>
-      <button class="num-btn" onclick="pinPress('7')">7</button>
-      <button class="num-btn" onclick="pinPress('8')">8</button>
-      <button class="num-btn" onclick="pinPress('9')">9</button>
-      <button class="num-btn" onclick="pinPress('0')">0</button>
-      <button class="num-btn del" onclick="pinDel()">⌫</button>
+      <button class="nkey" onclick="pn('1')">1</button><button class="nkey" onclick="pn('2')">2</button><button class="nkey" onclick="pn('3')">3</button>
+      <button class="nkey" onclick="pn('4')">4</button><button class="nkey" onclick="pn('5')">5</button><button class="nkey" onclick="pn('6')">6</button>
+      <button class="nkey" onclick="pn('7')">7</button><button class="nkey" onclick="pn('8')">8</button><button class="nkey" onclick="pn('9')">9</button>
+      <button class="nkey" onclick="pn('0')">0</button><button class="nkey del" onclick="pd()">⌫</button>
     </div>
-    <button class="modal-cancel" id="modal-cancel-btn">Bekor qilish</button>
+    <button class="pin-cancel" onclick="closePin()">Bekor qilish</button>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ============ STATE ============
-let videos = JSON.parse(localStorage.getItem('bolatube_videos') || '[]');
-let adminPin = localStorage.getItem('bolatube_pin') || '1234';
-let pinBuffer = '';
-let pinMode = ''; // 'admin' | 'exit-admin'
+let vids = JSON.parse(localStorage.getItem('yt_v2') || '[]');
+let pin = localStorage.getItem('yt_p2') || '1234';
+let pbuf = '', pmode = '', curIdx = -1, ctimer = null;
+let pVidBlob = null, pThumbBlob = null, pVidUrl = null;
 
-// ============ INIT ============
-renderKidsGrid();
+renderFeed();
 
-// ============ SCREEN NAV ============
-function showScreen(id) {
+function scr(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ============ PIN MODAL ============
-function showPinModal(mode) {
-  pinMode = mode;
-  pinBuffer = '';
-  updatePinDots();
-  document.getElementById('modal-title').textContent = mode === 'admin' ? '🔐 Admin PIN' : '🔓 Chiqish';
-  document.getElementById('modal-desc').textContent = 'Sozlamalarga kirish uchun PIN kiriting';
-  document.getElementById('modal-cancel-btn').onclick = closePinModal;
-  document.getElementById('pin-modal').classList.add('active');
-}
-
-function closePinModal() {
-  document.getElementById('pin-modal').classList.remove('active');
-  pinBuffer = '';
-  updatePinDots();
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById('dot-' + i);
-    dot.className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
-  }
-}
-
-function pinPress(digit) {
-  if (pinBuffer.length < 4) {
-    pinBuffer += digit;
-    updatePinDots();
-    if (pinBuffer.length === 4) {
-      setTimeout(checkPin, 150);
-    }
-  }
-}
-
-function pinDel() {
-  if (pinBuffer.length > 0) {
-    pinBuffer = pinBuffer.slice(0, -1);
-    updatePinDots();
-  }
-}
-
-function checkPin() {
-  if (pinBuffer === adminPin) {
-    closePinModal();
-    if (pinMode === 'admin') {
-      renderAdminList();
-      showScreen('admin-screen');
-    } else {
-      showScreen('kids-screen');
-    }
-    showToast('✅ Kirildi!', 'success');
+// PIN
+function showPin(mode) { pmode=mode; pbuf=''; updDots(); document.getElementById('pin-ov').classList.add('active'); }
+function closePin() { document.getElementById('pin-ov').classList.remove('active'); pbuf=''; updDots(); }
+function updDots() { for(let i=0;i<4;i++) document.getElementById('d'+i).className='pdot'+(i<pbuf.length?' on':''); }
+function pn(d) { if(pbuf.length<4){pbuf+=d;updDots();} if(pbuf.length===4)setTimeout(chkPin,150); }
+function pd() { if(pbuf.length>0){pbuf=pbuf.slice(0,-1);updDots();} }
+function chkPin() {
+  if(pbuf===pin) {
+    closePin();
+    if(pmode==='admin'){renderAdmList();scr('admin-screen');}
+    else scr('home-screen');
+    toast('✅ Kirildi!');
   } else {
-    // Shake
-    for (let i = 0; i < 4; i++) {
-      const dot = document.getElementById('dot-' + i);
-      dot.className = 'pin-dot error';
-    }
-    showToast('❌ PIN noto\'g\'ri', 'error');
-    setTimeout(() => {
-      pinBuffer = '';
-      updatePinDots();
-    }, 600);
+    for(let i=0;i<4;i++) document.getElementById('d'+i).className='pdot er';
+    toast('❌ PIN noto\'g\'ri');
+    setTimeout(()=>{pbuf='';updDots();},600);
   }
 }
 
-// ============ YOUTUBE HELPERS ============
-function extractVideoId(input) {
-  input = input.trim();
-  // Full URL patterns
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-    /^([a-zA-Z0-9_-]{11})$/
-  ];
-  for (const p of patterns) {
-    const m = input.match(p);
-    if (m) return m[1];
-  }
-  return null;
-}
-
-function getThumb(videoId) {
-  return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-}
-
-// ============ ADD VIDEO ============
-async function addVideo() {
-  const linkVal = document.getElementById('yt-link-input').value.trim();
-  const titleVal = document.getElementById('yt-title-input').value.trim();
-
-  if (!linkVal) { showToast('⚠️ Link kiriting', 'error'); return; }
-
-  const vid = extractVideoId(linkVal);
-  if (!vid) { showToast('❌ Yaroqsiz YouTube linki', 'error'); return; }
-
-  if (videos.find(v => v.id === vid)) {
-    showToast('⚠️ Bu video allaqachon bor', 'error'); return;
-  }
-
-  const title = titleVal || `Video ${videos.length + 1}`;
-  videos.push({ id: vid, title });
-  saveVideos();
-  renderAdminList();
-  renderKidsGrid();
-
-  document.getElementById('yt-link-input').value = '';
-  document.getElementById('yt-title-input').value = '';
-  showToast('✅ Video qo\'shildi!', 'success');
-}
-
-// ============ DELETE VIDEO ============
-function deleteVideo(id) {
-  videos = videos.filter(v => v.id !== id);
-  saveVideos();
-  renderAdminList();
-  renderKidsGrid();
-  showToast('🗑️ Video o\'chirildi', '');
-}
-
-// ============ CHANGE PIN ============
-function changePin() {
-  const np = document.getElementById('new-pin-input').value;
-  const cp = document.getElementById('confirm-pin-input').value;
-  if (np.length !== 4 || !/^\d{4}$/.test(np)) {
-    showToast('⚠️ PIN 4 raqamdan iborat bo\'lishi kerak', 'error'); return;
-  }
-  if (np !== cp) { showToast('❌ PIN lar mos kelmadi', 'error'); return; }
-  adminPin = np;
-  localStorage.setItem('bolatube_pin', np);
-  document.getElementById('new-pin-input').value = '';
-  document.getElementById('confirm-pin-input').value = '';
-  showToast('✅ PIN o\'zgartirildi!', 'success');
-}
-
-// ============ RENDER KIDS GRID ============
-function renderKidsGrid() {
-  const grid = document.getElementById('video-grid');
-  if (videos.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state">
-        <div class="big-icon">🎬</div>
-        <h2>Hali video yo'q</h2>
-        <p>Sozlamalar orqali videolar qo'shing.<br>Bolangiz faqat o'sha videolarni ko'radi.</p>
-      </div>`;
+// FEED
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  if(!vids.length) {
+    feed.innerHTML = `<div class="empty-home">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.25"><path d="M21.582 6.186a2.496 2.496 0 0 0-1.757-1.757C18.254 4 12 4 12 4s-6.254 0-7.825.429a2.496 2.496 0 0 0-1.757 1.757C2 7.757 2 12 2 12s0 4.243.418 5.814c.228.857.903 1.532 1.757 1.757C5.746 20 12 20 12 20s6.254 0 7.825-.429a2.496 2.496 0 0 0 1.757-1.757C22 16.243 22 12 22 12s0-4.243-.418-5.814zM9.954 15.519V8.481L15.827 12l-5.873 3.519z"/></svg>
+      <h3>Hali video yo'q</h3><p>Sozlamalar orqali telefondan video yuklang</p></div>`;
     return;
   }
-  grid.innerHTML = videos.map(v => `
-    <div class="video-card" onclick="playVideo('${v.id}', '${escHtml(v.title)}')">
-      <div class="thumb-wrapper">
-        <img src="${getThumb(v.id)}" alt="${escHtml(v.title)}"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="thumb-placeholder" style="display:none">▶</div>
-        <div class="play-overlay">
-          <div class="play-circle">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-          </div>
+  feed.innerHTML = vids.map((v,i) => `
+    <div class="yt-card" onclick="playVid(${i})">
+      <div class="yt-card-thumb" style="${v.thumb?`background-image:url('${v.thumb}');background-size:cover;background-position:center`:'background:#1a1a1a'}">
+        ${!v.thumb?`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333"><svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>`:''}
+        ${v.dur?`<div class="thumb-dur">${fmt(v.dur)}</div>`:''}
+      </div>
+      <div class="yt-card-info">
+        <div class="yt-avatar">${(v.title||'V')[0].toUpperCase()}</div>
+        <div class="yt-meta">
+          <div class="yt-meta-title">${esc(v.title||'Video')}</div>
+          <div class="yt-meta-sub"><span>BolaTube</span><span>•</span><span>${v.views||0} ta ko'rish</span></div>
         </div>
+        <button class="card-more"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button>
       </div>
-      <div class="card-info">
-        <div class="card-title">${escHtml(v.title)}</div>
+    </div>`).join('');
+}
+
+// PLAYER
+const vid = document.getElementById('main-vid');
+const vwrap = document.getElementById('vwrap');
+
+function playVid(i) {
+  const v = vids[i];
+  if(!v||!v.src){toast('Video topilmadi');return;}
+  curIdx=i;
+  vids[i].views=(vids[i].views||0)+1;
+  saveVids();
+  vid.src=v.src; vid.load(); vid.play().catch(()=>{});
+  document.getElementById('ptitle').textContent=v.title||'Video';
+  document.getElementById('pmeta').textContent=`BolaTube • ${v.views||0} ta ko'rish`;
+  // up next
+  const others=vids.filter((_,j)=>j!==i);
+  const unl=document.getElementById('up-next-list');
+  unl.innerHTML=others.length?others.map(u=>{
+    const ri=vids.indexOf(u);
+    return `<div class="mini-card" onclick="playVid(${ri})">
+      <div class="mini-thumb" style="${u.thumb?`background-image:url('${u.thumb}');background-size:cover`:''}">
+        ${!u.thumb?`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`:''}
       </div>
-    </div>
-  `).join('');
+      <div class="mini-info"><div class="mini-title">${esc(u.title||'Video')}</div><div class="mini-sub">BolaTube • ${u.views||0} ta ko'rish</div></div>
+    </div>`;}).join(''):`<p style="padding:12px 14px;color:var(--tx2);font-size:13px">Boshqa video yo'q</p>`;
+  scr('player-screen');
+  showCtrl();
 }
 
-// ============ RENDER ADMIN LIST ============
-function renderAdminList() {
-  const list = document.getElementById('admin-video-list');
-  document.getElementById('video-count').textContent = videos.length;
+function closePlayer() { vid.pause(); vid.src=''; scr('home-screen'); renderFeed(); }
 
-  if (videos.length === 0) {
-    list.innerHTML = `<p style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px 0;">Hali video qo'shilmagan</p>`;
-    return;
-  }
-
-  list.innerHTML = videos.map(v => `
-    <div class="video-item">
-      <img class="video-item-thumb" src="${getThumb(v.id)}" alt=""
-        onerror="this.style.background='#333';this.src=''">
-      <div class="video-item-info">
-        <div class="video-item-title">${escHtml(v.title)}</div>
-        <div class="video-item-id">ID: ${v.id}</div>
-      </div>
-      <button class="delete-btn" onclick="deleteVideo('${v.id}')" title="O'chirish">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
-        </svg>
-      </button>
-    </div>
-  `).join('');
-}
-
-// ============ PLAY VIDEO ============
-function playVideo(videoId, title) {
-  document.getElementById('player-title').textContent = title;
-  document.getElementById('youtube-iframe').src =
-    `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&fs=1`;
-
-  // Related
-  const relGrid = document.getElementById('related-grid');
-  const others = videos.filter(v => v.id !== videoId);
-  if (others.length === 0) {
-    relGrid.innerHTML = `<p style="color:var(--muted);font-size:13px;">Boshqa video yo'q</p>`;
-  } else {
-    relGrid.innerHTML = others.map(v => `
-      <div class="video-card" onclick="playVideo('${v.id}','${escHtml(v.title)}')">
-        <div class="thumb-wrapper">
-          <img src="${getThumb(v.id)}" alt="${escHtml(v.title)}">
-          <div class="play-overlay">
-            <div class="play-circle">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div class="card-info">
-          <div class="card-title">${escHtml(v.title)}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  showScreen('player-screen');
-}
-
-function goBack() {
-  document.getElementById('youtube-iframe').src = '';
-  showScreen('kids-screen');
-}
-
-// ============ SAVE ============
-function saveVideos() {
-  localStorage.setItem('bolatube_videos', JSON.stringify(videos));
-}
-
-// ============ TOAST ============
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + (type || '');
-  setTimeout(() => t.className = 'toast', 2500);
-}
-
-// ============ HELPERS ============
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// Prevent back gesture on kids screen
-window.addEventListener('popstate', e => {
-  history.pushState(null, '', location.href);
+vwrap.addEventListener('click',e=>{
+  if(e.target.closest('.ctrl-btn')||e.target.closest('.p-back')||e.target.closest('.prog-wrap'))return;
+  vwrap.classList.toggle('show');
+  if(vwrap.classList.contains('show')) { clearTimeout(ctimer); ctimer=setTimeout(()=>vwrap.classList.remove('show'),3000); }
 });
-history.pushState(null, '', location.href);
+
+function showCtrl() { vwrap.classList.add('show'); clearTimeout(ctimer); ctimer=setTimeout(()=>vwrap.classList.remove('show'),3000); }
+
+function togglePlay() { vid.paused?vid.play():vid.pause(); showCtrl(); }
+vid.addEventListener('play',()=>{ document.getElementById('pp-icon').innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; });
+vid.addEventListener('pause',()=>{ document.getElementById('pp-icon').innerHTML='<path d="M8 5v14l11-7z"/>'; });
+vid.addEventListener('timeupdate',()=>{
+  if(!vid.duration)return;
+  document.getElementById('pfill').style.width=(vid.currentTime/vid.duration*100)+'%';
+  document.getElementById('tdisp').textContent=fmt(vid.currentTime)+' / '+fmt(vid.duration);
+});
+vid.addEventListener('loadedmetadata',()=>{ if(curIdx>=0&&!vids[curIdx].dur){vids[curIdx].dur=vid.duration;saveVids();} });
+vid.addEventListener('ended',()=>{ if(curIdx+1<vids.length)playVid(curIdx+1); });
+
+document.getElementById('pwrap').addEventListener('click',e=>{
+  const r=e.currentTarget.getBoundingClientRect();
+  vid.currentTime=((e.clientX-r.left)/r.width)*vid.duration;
+  showCtrl();
+});
+function skip(s){vid.currentTime=Math.max(0,Math.min(vid.duration||0,vid.currentTime+s));showCtrl();}
+function goFS(){
+  const el=document.getElementById('player-screen');
+  if(el.requestFullscreen)el.requestFullscreen();
+  else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+  else if(vid.webkitEnterFullscreen)vid.webkitEnterFullscreen();
+}
+
+// UPLOAD
+function onVid(inp) {
+  const f=inp.files[0]; if(!f)return;
+  pVidBlob=f;
+  if(pVidUrl)URL.revokeObjectURL(pVidUrl);
+  pVidUrl=URL.createObjectURL(f);
+  const pv=document.getElementById('vid-prev');
+  pv.src=pVidUrl; pv.style.display='block';
+  const ti=document.getElementById('vtitle');
+  if(!ti.value)ti.value=f.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+}
+
+function onThumb(inp) {
+  const f=inp.files[0]; if(!f)return;
+  pThumbBlob=f;
+  const r=new FileReader();
+  r.onload=e=>{
+    const im=document.getElementById('img-prev');
+    im.src=e.target.result; im.style.display='block';
+    document.getElementById('thumb-zone').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+
+function saveVid() {
+  if(!pVidBlob){toast('⚠️ Video tanlang');return;}
+  const title=document.getElementById('vtitle').value.trim()||'Video '+(vids.length+1);
+  document.getElementById('upbar').style.display='block';
+  const r=new FileReader();
+  r.onprogress=e=>{if(e.lengthComputable)document.getElementById('upfill').style.width=(e.loaded/e.total*100)+'%';};
+  r.onload=e=>{
+    document.getElementById('upfill').style.width='100%';
+    const src=e.target.result;
+    if(pThumbBlob){const tr=new FileReader();tr.onload=te=>finSave(title,src,te.target.result);tr.readAsDataURL(pThumbBlob);}
+    else genThumb(pVidUrl,th=>finSave(title,src,th));
+  };
+  r.readAsDataURL(pVidBlob);
+  toast('⏳ Yuklanmoqda...');
+}
+
+function genThumb(url,cb){
+  const v=document.createElement('video');
+  v.src=url; v.muted=true; v.preload='metadata'; v.currentTime=1;
+  v.onloadeddata=()=>{const c=document.createElement('canvas');c.width=320;c.height=180;c.getContext('2d').drawImage(v,0,0,320,180);cb(c.toDataURL('image/jpeg',0.7));};
+  v.onerror=()=>cb('');
+}
+
+function finSave(title,src,thumb){
+  try{
+    vids.push({id:Date.now(),title,src,thumb:thumb||'',views:0,date:new Date().toLocaleDateString('uz-UZ')});
+    saveVids();
+  }catch(e){toast('⚠️ Xotira to\'ldi! Eski videolarni o\'chiring');return;}
+  renderAdmList(); renderFeed();
+  pVidBlob=null;pThumbBlob=null;pVidUrl=null;
+  document.getElementById('vid-prev').style.display='none';
+  document.getElementById('vid-prev').src='';
+  document.getElementById('img-prev').style.display='none';
+  document.getElementById('thumb-zone').style.display='block';
+  document.getElementById('vtitle').value='';
+  document.getElementById('file-in').value='';
+  document.getElementById('thumb-in').value='';
+  document.getElementById('upbar').style.display='none';
+  document.getElementById('upfill').style.width='0%';
+  toast('✅ Video saqlandi!');
+}
+
+function renderAdmList(){
+  const l=document.getElementById('adm-list');
+  document.getElementById('vcnt').textContent=vids.length;
+  if(!vids.length){l.innerHTML='<p style="color:var(--tx2);font-size:13px;text-align:center;padding:16px 0">Hali video yo\'q</p>';return;}
+  l.innerHTML=vids.map((v,i)=>`
+    <div class="adm-vi">
+      <div class="adm-vthumb" style="${v.thumb?`background-image:url('${v.thumb}');background-size:cover;border-radius:6px`:''}">${!v.thumb?`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`:''}</div>
+      <div class="adm-vinfo"><div class="adm-vtitle">${esc(v.title)}</div><div class="adm-vsub">${v.views||0} ta ko'rish • ${v.date||''}</div></div>
+      <button class="del-btn" onclick="delVid(${i})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+    </div>`).join('');
+}
+
+function delVid(i){
+  if(!confirm('Bu videoni o\'chirasizmi?'))return;
+  vids.splice(i,1);saveVids();renderAdmList();renderFeed();toast('🗑️ O\'chirildi');
+}
+
+function changePin(){
+  const n=document.getElementById('npin').value, c=document.getElementById('cpin').value;
+  if(!/^\d{4}$/.test(n)){toast('⚠️ 4 ta raqam kiriting');return;}
+  if(n!==c){toast('❌ PIN lar mos kelmadi');return;}
+  pin=n;localStorage.setItem('yt_p2',n);
+  document.getElementById('npin').value='';document.getElementById('cpin').value='';
+  toast('✅ PIN o\'zgartirildi!');
+}
+
+function saveVids(){try{localStorage.setItem('yt_v2',JSON.stringify(vids));}catch(e){toast('⚠️ Xotira to\'ldi!');}}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function fmt(s){if(isNaN(s))return'0:00';const m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+window.addEventListener('popstate',()=>history.pushState(null,'',location.href));
+history.pushState(null,'',location.href);
 </script>
 </body>
 </html>
